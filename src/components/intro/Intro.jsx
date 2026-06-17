@@ -1,5 +1,154 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
+
+const STEP = 70
+const GLOW_COLOR = '#00d4ff'
+const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]]
+
+function buildCircuits(w, h) {
+  const circuits = []
+  for (let i = 0; i < 14; i++) {
+    const nodes = []
+    let x = Math.floor(Math.random() * Math.ceil(w / STEP)) * STEP
+    let y = Math.floor(Math.random() * Math.ceil(h / STEP)) * STEP
+    nodes.push({ x, y })
+    let dir = Math.floor(Math.random() * 4)
+    const segs = 2 + Math.floor(Math.random() * 3)
+    for (let s = 0; s < segs; s++) {
+      const len = (1 + Math.floor(Math.random() * 4)) * STEP
+      const [dx, dy] = DIRS[dir]
+      const nx = x + dx * len
+      const ny = y + dy * len
+      if (nx < 0 || nx > w || ny < 0 || ny > h) break
+      x = nx; y = ny
+      nodes.push({ x, y })
+      dir = (dir + (Math.random() > 0.5 ? 1 : 3)) % 4
+    }
+    if (nodes.length >= 2) circuits.push(nodes)
+  }
+  return circuits
+}
+
+function CircuitCanvas({ reduceMotion }) {
+  const canvasRef = useRef(null)
+  const circuitsRef = useRef([])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    let animId
+
+    function resize() {
+      canvas.width = canvas.offsetWidth
+      canvas.height = canvas.offsetHeight
+    }
+
+    function drawCircuits() {
+      ctx.save()
+      ctx.strokeStyle = 'rgba(0,212,255,0.08)'
+      ctx.lineWidth = 1
+      for (const circuit of circuitsRef.current) {
+        ctx.beginPath()
+        ctx.moveTo(circuit[0].x, circuit[0].y)
+        for (let i = 1; i < circuit.length; i++) ctx.lineTo(circuit[i].x, circuit[i].y)
+        ctx.stroke()
+        ctx.fillStyle = 'rgba(0,212,255,0.2)'
+        for (let i = 0; i < circuit.length; i++) {
+          const { x, y } = circuit[i]
+          const isEndpoint = i === 0 || i === circuit.length - 1
+          if (isEndpoint) {
+            ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2); ctx.fill()
+          } else {
+            ctx.fillRect(x - 2, y - 2, 4, 4)
+          }
+        }
+      }
+      ctx.restore()
+    }
+
+    function makeParticle() {
+      const all = circuitsRef.current
+      const ci = Math.floor(Math.random() * all.length)
+      return { ci, si: 0, t: Math.random(), speed: 0.005 + Math.random() * 0.008 }
+    }
+
+    function drawParticle(p) {
+      const circuit = circuitsRef.current[p.ci]
+      if (!circuit || p.si >= circuit.length - 1) return
+      const n1 = circuit[p.si]
+      const n2 = circuit[p.si + 1]
+      const x = n1.x + (n2.x - n1.x) * p.t
+      const y = n1.y + (n2.y - n1.y) * p.t
+      const tailT = Math.max(0, p.t - 0.25)
+      const tx = n1.x + (n2.x - n1.x) * tailT
+      const ty = n1.y + (n2.y - n1.y) * tailT
+
+      ctx.save()
+      const tail = ctx.createLinearGradient(tx, ty, x, y)
+      tail.addColorStop(0, 'rgba(0,212,255,0)')
+      tail.addColorStop(1, 'rgba(0,212,255,0.6)')
+      ctx.strokeStyle = tail
+      ctx.lineWidth = 1.5
+      ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(x, y); ctx.stroke()
+      ctx.restore()
+
+      ctx.save()
+      const glow = ctx.createRadialGradient(x, y, 0, x, y, 6)
+      glow.addColorStop(0, 'rgba(0,212,255,1)')
+      glow.addColorStop(0.4, 'rgba(0,212,255,0.5)')
+      glow.addColorStop(1, 'rgba(0,212,255,0)')
+      ctx.shadowBlur = 10
+      ctx.shadowColor = GLOW_COLOR
+      ctx.fillStyle = glow
+      ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill()
+      ctx.restore()
+    }
+
+    resize()
+    circuitsRef.current = buildCircuits(canvas.width, canvas.height)
+    const particles = Array.from({ length: 7 }, makeParticle)
+
+    function tick() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      drawCircuits()
+      for (const p of particles) {
+        p.t += p.speed
+        if (p.t >= 1) {
+          p.si++
+          p.t = 0
+          const c = circuitsRef.current[p.ci]
+          if (!c || p.si >= c.length - 1) {
+            p.ci = Math.floor(Math.random() * circuitsRef.current.length)
+            p.si = 0
+          }
+        }
+        drawParticle(p)
+      }
+      animId = requestAnimationFrame(tick)
+    }
+
+    if (reduceMotion) {
+      drawCircuits()
+    } else {
+      tick()
+    }
+
+    const ro = new ResizeObserver(() => {
+      resize()
+      circuitsRef.current = buildCircuits(canvas.width, canvas.height)
+      if (reduceMotion) { ctx.clearRect(0, 0, canvas.width, canvas.height); drawCircuits() }
+    })
+    ro.observe(canvas)
+
+    return () => {
+      cancelAnimationFrame(animId)
+      ro.disconnect()
+    }
+  }, [reduceMotion])
+
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+}
 
 function Toggle({ checked, onChange, label }) {
   return (
@@ -14,7 +163,7 @@ function Toggle({ checked, onChange, label }) {
         }`}
       >
         <span
-          className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full transition-transform duration-200 ${
+          className={`toggle-thumb absolute top-0.5 left-0.5 w-4 h-4 rounded-full transition-transform duration-200 ${
             checked ? 'translate-x-4 bg-[#00d4ff]' : 'translate-x-0 bg-white/30'
           }`}
         />
@@ -39,6 +188,8 @@ function Intro() {
       id="intro"
       className="bg-[#050d1a] min-h-screen flex flex-col items-center justify-center relative overflow-hidden"
     >
+      <CircuitCanvas reduceMotion={reduceMotion} />
+
       {/* Nombre y título */}
       <div className="text-center z-10 mb-12">
         <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-3 opacity-60">
