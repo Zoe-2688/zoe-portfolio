@@ -150,6 +150,28 @@ function CircuitCanvas({ reduceMotion }) {
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 }
 
+function A11yIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="4.5" r="2" fill="currentColor" />
+      <path
+        d="M12 7v7.5M6.5 10.5h11M12 14.5l-3 5.5M12 14.5l3 5.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  )
+}
+
 function Toggle({ checked, onChange, label }) {
   return (
     <label className="flex items-center justify-between gap-4 cursor-pointer select-none">
@@ -172,6 +194,212 @@ function Toggle({ checked, onChange, label }) {
   )
 }
 
+const ROTATING_WORDS = ['siente', 'vive', 'usa', 'recuerda', 'comparte']
+
+function BorderParticle({ onComplete }) {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    canvas.width = canvas.offsetWidth
+    canvas.height = canvas.offsetHeight
+    const W = canvas.width
+    const H = canvas.height
+    const ctx = canvas.getContext('2d')
+    const DURATION = 1200
+    const perim = 2 * (W + H)
+    const TAIL = 70
+    const STEPS = 26
+    let startTime = null
+    let animId
+    const done = onComplete
+
+    function getPos(d) {
+      d = ((d % perim) + perim) % perim
+      if (d <= W) return { x: d, y: 0 }
+      d -= W
+      if (d <= H) return { x: W, y: d }
+      d -= H
+      if (d <= W) return { x: W - d, y: H }
+      d -= W
+      return { x: 0, y: H - d }
+    }
+
+    function frame(ts) {
+      if (!startTime) startTime = ts
+      const progress = Math.min((ts - startTime) / DURATION, 1)
+      const cur = progress * perim
+      ctx.clearRect(0, 0, W, H)
+
+      for (let i = STEPS; i >= 1; i--) {
+        const { x, y } = getPos(Math.max(0, cur - TAIL * (i / STEPS)))
+        const a = 1 - i / STEPS
+        ctx.save()
+        ctx.shadowBlur = 6
+        ctx.shadowColor = '#00d4ff'
+        ctx.fillStyle = `rgba(0,212,255,${a * 0.6})`
+        ctx.beginPath()
+        ctx.arc(x, y, Math.max(0.5, a * 3.5), 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+      }
+
+      const { x, y } = getPos(cur)
+
+      // Halo exterior
+      ctx.save()
+      const outer = ctx.createRadialGradient(x, y, 0, x, y, 20)
+      outer.addColorStop(0,   'rgba(0,212,255,0.4)')
+      outer.addColorStop(1,   'rgba(0,212,255,0)')
+      ctx.fillStyle = outer
+      ctx.beginPath()
+      ctx.arc(x, y, 20, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.restore()
+
+      // Halo interior + núcleo
+      ctx.save()
+      const g = ctx.createRadialGradient(x, y, 0, x, y, 12)
+      g.addColorStop(0,    'rgba(255,255,255,1)')
+      g.addColorStop(0.33, 'rgba(0,212,255,0.9)')
+      g.addColorStop(1,    'rgba(0,212,255,0)')
+      ctx.shadowBlur = 20
+      ctx.shadowColor = '#00d4ff'
+      ctx.fillStyle = g
+      ctx.beginPath()
+      ctx.arc(x, y, 12, 0, Math.PI * 2)
+      ctx.fill()
+      // Punto central sólido
+      ctx.shadowBlur = 0
+      ctx.fillStyle = 'rgba(255,255,255,1)'
+      ctx.beginPath()
+      ctx.arc(x, y, 4, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.restore()
+
+      if (progress < 1) {
+        animId = requestAnimationFrame(frame)
+      } else {
+        done()
+      }
+    }
+
+    animId = requestAnimationFrame(frame)
+    return () => cancelAnimationFrame(animId)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }}
+    />
+  )
+}
+
+function PixelRevealName({ reduceMotion }) {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    let animId
+    let cancelled = false
+
+    async function run() {
+      const fontSize = window.innerWidth >= 768 ? 64 : 36
+      const FONT = `${fontSize}px 'Press Start 2P', monospace`
+      const PAD = 8
+
+      await document.fonts.load(FONT)
+      if (cancelled) return
+
+      const temp = document.createElement('canvas')
+      const tctx = temp.getContext('2d')
+      tctx.font = FONT
+      const totalWidth = Math.ceil(tctx.measureText('Mejia').width)
+      const W = totalWidth + PAD * 2
+      const H = Math.ceil(fontSize * 1.6)
+
+      canvas.width = W
+      canvas.height = H
+      const ctx = canvas.getContext('2d')
+
+      function drawText(target) {
+        target.clearRect(0, 0, W, H)
+        target.font = FONT
+        target.textBaseline = 'middle'
+        target.fillStyle = '#00d4ff'
+        target.fillText('Mejia', PAD, H / 2)
+      }
+
+      if (reduceMotion) {
+        drawText(ctx)
+        return
+      }
+
+      const off = document.createElement('canvas')
+      off.width = W; off.height = H
+      drawText(off.getContext('2d'))
+
+      const src = off.getContext('2d').getImageData(0, 0, W, H)
+      const BLOCK = 4
+      const blocks = []
+      for (let by = 0; by < H; by += BLOCK) {
+        for (let bx = 0; bx < W; bx += BLOCK) {
+          let hasText = false
+          outer: for (let dy = 0; dy < BLOCK && by + dy < H; dy++) {
+            for (let dx = 0; dx < BLOCK && bx + dx < W; dx++) {
+              if (src.data[((by + dy) * W + (bx + dx)) * 4 + 3] > 10) { hasText = true; break outer }
+            }
+          }
+          if (hasText) blocks.push({ bx, by })
+        }
+      }
+
+      for (let i = blocks.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        ;[blocks[i], blocks[j]] = [blocks[j], blocks[i]]
+      }
+
+      const out = ctx.createImageData(W, H)
+      let done = 0
+
+      function tick() {
+        if (cancelled) return
+        const end = Math.min(done + 15, blocks.length)
+        for (let i = done; i < end; i++) {
+          const { bx, by } = blocks[i]
+          for (let dy = 0; dy < BLOCK && by + dy < H; dy++) {
+            for (let dx = 0; dx < BLOCK && bx + dx < W; dx++) {
+              const idx = ((by + dy) * W + (bx + dx)) * 4
+              out.data[idx]     = src.data[idx]
+              out.data[idx + 1] = src.data[idx + 1]
+              out.data[idx + 2] = src.data[idx + 2]
+              out.data[idx + 3] = src.data[idx + 3]
+            }
+          }
+        }
+        done = end
+        ctx.putImageData(out, 0, 0)
+        if (done < blocks.length) animId = requestAnimationFrame(tick)
+      }
+
+      tick()
+    }
+
+    run()
+    return () => { cancelled = true; cancelAnimationFrame(animId) }
+  }, [reduceMotion])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{ display: 'block', imageRendering: 'pixelated' }}
+    />
+  )
+}
+
 function Intro() {
   const {
     setMode,
@@ -182,111 +410,253 @@ function Intro() {
   } = usePortfolio()
 
   const [a11yOpen, setA11yOpen] = useState(false)
+  const [wordIndex, setWordIndex] = useState(0)
+  const [wordVisible, setWordVisible] = useState(true)
+  const [creativePixel, setCreativePixel] = useState(false)
+  const [creativeVisible, setCreativeVisible] = useState(true)
+  const [tooltip, setTooltip] = useState(null)
+  const [clickingMode, setClickingMode] = useState(null)
+  const [lettersFalling, setLettersFalling] = useState(false)
+  const creativeTid = useRef(null)
+
+  const handleCreativeEnter = () => {
+    clearTimeout(creativeTid.current)
+    setCreativeVisible(false)
+    creativeTid.current = setTimeout(() => { setCreativePixel(true); setCreativeVisible(true) }, 180)
+  }
+
+  const handleCreativeLeave = () => {
+    clearTimeout(creativeTid.current)
+    setCreativeVisible(false)
+    creativeTid.current = setTimeout(() => { setCreativePixel(false); setCreativeVisible(true) }, 180)
+  }
+
+  const handleModeSelect = (mode) => {
+    if (clickingMode) return
+    if (reduceMotion) {
+      setMode(mode)
+      if (mode === 'professional') window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })
+      return
+    }
+    setClickingMode(mode)
+    if (mode === 'creative') setLettersFalling(true)
+  }
+
+  const handleAnimationComplete = (mode) => {
+    setMode(mode)
+    if (mode === 'professional') window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })
+    setClickingMode(null)
+    setLettersFalling(false)
+  }
+
+  useEffect(() => {
+    if (reduceMotion) return
+    const id = setInterval(() => {
+      setWordVisible(false)
+      setTimeout(() => {
+        setWordIndex(i => (i + 1) % ROTATING_WORDS.length)
+        setWordVisible(true)
+      }, 300)
+    }, 2500)
+    return () => clearInterval(id)
+  }, [reduceMotion])
+
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
 
   return (
+    <>
     <section
       id="intro"
-      className="bg-[#050d1a] min-h-screen flex flex-col items-center justify-center relative overflow-hidden"
+      className="bg-[#050d1a] min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-6"
     >
       <CircuitCanvas reduceMotion={reduceMotion} />
 
-      {/* Nombre y título */}
-      <div className="text-center z-10 mb-12">
-        <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-3 opacity-60">
-          Portfolio · 2025
-        </p>
-        <h1 id="main-title" className="text-white text-4xl md:text-5xl font-bold tracking-wider mb-2">
-          Zoe <span className="text-[#00d4ff]">Mejia</span>
-        </h1>
-        <p className="text-[#00d4ff] text-sm tracking-[3px] uppercase opacity-70">
-          UX/UI · Front-end · Design
-        </p>
-      </div>
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-14">
 
-      {/* Selector de versión */}
-      <div className="z-10 flex gap-6 mb-10 flex-wrap justify-center px-4">
-        <button
-          onClick={() => setMode('professional')}
-          className="border border-[#00d4ff]/40 text-[#00d4ff] px-8 py-4 text-xs tracking-[2px] uppercase hover:bg-[#00d4ff]/10 transition-all duration-300 min-w-[180px]"
-        >
-          <span className="block text-base mb-1">Profesional</span>
-          <span className="opacity-50 normal-case tracking-normal text-[10px]">Proceso y resultados</span>
-        </button>
-        <button
-          onClick={() => setMode('creative')}
-          className="border border-[#00d4ff]/40 text-[#00d4ff] px-8 py-4 text-xs tracking-[2px] uppercase hover:bg-[#00d4ff]/10 transition-all duration-300 min-w-[180px]"
-        >
-          <span className="block text-base mb-1">Creativa</span>
-          <span className="opacity-50 normal-case tracking-normal text-[10px]">Experiencia interactiva</span>
-        </button>
-      </div>
+        {/* Dos columnas en desktop, apilado en móvil */}
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-start gap-10 md:gap-20 w-full pl-0 md:pl-8">
 
-      {/* Selector de idioma + accesibilidad */}
-      <div className="z-10 flex gap-4 items-center relative">
-        <button
-          onClick={() => setLanguage('es')}
-          className={`text-xs tracking-[2px] uppercase transition-all ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
-        >
-          ES
-        </button>
-        <span className="text-white/20">·</span>
-        <button
-          onClick={() => setLanguage('en')}
-          className={`text-xs tracking-[2px] uppercase transition-all ${language === 'en' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
-        >
-          EN
-        </button>
+          {/* Columna izquierda: nombre + subtítulo */}
+          <div className="flex flex-col items-start text-left">
+            <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-6 opacity-60">
+              Portfolio · 2025
+            </p>
 
-        <span className="text-white/20">·</span>
-
-        {/* Botón accesibilidad */}
-        <div className="relative">
-          <button
-            onClick={() => setA11yOpen(prev => !prev)}
-            aria-label="Opciones de accesibilidad"
-            aria-expanded={a11yOpen}
-            className={`text-base leading-none transition-all duration-200 ${
-              a11yOpen ? 'opacity-100' : 'opacity-40 hover:opacity-80'
-            }`}
-          >
-            ♿
-          </button>
-
-          {/* Panel */}
-          {a11yOpen && (
-            <div className="absolute bottom-8 right-0 w-56 bg-[#050d1a] border border-[#00d4ff]/20 p-4 flex flex-col gap-3">
-              <div className="flex items-center justify-between mb-1">
-                <p className="text-[#00d4ff] text-[10px] tracking-[3px] uppercase opacity-60">
-                  Accesibilidad
-                </p>
-                <button
-                  onClick={() => setA11yOpen(false)}
-                  aria-label="Cerrar opciones de accesibilidad"
-                  className="text-white/40 hover:text-white/80 transition-colors text-xs leading-none"
-                >
-                  ✕
-                </button>
-              </div>
-              <Toggle
-                checked={highContrast}
-                onChange={setHighContrast}
-                label="Alto contraste"
-              />
-              <Toggle
-                checked={largeText}
-                onChange={setLargeText}
-                label="Texto grande"
-              />
-              <Toggle
-                checked={reduceMotion}
-                onChange={setReduceMotion}
-                label="Reducir animaciones"
-              />
+            <div className="mb-5 flex flex-col gap-2">
+              {lettersFalling ? (
+                <>
+                  <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '48px' }}>
+                    {'Zoe'.split('').map((char, i) => (
+                      <span key={i} className="letter-fall" style={{ color: '#ffffff', animationDelay: `${i * 35}ms` }}>{char}</span>
+                    ))}
+                  </div>
+                  <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '48px' }}>
+                    {'Mejia'.split('').map((char, i) => (
+                      <span key={i} className="letter-fall" style={{ color: '#00d4ff', animationDelay: `${(3 + i) * 35}ms` }}>{char}</span>
+                    ))}
+                  </div>
+                  <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '48px' }}>
+                    {'Santana'.split('').map((char, i) => (
+                      <span key={i} className="letter-fall" style={{ color: '#ffffff', animationDelay: `${(8 + i) * 35}ms` }}>{char}</span>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '36px' : '64px', color: '#ffffff', lineHeight: 1.2 }}>Zoe</p>
+                  <h1 id="main-title" aria-label="Mejia">
+                    <PixelRevealName reduceMotion={reduceMotion} />
+                  </h1>
+                  <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '36px' : '64px', color: '#ffffff', lineHeight: 1.2 }}>Santana</p>
+                </>
+              )}
             </div>
-          )}
+
+            <p className="text-[#00d4ff] text-sm tracking-[3px] uppercase opacity-70">
+              UX/UI · Front-end · Design
+            </p>
+          </div>
+
+          {/* Columna derecha: frase rotativa */}
+          <div className="flex items-center justify-center max-w-xs">
+            <p style={{ color: '#eab5a8' }} className="text-xl italic tracking-wide text-center">
+              "El buen diseño se{' '}
+              <span
+                style={{
+                  color: '#f5c4b4',
+                  textDecoration: 'underline dotted rgba(245,196,180,0.45)',
+                  opacity: wordVisible ? 1 : 0,
+                  transition: 'opacity 300ms ease',
+                  display: 'inline-block',
+                }}
+              >
+                {ROTATING_WORDS[wordIndex]}
+              </span>."
+            </p>
+          </div>
+
         </div>
+
+        {/* Sección inferior centrada: selector de versión + idioma */}
+        <div className="flex flex-col items-center gap-6">
+          <p className="text-white/60 text-sm tracking-[3px] uppercase">
+            Elige cómo quieres conocerme
+          </p>
+
+          <div className="flex gap-6 flex-wrap justify-center">
+            {/* Botón Profesional */}
+            <div className="flex flex-col items-center">
+              <div className="relative">
+                <button
+                  onClick={() => handleModeSelect('professional')}
+                  onMouseEnter={() => setTooltip('professional')}
+                  onMouseLeave={() => setTooltip(null)}
+                  className={`mode-btn text-[#00d4ff] px-8 py-6 text-xs tracking-[2px] uppercase min-w-[180px] ${clickingMode === 'professional' ? 'mode-btn-clicking' : ''}`}
+                >
+                  <span className="block text-base mb-1">Profesional</span>
+                  <span className="opacity-70 normal-case tracking-normal text-xs">Proceso y resultados</span>
+                </button>
+                {clickingMode === 'professional' && (
+                  <BorderParticle onComplete={() => handleAnimationComplete('professional')} />
+                )}
+              </div>
+              <p
+                className="mt-2 w-56 text-sm text-white/70 normal-case tracking-normal text-center pointer-events-none"
+                style={{ opacity: tooltip === 'professional' ? 1 : 0, transition: 'opacity 200ms ease' }}
+              >
+                Proceso de diseño, casos de estudio y resultados
+              </p>
+            </div>
+
+            {/* Botón Creativa */}
+            <div className="flex flex-col items-center">
+              <div className="relative">
+                <button
+                  onClick={() => handleModeSelect('creative')}
+                  onMouseEnter={() => { handleCreativeEnter(); setTooltip('creative') }}
+                  onMouseLeave={() => { handleCreativeLeave(); setTooltip(null) }}
+                  className={`mode-btn text-[#00d4ff] px-8 py-6 text-xs tracking-[2px] uppercase min-w-[180px] ${clickingMode === 'creative' ? 'mode-btn-clicking' : ''}`}
+                >
+                  <span
+                    className="block mb-1"
+                    style={{
+                      fontFamily: creativePixel ? "'Press Start 2P', monospace" : 'inherit',
+                      fontSize: creativePixel ? '0.6rem' : '1rem',
+                      lineHeight: creativePixel ? 1.8 : 'inherit',
+                      opacity: creativeVisible ? 1 : 0,
+                      transition: 'opacity 180ms ease',
+                    }}
+                  >
+                    Creativa
+                  </span>
+                  <span className="opacity-70 normal-case tracking-normal text-xs">Experiencia interactiva</span>
+                </button>
+                {clickingMode === 'creative' && (
+                  <BorderParticle onComplete={() => handleAnimationComplete('creative')} />
+                )}
+              </div>
+              <p
+                className="mt-2 w-56 text-sm text-white/70 normal-case tracking-normal text-center pointer-events-none"
+                style={{ opacity: tooltip === 'creative' ? 1 : 0, transition: 'opacity 200ms ease' }}
+              >
+                Experiencia interactiva con animaciones y mi historia
+              </p>
+            </div>
+          </div>
+
+          {/* Selector de idioma */}
+          <div className="flex gap-4 items-center">
+            <button
+              onClick={() => setLanguage('es')}
+              className={`text-xs tracking-[2px] uppercase transition-all ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
+            >
+              ES
+            </button>
+            <span className="text-white/20">·</span>
+            <button
+              onClick={() => setLanguage('en')}
+              className={`text-xs tracking-[2px] uppercase transition-all ${language === 'en' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
+            >
+              EN
+            </button>
+          </div>
+        </div>
+
       </div>
     </section>
+
+    {/* Accesibilidad — fixed esquina inferior derecha */}
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+      {a11yOpen && (
+        <div className="w-56 bg-[#050d1a] border border-[#00d4ff]/20 p-4 flex flex-col gap-3">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[#00d4ff] text-[10px] tracking-[3px] uppercase opacity-60">
+              Accesibilidad
+            </p>
+            <button
+              onClick={() => setA11yOpen(false)}
+              aria-label="Cerrar opciones de accesibilidad"
+              className="text-white/40 hover:text-white/80 transition-colors text-xs leading-none"
+            >
+              ✕
+            </button>
+          </div>
+          <Toggle checked={highContrast} onChange={setHighContrast} label="Alto contraste" />
+          <Toggle checked={largeText} onChange={setLargeText} label="Texto grande" />
+          <Toggle checked={reduceMotion} onChange={setReduceMotion} label="Reducir animaciones" />
+        </div>
+      )}
+
+      <button
+        onClick={() => setA11yOpen(prev => !prev)}
+        aria-label="Opciones de accesibilidad"
+        aria-expanded={a11yOpen}
+        className={`a11y-btn ${a11yOpen ? 'opacity-100' : 'opacity-60'}`}
+      >
+        <A11yIcon />
+      </button>
+    </div>
+    </>
   )
 }
 
