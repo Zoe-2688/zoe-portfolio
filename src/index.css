@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+/* Accesibilidad */
+
+.high-contrast {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.high-contrast * {
+  color: #fff !important;
+  border-color: #fff !important;
+  background-color: transparent !important;
+}
+
+.high-contrast [class*="bg-"] {
+  background-color: #000 !important;
+}
+
+.large-text {
+  font-size: 120% !important;
+}
+
+.large-text h1,
+.large-text h2,
+.large-text h3 {
+  font-size: 1.4em !important;
+}
+
+.large-text p,
+.large-text span,
+.large-text button,
+.large-text a {
+  font-size: 1.2em !important;
+}
+
+.large-text #main-title {
+  font-size: 3.5rem !important;
+}
+
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
