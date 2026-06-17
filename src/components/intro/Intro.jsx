@@ -7,13 +7,14 @@ const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]]
 
 function buildCircuits(w, h) {
   const circuits = []
-  for (let i = 0; i < 14; i++) {
+  const initDirs = [0, 0, 0, 1, 3]
+  for (let i = 0; i < 8; i++) {
     const nodes = []
-    let x = Math.floor(Math.random() * Math.ceil(w / STEP)) * STEP
-    let y = Math.floor(Math.random() * Math.ceil(h / STEP)) * STEP
+    let x = Math.floor(Math.random() * Math.ceil(w * 0.35 / STEP)) * STEP
+    let y = Math.floor((0.2 + Math.random() * 0.5) * h / STEP) * STEP
     nodes.push({ x, y })
-    let dir = Math.floor(Math.random() * 4)
-    const segs = 2 + Math.floor(Math.random() * 3)
+    let dir = initDirs[Math.floor(Math.random() * initDirs.length)]
+    const segs = 3 + Math.floor(Math.random() * 3)
     for (let s = 0; s < segs; s++) {
       const len = (1 + Math.floor(Math.random() * 4)) * STEP
       const [dx, dy] = DIRS[dir]
@@ -24,9 +25,63 @@ function buildCircuits(w, h) {
       nodes.push({ x, y })
       dir = (dir + (Math.random() > 0.5 ? 1 : 3)) % 4
     }
-    if (nodes.length >= 2) circuits.push(nodes)
+    if (nodes.length >= 2) circuits.push({ nodes, featured: false, connection: false })
   }
   return circuits
+}
+
+function buildFeaturedCircuits(w, h) {
+  return [
+    // === SUPERIOR ===
+    // Tramo principal: nombre → sube → gira derecha
+    {
+      nodes: [
+        { x: Math.round(w * 0.35), y: Math.round(h * 0.38) },
+        { x: Math.round(w * 0.35), y: Math.round(h * 0.22) },
+        { x: Math.round(w * 0.73), y: Math.round(h * 0.22) },
+      ],
+      featured: true,
+      connection: false,
+    },
+    // Ramificación hacia la frase rotativa
+    {
+      nodes: [
+        { x: Math.round(w * 0.73), y: Math.round(h * 0.22) },
+        { x: Math.round(w * 0.73), y: Math.round(h * 0.32) },
+      ],
+      featured: true,
+      connection: true,
+    },
+    // === INFERIOR ===
+    // Tramo principal: nombre → baja → gira derecha
+    {
+      nodes: [
+        { x: Math.round(w * 0.35), y: Math.round(h * 0.65) },
+        { x: Math.round(w * 0.35), y: Math.round(h * 0.77) },
+        { x: Math.round(w * 0.82), y: Math.round(h * 0.77) },
+      ],
+      featured: true,
+      connection: false,
+    },
+    // Ramificación hacia botón Profesional
+    {
+      nodes: [
+        { x: Math.round(w * 0.575), y: Math.round(h * 0.77) },
+        { x: Math.round(w * 0.575), y: Math.round(h * 0.63) },
+      ],
+      featured: true,
+      connection: true,
+    },
+    // Ramificación hacia botón Creativa
+    {
+      nodes: [
+        { x: Math.round(w * 0.735), y: Math.round(h * 0.77) },
+        { x: Math.round(w * 0.735), y: Math.round(h * 0.63) },
+      ],
+      featured: true,
+      connection: true,
+    },
+  ]
 }
 
 function CircuitCanvas({ reduceMotion }) {
@@ -44,23 +99,64 @@ function CircuitCanvas({ reduceMotion }) {
       canvas.height = canvas.offsetHeight
     }
 
+    function rebuildCircuits() {
+      circuitsRef.current = [
+        ...buildFeaturedCircuits(canvas.width, canvas.height),
+        ...buildCircuits(canvas.width, canvas.height),
+      ]
+    }
+
     function drawCircuits() {
       ctx.save()
-      ctx.strokeStyle = 'rgba(0,212,255,0.08)'
-      ctx.lineWidth = 1
       for (const circuit of circuitsRef.current) {
-        ctx.beginPath()
-        ctx.moveTo(circuit[0].x, circuit[0].y)
-        for (let i = 1; i < circuit.length; i++) ctx.lineTo(circuit[i].x, circuit[i].y)
-        ctx.stroke()
-        ctx.fillStyle = 'rgba(0,212,255,0.2)'
-        for (let i = 0; i < circuit.length; i++) {
-          const { x, y } = circuit[i]
-          const isEndpoint = i === 0 || i === circuit.length - 1
-          if (isEndpoint) {
-            ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2); ctx.fill()
-          } else {
-            ctx.fillRect(x - 2, y - 2, 4, 4)
+        const { nodes, featured } = circuit
+        if (featured) {
+          ctx.lineWidth = 2
+          ctx.strokeStyle = 'rgba(0,212,255,0.4)'
+          ctx.beginPath()
+          ctx.moveTo(nodes[0].x, nodes[0].y)
+          for (let i = 1; i < nodes.length; i++) ctx.lineTo(nodes[i].x, nodes[i].y)
+          ctx.stroke()
+          for (let i = 0; i < nodes.length; i++) {
+            const { x, y } = nodes[i]
+            const isEnd = i === 0 || i === nodes.length - 1
+            const isConnEnd = circuit.connection && i === nodes.length - 1
+            if (isConnEnd) {
+              ctx.save()
+              ctx.shadowBlur = 16
+              ctx.shadowColor = GLOW_COLOR
+              ctx.fillStyle = 'rgba(180,240,255,0.95)'
+              ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill()
+              ctx.restore()
+            } else if (isEnd) {
+              ctx.fillStyle = 'rgba(0,212,255,0.6)'
+              ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.fill()
+            } else {
+              ctx.fillStyle = 'rgba(0,212,255,0.6)'
+              ctx.fillRect(x - 3, y - 3, 6, 6)
+            }
+          }
+        } else {
+          const nx = nodes[0].x / canvas.width
+          const ny = nodes[0].y / canvas.height
+          const distToEdge = Math.min(nx, 1 - nx, ny, 1 - ny)
+          const t = Math.min(distToEdge / 0.3, 1)
+          const lineOp = 0.03 + t * 0.05
+          ctx.lineWidth = 1
+          ctx.strokeStyle = `rgba(0,212,255,${lineOp.toFixed(3)})`
+          ctx.beginPath()
+          ctx.moveTo(nodes[0].x, nodes[0].y)
+          for (let i = 1; i < nodes.length; i++) ctx.lineTo(nodes[i].x, nodes[i].y)
+          ctx.stroke()
+          ctx.fillStyle = `rgba(0,212,255,${(lineOp * 2.5).toFixed(3)})`
+          for (let i = 0; i < nodes.length; i++) {
+            const { x, y } = nodes[i]
+            const isEnd = i === 0 || i === nodes.length - 1
+            if (isEnd) {
+              ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2); ctx.fill()
+            } else {
+              ctx.fillRect(x - 2, y - 2, 4, 4)
+            }
           }
         }
       }
@@ -68,16 +164,15 @@ function CircuitCanvas({ reduceMotion }) {
     }
 
     function makeParticle() {
-      const all = circuitsRef.current
-      const ci = Math.floor(Math.random() * all.length)
+      const ci = Math.floor(Math.random() * circuitsRef.current.length)
       return { ci, si: 0, t: Math.random(), speed: 0.005 + Math.random() * 0.008 }
     }
 
     function drawParticle(p) {
       const circuit = circuitsRef.current[p.ci]
-      if (!circuit || p.si >= circuit.length - 1) return
-      const n1 = circuit[p.si]
-      const n2 = circuit[p.si + 1]
+      if (!circuit || p.si >= circuit.nodes.length - 1) return
+      const n1 = circuit.nodes[p.si]
+      const n2 = circuit.nodes[p.si + 1]
       const x = n1.x + (n2.x - n1.x) * p.t
       const y = n1.y + (n2.y - n1.y) * p.t
       const tailT = Math.max(0, p.t - 0.25)
@@ -89,25 +184,26 @@ function CircuitCanvas({ reduceMotion }) {
       tail.addColorStop(0, 'rgba(0,212,255,0)')
       tail.addColorStop(1, 'rgba(0,212,255,0.6)')
       ctx.strokeStyle = tail
-      ctx.lineWidth = 1.5
+      ctx.lineWidth = circuit.featured ? 2 : 1.5
       ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(x, y); ctx.stroke()
       ctx.restore()
 
+      const r = circuit.featured ? 8 : 6
       ctx.save()
-      const glow = ctx.createRadialGradient(x, y, 0, x, y, 6)
+      const glow = ctx.createRadialGradient(x, y, 0, x, y, r)
       glow.addColorStop(0, 'rgba(0,212,255,1)')
       glow.addColorStop(0.4, 'rgba(0,212,255,0.5)')
       glow.addColorStop(1, 'rgba(0,212,255,0)')
-      ctx.shadowBlur = 10
+      ctx.shadowBlur = circuit.featured ? 16 : 10
       ctx.shadowColor = GLOW_COLOR
       ctx.fillStyle = glow
-      ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill()
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill()
       ctx.restore()
     }
 
     resize()
-    circuitsRef.current = buildCircuits(canvas.width, canvas.height)
-    const particles = Array.from({ length: 7 }, makeParticle)
+    rebuildCircuits()
+    const particles = Array.from({ length: 9 }, makeParticle)
 
     function tick() {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -118,7 +214,7 @@ function CircuitCanvas({ reduceMotion }) {
           p.si++
           p.t = 0
           const c = circuitsRef.current[p.ci]
-          if (!c || p.si >= c.length - 1) {
+          if (!c || p.si >= c.nodes.length - 1) {
             p.ci = Math.floor(Math.random() * circuitsRef.current.length)
             p.si = 0
           }
@@ -136,7 +232,7 @@ function CircuitCanvas({ reduceMotion }) {
 
     const ro = new ResizeObserver(() => {
       resize()
-      circuitsRef.current = buildCircuits(canvas.width, canvas.height)
+      rebuildCircuits()
       if (reduceMotion) { ctx.clearRect(0, 0, canvas.width, canvas.height); drawCircuits() }
     })
     ro.observe(canvas)
@@ -307,7 +403,7 @@ function PixelRevealName({ reduceMotion }) {
     let cancelled = false
 
     async function run() {
-      const fontSize = window.innerWidth >= 768 ? 64 : 36
+      const fontSize = window.innerWidth >= 768 ? 72 : 32
       const FONT = `${fontSize}px 'Press Start 2P', monospace`
       const PAD = 8
 
@@ -471,155 +567,157 @@ function Intro() {
     >
       <CircuitCanvas reduceMotion={reduceMotion} />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-14">
+      {/* Grid 2fr / 3fr en desktop, columna en móvil */}
+      <div
+        className="z-10 w-full max-w-6xl flex flex-col md:grid md:items-center gap-12 md:gap-8 px-6 md:px-12"
+        style={{ gridTemplateColumns: '2fr 3fr' }}
+      >
 
-        {/* Dos columnas en desktop, apilado en móvil */}
-        <div className="flex flex-col md:flex-row items-center md:items-start justify-start gap-10 md:gap-20 w-full pl-0 md:pl-8">
-
-          {/* Columna izquierda: nombre + subtítulo */}
-          <div className="flex flex-col items-start text-left">
-            <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-6 opacity-60">
-              Portfolio · 2025
-            </p>
-
-            <div className="mb-5 flex flex-col gap-2">
-              {lettersFalling ? (
-                <>
-                  <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '48px' }}>
-                    {'Zoe'.split('').map((char, i) => (
-                      <span key={i} className="letter-fall" style={{ color: '#ffffff', animationDelay: `${i * 35}ms` }}>{char}</span>
-                    ))}
-                  </div>
-                  <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '48px' }}>
-                    {'Mejia'.split('').map((char, i) => (
-                      <span key={i} className="letter-fall" style={{ color: '#00d4ff', animationDelay: `${(3 + i) * 35}ms` }}>{char}</span>
-                    ))}
-                  </div>
-                  <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '48px' }}>
-                    {'Santana'.split('').map((char, i) => (
-                      <span key={i} className="letter-fall" style={{ color: '#ffffff', animationDelay: `${(8 + i) * 35}ms` }}>{char}</span>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '36px' : '64px', color: '#ffffff', lineHeight: 1.2 }}>Zoe</p>
-                  <h1 id="main-title" aria-label="Mejia">
-                    <PixelRevealName reduceMotion={reduceMotion} />
-                  </h1>
-                  <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '36px' : '64px', color: '#ffffff', lineHeight: 1.2 }}>Santana</p>
-                </>
-              )}
-            </div>
-
-            <p className="text-[#00d4ff] text-sm tracking-[3px] uppercase opacity-70">
-              UX/UI · Front-end · Design
-            </p>
-          </div>
-
-          {/* Columna derecha: frase rotativa */}
-          <div className="flex items-center justify-center max-w-xs">
-            <p style={{ color: '#eab5a8' }} className="text-xl italic tracking-wide text-center">
-              "El buen diseño se{' '}
-              <span
-                style={{
-                  color: '#f5c4b4',
-                  textDecoration: 'underline dotted rgba(245,196,180,0.45)',
-                  opacity: wordVisible ? 1 : 0,
-                  transition: 'opacity 300ms ease',
-                  display: 'inline-block',
-                }}
-              >
-                {ROTATING_WORDS[wordIndex]}
-              </span>."
-            </p>
-          </div>
-
-        </div>
-
-        {/* Sección inferior centrada: selector de versión + idioma */}
-        <div className="flex flex-col items-center gap-6">
-          <p className="text-white/60 text-sm tracking-[3px] uppercase">
-            Elige cómo quieres conocerme
+        {/* Columna izquierda: nombre */}
+        <div className="flex flex-col items-start text-left">
+          <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-6 opacity-60">
+            Portfolio · 2025
           </p>
 
-          <div className="flex gap-6 flex-wrap justify-center">
-            {/* Botón Profesional */}
-            <div className="flex flex-col items-center">
-              <div className="relative">
-                <button
-                  onClick={() => handleModeSelect('professional')}
-                  onMouseEnter={() => setTooltip('professional')}
-                  onMouseLeave={() => setTooltip(null)}
-                  className={`mode-btn text-[#00d4ff] px-8 py-6 text-xs tracking-[2px] uppercase min-w-[180px] ${clickingMode === 'professional' ? 'mode-btn-clicking' : ''}`}
-                >
-                  <span className="block text-base mb-1">Profesional</span>
-                  <span className="opacity-70 normal-case tracking-normal text-xs">Proceso y resultados</span>
-                </button>
-                {clickingMode === 'professional' && (
-                  <BorderParticle onComplete={() => handleAnimationComplete('professional')} />
-                )}
-              </div>
-              <p
-                className="mt-2 w-56 text-sm text-white/70 normal-case tracking-normal text-center pointer-events-none"
-                style={{ opacity: tooltip === 'professional' ? 1 : 0, transition: 'opacity 200ms ease' }}
-              >
-                Proceso de diseño, casos de estudio y resultados
-              </p>
-            </div>
+          <div className="mb-5 flex flex-col gap-2">
+            {lettersFalling ? (
+              <>
+                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '72px' }}>
+                  {'Zoe'.split('').map((char, i) => (
+                    <span key={i} className="letter-fall" style={{ color: '#ffffff', animationDelay: `${i * 35}ms` }}>{char}</span>
+                  ))}
+                </div>
+                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '72px' }}>
+                  {'Mejia'.split('').map((char, i) => (
+                    <span key={i} className="letter-fall" style={{ color: '#00d4ff', animationDelay: `${(3 + i) * 35}ms` }}>{char}</span>
+                  ))}
+                </div>
+                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '72px' }}>
+                  {'Santana'.split('').map((char, i) => (
+                    <span key={i} className="letter-fall" style={{ color: '#ffffff', animationDelay: `${(8 + i) * 35}ms` }}>{char}</span>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '72px', color: '#ffffff', lineHeight: 1.2 }}>Zoe</p>
+                <h1 id="main-title" aria-label="Mejia">
+                  <PixelRevealName reduceMotion={reduceMotion} />
+                </h1>
+                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '72px', color: '#ffffff', lineHeight: 1.2 }}>Santana</p>
+              </>
+            )}
+          </div>
 
-            {/* Botón Creativa */}
-            <div className="flex flex-col items-center">
-              <div className="relative">
-                <button
-                  onClick={() => handleModeSelect('creative')}
-                  onMouseEnter={() => { handleCreativeEnter(); setTooltip('creative') }}
-                  onMouseLeave={() => { handleCreativeLeave(); setTooltip(null) }}
-                  className={`mode-btn text-[#00d4ff] px-8 py-6 text-xs tracking-[2px] uppercase min-w-[180px] ${clickingMode === 'creative' ? 'mode-btn-clicking' : ''}`}
-                >
-                  <span
-                    className="block mb-1"
-                    style={{
-                      fontFamily: creativePixel ? "'Press Start 2P', monospace" : 'inherit',
-                      fontSize: creativePixel ? '0.6rem' : '1rem',
-                      lineHeight: creativePixel ? 1.8 : 'inherit',
-                      opacity: creativeVisible ? 1 : 0,
-                      transition: 'opacity 180ms ease',
-                    }}
+          <p className="text-[#00d4ff] text-sm tracking-[3px] uppercase opacity-70">
+            UX/UI · Front-end · Design
+          </p>
+        </div>
+
+        {/* Columna derecha: frase + selector */}
+        <div className="flex flex-col items-center gap-10 pl-0 md:pl-8">
+
+          {/* Frase rotativa */}
+          <p style={{ color: '#eab5a8' }} className="text-2xl italic tracking-wide text-center">
+            "El buen diseño no se nota. Se{' '}
+            <span
+              style={{
+                color: '#f5c4b4',
+                textDecoration: 'underline dotted rgba(245,196,180,0.45)',
+                opacity: wordVisible ? 1 : 0,
+                transition: 'opacity 300ms ease',
+                display: 'inline-block',
+              }}
+            >
+              {ROTATING_WORDS[wordIndex]}
+            </span>."
+          </p>
+
+          {/* Selector de versión + idioma */}
+          <div className="flex flex-col items-center gap-6">
+            <p className="text-white/60 text-sm tracking-[3px] uppercase">
+              Elige cómo quieres conocerme
+            </p>
+
+            <div className="flex gap-6 flex-wrap justify-center">
+              {/* Botón Profesional */}
+              <div className="flex flex-col items-center">
+                <div className="relative">
+                  <button
+                    onClick={() => handleModeSelect('professional')}
+                    onMouseEnter={() => setTooltip('professional')}
+                    onMouseLeave={() => setTooltip(null)}
+                    className={`mode-btn text-[#00d4ff] px-8 py-6 text-xs tracking-[2px] uppercase min-w-[180px] ${clickingMode === 'professional' ? 'mode-btn-clicking' : ''}`}
                   >
-                    Creativa
-                  </span>
-                  <span className="opacity-70 normal-case tracking-normal text-xs">Experiencia interactiva</span>
-                </button>
-                {clickingMode === 'creative' && (
-                  <BorderParticle onComplete={() => handleAnimationComplete('creative')} />
-                )}
+                    <span className="block text-base mb-1">Profesional</span>
+                    <span className="opacity-70 normal-case tracking-normal text-xs">Proceso y resultados</span>
+                  </button>
+                  {clickingMode === 'professional' && (
+                    <BorderParticle onComplete={() => handleAnimationComplete('professional')} />
+                  )}
+                </div>
+                <p
+                  className="mt-2 w-56 text-sm text-white/70 normal-case tracking-normal text-center pointer-events-none"
+                  style={{ opacity: tooltip === 'professional' ? 1 : 0, transition: 'opacity 200ms ease' }}
+                >
+                  Proceso de diseño, casos de estudio y resultados
+                </p>
               </div>
-              <p
-                className="mt-2 w-56 text-sm text-white/70 normal-case tracking-normal text-center pointer-events-none"
-                style={{ opacity: tooltip === 'creative' ? 1 : 0, transition: 'opacity 200ms ease' }}
+
+              {/* Botón Creativa */}
+              <div className="flex flex-col items-center">
+                <div className="relative">
+                  <button
+                    onClick={() => handleModeSelect('creative')}
+                    onMouseEnter={() => { handleCreativeEnter(); setTooltip('creative') }}
+                    onMouseLeave={() => { handleCreativeLeave(); setTooltip(null) }}
+                    className={`mode-btn text-[#00d4ff] px-8 py-6 text-xs tracking-[2px] uppercase min-w-[180px] ${clickingMode === 'creative' ? 'mode-btn-clicking' : ''}`}
+                  >
+                    <span
+                      className="block mb-1"
+                      style={{
+                        fontFamily: creativePixel ? "'Press Start 2P', monospace" : 'inherit',
+                        fontSize: creativePixel ? '0.6rem' : '1rem',
+                        lineHeight: creativePixel ? 1.8 : 'inherit',
+                        opacity: creativeVisible ? 1 : 0,
+                        transition: 'opacity 180ms ease',
+                      }}
+                    >
+                      Creativa
+                    </span>
+                    <span className="opacity-70 normal-case tracking-normal text-xs">Experiencia interactiva</span>
+                  </button>
+                  {clickingMode === 'creative' && (
+                    <BorderParticle onComplete={() => handleAnimationComplete('creative')} />
+                  )}
+                </div>
+                <p
+                  className="mt-2 w-56 text-sm text-white/70 normal-case tracking-normal text-center pointer-events-none"
+                  style={{ opacity: tooltip === 'creative' ? 1 : 0, transition: 'opacity 200ms ease' }}
+                >
+                  Experiencia interactiva con animaciones y mi historia
+                </p>
+              </div>
+            </div>
+
+            {/* Selector de idioma */}
+            <div className="flex gap-4 items-center">
+              <button
+                onClick={() => setLanguage('es')}
+                className={`text-xs tracking-[2px] uppercase transition-all ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
               >
-                Experiencia interactiva con animaciones y mi historia
-              </p>
+                ES
+              </button>
+              <span className="text-white/20">·</span>
+              <button
+                onClick={() => setLanguage('en')}
+                className={`text-xs tracking-[2px] uppercase transition-all ${language === 'en' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
+              >
+                EN
+              </button>
             </div>
           </div>
 
-          {/* Selector de idioma */}
-          <div className="flex gap-4 items-center">
-            <button
-              onClick={() => setLanguage('es')}
-              className={`text-xs tracking-[2px] uppercase transition-all ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
-            >
-              ES
-            </button>
-            <span className="text-white/20">·</span>
-            <button
-              onClick={() => setLanguage('en')}
-              className={`text-xs tracking-[2px] uppercase transition-all ${language === 'en' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
-            >
-              EN
-            </button>
-          </div>
         </div>
 
       </div>
