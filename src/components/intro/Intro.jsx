@@ -557,7 +557,12 @@ function Intro() {
     return () => clearInterval(id)
   }, [reduceMotion])
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+useEffect(() => {
+  const check = () => setIsMobile(window.innerWidth < 768)
+  window.addEventListener('resize', check)
+  return () => window.removeEventListener('resize', check)
+}, [])
 
   return (
     <>
@@ -569,9 +574,14 @@ function Intro() {
 
       {/* Grid 2fr / 3fr en desktop, columna en móvil */}
       <div
-        className="z-10 w-full max-w-6xl flex flex-col md:grid md:items-center gap-12 md:gap-8 px-6 md:px-12"
-        style={{ gridTemplateColumns: '2fr 3fr' }}
-      >
+  className="z-10 w-full max-w-6xl px-6 md:px-12"
+  style={{
+    display: 'grid',
+    gridTemplateColumns: isMobile ? '1fr' : '2fr 3fr',
+    alignItems: 'center',
+    gap: '2rem',
+  }}
+>
 
         {/* Columna izquierda: nombre */}
         <div className="flex flex-col items-start text-left">
@@ -639,7 +649,7 @@ function Intro() {
               Elige cómo quieres conocerme
             </p>
 
-            <div className="flex gap-6 flex-wrap justify-center">
+            <div className="flex flex-row gap-4  justify-center">
               {/* Botón Profesional */}
               <div className="flex flex-col items-center">
                 <div className="relative">
@@ -647,7 +657,7 @@ function Intro() {
                     onClick={() => handleModeSelect('professional')}
                     onMouseEnter={() => setTooltip('professional')}
                     onMouseLeave={() => setTooltip(null)}
-                    className={`mode-btn text-[#00d4ff] px-8 py-6 text-xs tracking-[2px] uppercase min-w-[180px] ${clickingMode === 'professional' ? 'mode-btn-clicking' : ''}`}
+                    className={`mode-btn text-[#00d4ff] px-5 py-5 text-xs tracking-[2px] uppercase min-w-[140px] ${clickingMode === 'professional' ? 'mode-btn-clicking' : ''}`}
                   >
                     <span className="block text-base mb-1">Profesional</span>
                     <span className="opacity-70 normal-case tracking-normal text-xs">Proceso y resultados</span>
@@ -671,7 +681,7 @@ function Intro() {
                     onClick={() => handleModeSelect('creative')}
                     onMouseEnter={() => { handleCreativeEnter(); setTooltip('creative') }}
                     onMouseLeave={() => { handleCreativeLeave(); setTooltip(null) }}
-                    className={`mode-btn text-[#00d4ff] px-8 py-6 text-xs tracking-[2px] uppercase min-w-[180px] ${clickingMode === 'creative' ? 'mode-btn-clicking' : ''}`}
+                    className={`mode-btn text-[#00d4ff] px-5 py-5 text-xs tracking-[2px] uppercase min-w-[140px] ${clickingMode === 'creative' ? 'mode-btn-clicking' : ''}`}
                   >
                     <span
                       className="block mb-1"
