@@ -554,18 +554,29 @@ function Intro() {
 
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
   const [isSmallScreen, setIsSmallScreen] = useState(() => window.innerWidth < 1280)
-  const [isLaptop, setIsLaptop] = useState(() => window.innerWidth < 1400)
   useEffect(() => {
     const check = () => {
       setIsMobile(window.innerWidth < 768)
       setIsSmallScreen(window.innerWidth < 1280)
-      setIsLaptop(window.innerWidth < 1400)
     }
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
   }, [])
 
-  const nameFontSize = isMobile ? 28 : isLaptop ? 44 : 68
+  const getNameSize = () => {
+    const w = window.innerWidth
+    if (w < 768) return '28px'
+    if (w < 1100) return '44px'
+    if (w < 1500) return '54px'
+    return '68px'
+  }
+
+  const [nameSize, setNameSize] = useState(getNameSize)
+  useEffect(() => {
+    const check = () => setNameSize(getNameSize())
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   return (
     <>
@@ -595,17 +606,17 @@ function Intro() {
           <div className="mb-2 flex flex-col gap-1">
             {lettersFalling ? (
               <>
-                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: `${nameFontSize}px` }}>
+                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize }}>
                   {'Zoe'.split('').map((char, i) => (
                     <span key={i} className="letter-fall" style={{ color: '#e8a090', animationDelay: `${i * 35}ms` }}>{char}</span>
                   ))}
                 </div>
-                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: `${nameFontSize}px` }}>
+                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize }}>
                   {'Mejia'.split('').map((char, i) => (
                     <span key={i} className="letter-fall" style={{ color: '#00d4ff', animationDelay: `${(3 + i) * 35}ms` }}>{char}</span>
                   ))}
                 </div>
-                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: `${nameFontSize}px` }}>
+                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize }}>
                   {'Santana'.split('').map((char, i) => (
                     <span key={i} className="letter-fall" style={{ color: '#ffffff', animationDelay: `${(8 + i) * 35}ms` }}>{char}</span>
                   ))}
@@ -613,7 +624,7 @@ function Intro() {
               </>
             ) : (
               <>
-                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: `${nameFontSize}px`, lineHeight: 1.2, display: 'flex' }}>
+                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize, lineHeight: 1.2, display: 'flex' }}>
                   {'Zoe'.split('').map((char, i) => {
                     const off = letterOffsets.Zoe[i]
                     return (
@@ -637,7 +648,7 @@ function Intro() {
                 <h1
                   id="main-title"
                   aria-label="Mejia"
-                  style={{ fontFamily: "'Press Start 2P', monospace", fontSize: `${nameFontSize}px`, lineHeight: 1.2, display: 'flex' }}
+                  style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize, lineHeight: 1.2, display: 'flex' }}
                 >
                   {'Mejia'.split('').map((char, i) => {
                     const off = letterOffsets.Mejia[i]
@@ -659,7 +670,7 @@ function Intro() {
                     )
                   })}
                 </h1>
-                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: `${nameFontSize}px`, lineHeight: 1.2, display: 'flex' }}>
+                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize, lineHeight: 1.2, display: 'flex' }}>
                   {'Santana'.split('').map((char, i) => {
                     const off = letterOffsets.Santana[i]
                     return (
