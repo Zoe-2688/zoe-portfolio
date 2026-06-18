@@ -554,16 +554,18 @@ function Intro() {
 
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
   const [isSmallScreen, setIsSmallScreen] = useState(() => window.innerWidth < 1280)
+  const [isLaptop, setIsLaptop] = useState(() => window.innerWidth < 1400)
   useEffect(() => {
     const check = () => {
       setIsMobile(window.innerWidth < 768)
       setIsSmallScreen(window.innerWidth < 1280)
+      setIsLaptop(window.innerWidth < 1400)
     }
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
   }, [])
 
-  const nameFontSize = isMobile ? 32 : 68
+  const nameFontSize = isMobile ? 28 : isLaptop ? 44 : 68
 
   return (
     <>
