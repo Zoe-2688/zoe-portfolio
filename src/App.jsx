@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Intro from './components/intro/Intro'
 import Hero from './components/hero/Hero'
 import About from './components/about/About'
@@ -7,7 +7,8 @@ import Contact from './components/contact/Contact'
 import { usePortfolio } from './context/PortfolioContext'
 
 function App() {
-  const { highContrast, largeText, reduceMotion } = usePortfolio()
+  const { highContrast, largeText, reduceMotion, mode } = usePortfolio()
+  const [contentVisible, setContentVisible] = useState(false)
 
   useEffect(() => {
     const root = document.documentElement
@@ -16,13 +17,23 @@ function App() {
     root.classList.toggle('reduce-motion', reduceMotion)
   }, [highContrast, largeText, reduceMotion])
 
+  useEffect(() => {
+    if (!mode) return
+    const id = requestAnimationFrame(() => setContentVisible(true))
+    return () => cancelAnimationFrame(id)
+  }, [mode])
+
   return (
     <main>
-      <Intro />
-      <Hero />
-      <About />
-      <Projects />
-      <Contact />
+      {!mode && <Intro />}
+      {mode && (
+        <div style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 500ms ease' }}>
+          <Hero />
+          <About />
+          <Projects />
+          <Contact />
+        </div>
+      )}
     </main>
   )
 }
