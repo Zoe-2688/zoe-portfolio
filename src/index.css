@@ -84,7 +84,7 @@ html {
 
 .mode-btn {
   border-radius: 12px;
-  border: 2px solid rgba(0, 212, 255, 0.3);
+  border: 2px solid rgba(232, 160, 144, 0.4);
   background: transparent;
   transition: border-color 300ms, box-shadow 300ms, background-color 300ms, transform 200ms;
 }

@@ -10,83 +10,39 @@ function buildCircuits(w, h) {
   const initDirs = [0, 0, 0, 1, 3]
   for (let i = 0; i < 8; i++) {
     const nodes = []
-    let x = Math.floor(Math.random() * Math.ceil(w * 0.35 / STEP)) * STEP
-    let y = Math.floor((0.2 + Math.random() * 0.5) * h / STEP) * STEP
+    let x = Math.floor(Math.random() * w / STEP) * STEP
+    let y = Math.floor(Math.random() * h / STEP) * STEP
     nodes.push({ x, y })
     let dir = initDirs[Math.floor(Math.random() * initDirs.length)]
-    const segs = 3 + Math.floor(Math.random() * 3)
+    const segs = 4 + Math.floor(Math.random() * 4)
     for (let s = 0; s < segs; s++) {
-      const len = (1 + Math.floor(Math.random() * 4)) * STEP
+      const len = STEP * (1 + s * 0.5)
       const [dx, dy] = DIRS[dir]
       const nx = x + dx * len
       const ny = y + dy * len
-      if (nx < 0 || nx > w || ny < 0 || ny > h) break
+      if (nx < -w * 0.2 || nx > w * 1.2 || ny < -h * 0.2 || ny > h * 1.2) break
       x = nx; y = ny
       nodes.push({ x, y })
       dir = (dir + (Math.random() > 0.5 ? 1 : 3)) % 4
     }
-    if (nodes.length >= 2) circuits.push({ nodes, featured: false, connection: false })
+    if (nodes.length >= 2) circuits.push({ nodes, featured: false, connection: false, pink: Math.random() < 0.375 })
   }
   return circuits
 }
 
 function buildFeaturedCircuits(w, h) {
-  return [
-    // === SUPERIOR ===
-    // Tramo principal: nombre → sube → gira derecha
-    {
-      nodes: [
-        { x: Math.round(w * 0.35), y: Math.round(h * 0.38) },
-        { x: Math.round(w * 0.35), y: Math.round(h * 0.22) },
-        { x: Math.round(w * 0.73), y: Math.round(h * 0.22) },
-      ],
-      featured: true,
-      connection: false,
-    },
-    // Ramificación hacia la frase rotativa
-    {
-      nodes: [
-        { x: Math.round(w * 0.73), y: Math.round(h * 0.22) },
-        { x: Math.round(w * 0.73), y: Math.round(h * 0.32) },
-      ],
-      featured: true,
-      connection: true,
-    },
-    // === INFERIOR ===
-    // Tramo principal: nombre → baja → gira derecha
-    {
-      nodes: [
-        { x: Math.round(w * 0.35), y: Math.round(h * 0.65) },
-        { x: Math.round(w * 0.35), y: Math.round(h * 0.77) },
-        { x: Math.round(w * 0.82), y: Math.round(h * 0.77) },
-      ],
-      featured: true,
-      connection: false,
-    },
-    // Ramificación hacia botón Profesional
-    {
-      nodes: [
-        { x: Math.round(w * 0.575), y: Math.round(h * 0.77) },
-        { x: Math.round(w * 0.575), y: Math.round(h * 0.63) },
-      ],
-      featured: true,
-      connection: true,
-    },
-    // Ramificación hacia botón Creativa
-    {
-      nodes: [
-        { x: Math.round(w * 0.735), y: Math.round(h * 0.77) },
-        { x: Math.round(w * 0.735), y: Math.round(h * 0.63) },
-      ],
-      featured: true,
-      connection: true,
-    },
-  ]
+  return []
 }
 
-function CircuitCanvas({ reduceMotion }) {
+const SEGMENT_ON_MS = 400
+const SEGMENT_DELAY_MAX_MS = 300
+
+function CircuitCanvas({ reduceMotion, activated = false }) {
   const canvasRef = useRef(null)
   const circuitsRef = useRef([])
+  const activatedRef = useRef(activated)
+  const activationStartRef = useRef(activated ? performance.now() : null)
+  const drawRef = useRef(() => {})
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -100,24 +56,58 @@ function CircuitCanvas({ reduceMotion }) {
     }
 
     function rebuildCircuits() {
-      circuitsRef.current = [
+      const built = [
         ...buildFeaturedCircuits(canvas.width, canvas.height),
         ...buildCircuits(canvas.width, canvas.height),
       ]
+      circuitsRef.current = built.map((c) => ({
+        ...c,
+        segDelays: c.nodes.slice(1).map(() => Math.random() * SEGMENT_DELAY_MAX_MS),
+      }))
     }
 
-    function drawCircuits() {
+    function getSegProgress(circuit, now) {
+      const { nodes, segDelays } = circuit
+      const segProgress = []
+      for (let s = 0; s < nodes.length - 1; s++) {
+        if (reduceMotion) { segProgress.push(1); continue }
+        const start = activationStartRef.current
+        if (start === null) { segProgress.push(0); continue }
+        const elapsed = now - start - segDelays[s]
+        segProgress.push(Math.min(Math.max(elapsed / SEGMENT_ON_MS, 0), 1))
+      }
+      return segProgress
+    }
+
+    function getNodeProgress(segProgress, nodeCount) {
+      const out = []
+      for (let i = 0; i < nodeCount; i++) {
+        const before = i > 0 ? segProgress[i - 1] : 0
+        const after = i < nodeCount - 1 ? segProgress[i] : 0
+        out.push(Math.max(before, after))
+      }
+      return out
+    }
+
+    function drawCircuits(now) {
       ctx.save()
       for (const circuit of circuitsRef.current) {
         const { nodes, featured } = circuit
+        const segProgress = getSegProgress(circuit, now)
+        const nodeProgress = getNodeProgress(segProgress, nodes.length)
+
         if (featured) {
           ctx.lineWidth = 2
-          ctx.strokeStyle = 'rgba(0,212,255,0.4)'
-          ctx.beginPath()
-          ctx.moveTo(nodes[0].x, nodes[0].y)
-          for (let i = 1; i < nodes.length; i++) ctx.lineTo(nodes[i].x, nodes[i].y)
-          ctx.stroke()
+          for (let s = 0; s < nodes.length - 1; s++) {
+            if (segProgress[s] <= 0) continue
+            ctx.strokeStyle = `rgba(0,212,255,${(0.4 * segProgress[s]).toFixed(3)})`
+            ctx.beginPath()
+            ctx.moveTo(nodes[s].x, nodes[s].y)
+            ctx.lineTo(nodes[s + 1].x, nodes[s + 1].y)
+            ctx.stroke()
+          }
           for (let i = 0; i < nodes.length; i++) {
+            if (nodeProgress[i] <= 0) continue
             const { x, y } = nodes[i]
             const isEnd = i === 0 || i === nodes.length - 1
             const isConnEnd = circuit.connection && i === nodes.length - 1
@@ -125,15 +115,39 @@ function CircuitCanvas({ reduceMotion }) {
               ctx.save()
               ctx.shadowBlur = 16
               ctx.shadowColor = GLOW_COLOR
-              ctx.fillStyle = 'rgba(180,240,255,0.95)'
+              ctx.fillStyle = `rgba(180,240,255,${(0.95 * nodeProgress[i]).toFixed(3)})`
               ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill()
               ctx.restore()
             } else if (isEnd) {
-              ctx.fillStyle = 'rgba(0,212,255,0.6)'
+              ctx.fillStyle = `rgba(0,212,255,${(0.6 * nodeProgress[i]).toFixed(3)})`
               ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.fill()
             } else {
-              ctx.fillStyle = 'rgba(0,212,255,0.6)'
+              ctx.fillStyle = `rgba(0,212,255,${(0.6 * nodeProgress[i]).toFixed(3)})`
               ctx.fillRect(x - 3, y - 3, 6, 6)
+            }
+          }
+        } else if (circuit.pink) {
+          const pny = nodes[0].y / canvas.height
+          const pDistToVertEdge = Math.min(pny, 1 - pny)
+          const pFadeY = Math.min(pDistToVertEdge / 0.15, 1)
+          ctx.lineWidth = 1
+          for (let s = 0; s < nodes.length - 1; s++) {
+            if (segProgress[s] <= 0) continue
+            ctx.strokeStyle = `rgba(232,160,144,${(0.15 * pFadeY * segProgress[s]).toFixed(3)})`
+            ctx.beginPath()
+            ctx.moveTo(nodes[s].x, nodes[s].y)
+            ctx.lineTo(nodes[s + 1].x, nodes[s + 1].y)
+            ctx.stroke()
+          }
+          for (let i = 0; i < nodes.length; i++) {
+            if (nodeProgress[i] <= 0) continue
+            const { x, y } = nodes[i]
+            const isEnd = i === 0 || i === nodes.length - 1
+            ctx.fillStyle = `rgba(232,160,144,${(0.375 * pFadeY * nodeProgress[i]).toFixed(3)})`
+            if (isEnd) {
+              ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2); ctx.fill()
+            } else {
+              ctx.fillRect(x - 2, y - 2, 4, 4)
             }
           }
         } else {
@@ -141,17 +155,23 @@ function CircuitCanvas({ reduceMotion }) {
           const ny = nodes[0].y / canvas.height
           const distToEdge = Math.min(nx, 1 - nx, ny, 1 - ny)
           const t = Math.min(distToEdge / 0.3, 1)
-          const lineOp = 0.03 + t * 0.05
+          const distToVertEdge = Math.min(ny, 1 - ny)
+          const fadeY = Math.min(distToVertEdge / 0.15, 1)
+          const lineOp = (0.03 + t * 0.05) * fadeY
           ctx.lineWidth = 1
-          ctx.strokeStyle = `rgba(0,212,255,${lineOp.toFixed(3)})`
-          ctx.beginPath()
-          ctx.moveTo(nodes[0].x, nodes[0].y)
-          for (let i = 1; i < nodes.length; i++) ctx.lineTo(nodes[i].x, nodes[i].y)
-          ctx.stroke()
-          ctx.fillStyle = `rgba(0,212,255,${(lineOp * 2.5).toFixed(3)})`
+          for (let s = 0; s < nodes.length - 1; s++) {
+            if (segProgress[s] <= 0) continue
+            ctx.strokeStyle = `rgba(0,212,255,${(lineOp * segProgress[s]).toFixed(3)})`
+            ctx.beginPath()
+            ctx.moveTo(nodes[s].x, nodes[s].y)
+            ctx.lineTo(nodes[s + 1].x, nodes[s + 1].y)
+            ctx.stroke()
+          }
           for (let i = 0; i < nodes.length; i++) {
+            if (nodeProgress[i] <= 0) continue
             const { x, y } = nodes[i]
             const isEnd = i === 0 || i === nodes.length - 1
+            ctx.fillStyle = `rgba(0,212,255,${(lineOp * 2.5 * nodeProgress[i]).toFixed(3)})`
             if (isEnd) {
               ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2); ctx.fill()
             } else {
@@ -179,10 +199,20 @@ function CircuitCanvas({ reduceMotion }) {
       const tx = n1.x + (n2.x - n1.x) * tailT
       const ty = n1.y + (n2.y - n1.y) * tailT
 
+      const pny = circuit.nodes[0].y / canvas.height
+      const pDistToVertEdge = Math.min(pny, 1 - pny)
+      const fadeY = circuit.featured ? 1 : Math.min(pDistToVertEdge / 0.15, 1)
+
       ctx.save()
+      ctx.globalAlpha = fadeY
       const tail = ctx.createLinearGradient(tx, ty, x, y)
-      tail.addColorStop(0, 'rgba(0,212,255,0)')
-      tail.addColorStop(1, 'rgba(0,212,255,0.6)')
+      if (circuit.pink) {
+        tail.addColorStop(0, 'rgba(232,160,144,0)')
+        tail.addColorStop(1, 'rgba(232,160,144,0.6)')
+      } else {
+        tail.addColorStop(0, 'rgba(0,212,255,0)')
+        tail.addColorStop(1, 'rgba(0,212,255,0.6)')
+      }
       ctx.strokeStyle = tail
       ctx.lineWidth = circuit.featured ? 2 : 1.5
       ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(x, y); ctx.stroke()
@@ -190,12 +220,19 @@ function CircuitCanvas({ reduceMotion }) {
 
       const r = circuit.featured ? 8 : 6
       ctx.save()
+      ctx.globalAlpha = fadeY
       const glow = ctx.createRadialGradient(x, y, 0, x, y, r)
-      glow.addColorStop(0, 'rgba(0,212,255,1)')
-      glow.addColorStop(0.4, 'rgba(0,212,255,0.5)')
-      glow.addColorStop(1, 'rgba(0,212,255,0)')
+      if (circuit.pink) {
+        glow.addColorStop(0, 'rgba(232,160,144,1)')
+        glow.addColorStop(0.4, 'rgba(232,160,144,0.5)')
+        glow.addColorStop(1, 'rgba(232,160,144,0)')
+      } else {
+        glow.addColorStop(0, 'rgba(0,212,255,1)')
+        glow.addColorStop(0.4, 'rgba(0,212,255,0.5)')
+        glow.addColorStop(1, 'rgba(0,212,255,0)')
+      }
       ctx.shadowBlur = circuit.featured ? 16 : 10
-      ctx.shadowColor = GLOW_COLOR
+      ctx.shadowColor = circuit.pink ? '#e8a090' : GLOW_COLOR
       ctx.fillStyle = glow
       ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill()
       ctx.restore()
@@ -205,27 +242,35 @@ function CircuitCanvas({ reduceMotion }) {
     rebuildCircuits()
     const particles = Array.from({ length: 9 }, makeParticle)
 
-    function tick() {
+    function renderStatic() {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      drawCircuits()
-      for (const p of particles) {
-        p.t += p.speed
-        if (p.t >= 1) {
-          p.si++
-          p.t = 0
-          const c = circuitsRef.current[p.ci]
-          if (!c || p.si >= c.nodes.length - 1) {
-            p.ci = Math.floor(Math.random() * circuitsRef.current.length)
-            p.si = 0
+      if (activatedRef.current) drawCircuits(performance.now())
+    }
+    drawRef.current = renderStatic
+
+    function tick(now) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      if (activatedRef.current) {
+        drawCircuits(now)
+        for (const p of particles) {
+          p.t += p.speed
+          if (p.t >= 1) {
+            p.si++
+            p.t = 0
+            const c = circuitsRef.current[p.ci]
+            if (!c || p.si >= c.nodes.length - 1) {
+              p.ci = Math.floor(Math.random() * circuitsRef.current.length)
+              p.si = 0
+            }
           }
+          drawParticle(p)
         }
-        drawParticle(p)
       }
       animId = requestAnimationFrame(tick)
     }
 
     if (reduceMotion) {
-      drawCircuits()
+      renderStatic()
     } else {
       tick()
     }
@@ -233,7 +278,7 @@ function CircuitCanvas({ reduceMotion }) {
     const ro = new ResizeObserver(() => {
       resize()
       rebuildCircuits()
-      if (reduceMotion) { ctx.clearRect(0, 0, canvas.width, canvas.height); drawCircuits() }
+      if (reduceMotion) renderStatic()
     })
     ro.observe(canvas)
 
@@ -242,6 +287,16 @@ function CircuitCanvas({ reduceMotion }) {
       ro.disconnect()
     }
   }, [reduceMotion])
+
+  useEffect(() => {
+    activatedRef.current = activated
+    if (activated) {
+      if (activationStartRef.current === null) activationStartRef.current = performance.now()
+    } else {
+      activationStartRef.current = null
+    }
+    if (reduceMotion) drawRef.current()
+  }, [activated, reduceMotion])
 
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 }
@@ -393,109 +448,6 @@ function BorderParticle({ onComplete }) {
   )
 }
 
-function PixelRevealName({ reduceMotion }) {
-  const canvasRef = useRef(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    let animId
-    let cancelled = false
-
-    async function run() {
-      const fontSize = window.innerWidth >= 768 ? 72 : 32
-      const FONT = `${fontSize}px 'Press Start 2P', monospace`
-      const PAD = 8
-
-      await document.fonts.load(FONT)
-      if (cancelled) return
-
-      const temp = document.createElement('canvas')
-      const tctx = temp.getContext('2d')
-      tctx.font = FONT
-      const totalWidth = Math.ceil(tctx.measureText('Mejia').width)
-      const W = totalWidth + PAD * 2
-      const H = Math.ceil(fontSize * 1.6)
-
-      canvas.width = W
-      canvas.height = H
-      const ctx = canvas.getContext('2d')
-
-      function drawText(target) {
-        target.clearRect(0, 0, W, H)
-        target.font = FONT
-        target.textBaseline = 'middle'
-        target.fillStyle = '#00d4ff'
-        target.fillText('Mejia', PAD, H / 2)
-      }
-
-      if (reduceMotion) {
-        drawText(ctx)
-        return
-      }
-
-      const off = document.createElement('canvas')
-      off.width = W; off.height = H
-      drawText(off.getContext('2d'))
-
-      const src = off.getContext('2d').getImageData(0, 0, W, H)
-      const BLOCK = 4
-      const blocks = []
-      for (let by = 0; by < H; by += BLOCK) {
-        for (let bx = 0; bx < W; bx += BLOCK) {
-          let hasText = false
-          outer: for (let dy = 0; dy < BLOCK && by + dy < H; dy++) {
-            for (let dx = 0; dx < BLOCK && bx + dx < W; dx++) {
-              if (src.data[((by + dy) * W + (bx + dx)) * 4 + 3] > 10) { hasText = true; break outer }
-            }
-          }
-          if (hasText) blocks.push({ bx, by })
-        }
-      }
-
-      for (let i = blocks.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        ;[blocks[i], blocks[j]] = [blocks[j], blocks[i]]
-      }
-
-      const out = ctx.createImageData(W, H)
-      let done = 0
-
-      function tick() {
-        if (cancelled) return
-        const end = Math.min(done + 15, blocks.length)
-        for (let i = done; i < end; i++) {
-          const { bx, by } = blocks[i]
-          for (let dy = 0; dy < BLOCK && by + dy < H; dy++) {
-            for (let dx = 0; dx < BLOCK && bx + dx < W; dx++) {
-              const idx = ((by + dy) * W + (bx + dx)) * 4
-              out.data[idx]     = src.data[idx]
-              out.data[idx + 1] = src.data[idx + 1]
-              out.data[idx + 2] = src.data[idx + 2]
-              out.data[idx + 3] = src.data[idx + 3]
-            }
-          }
-        }
-        done = end
-        ctx.putImageData(out, 0, 0)
-        if (done < blocks.length) animId = requestAnimationFrame(tick)
-      }
-
-      tick()
-    }
-
-    run()
-    return () => { cancelled = true; cancelAnimationFrame(animId) }
-  }, [reduceMotion])
-
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{ display: 'block', imageRendering: 'pixelated' }}
-    />
-  )
-}
-
 function Intro() {
   const {
     setMode,
@@ -513,6 +465,18 @@ function Intro() {
   const [tooltip, setTooltip] = useState(null)
   const [clickingMode, setClickingMode] = useState(null)
   const [lettersFalling, setLettersFalling] = useState(false)
+  const [letterOffsets] = useState(() => {
+    const rand = () => (Math.random() * 2 - 1) * 150
+    const colors = ['#e8a090', '#00d4ff', '#ffffff']
+    const randColor = () => colors[Math.floor(Math.random() * colors.length)]
+    const build = (word) => word.split('').map(() => ({ dx: rand(), dy: rand(), color: randColor() }))
+    return { Zoe: build('Zoe'), Mejia: build('Mejia'), Santana: build('Santana') }
+  })
+  const [started, setStarted] = useState(() => reduceMotion)
+  const [lettersWhite, setLettersWhite] = useState(() => reduceMotion)
+  const [nameGlow, setNameGlow] = useState(false)
+  const [assembled, setAssembled] = useState(() => reduceMotion)
+  const [activated, setActivated] = useState(() => reduceMotion)
   const creativeTid = useRef(null)
 
   const handleCreativeEnter = () => {
@@ -557,12 +521,49 @@ function Intro() {
     return () => clearInterval(id)
   }, [reduceMotion])
 
+  useEffect(() => {
+    if (reduceMotion) {
+      setStarted(true)
+      setLettersWhite(true)
+      setNameGlow(false)
+      setAssembled(true)
+      return
+    }
+    const startId = requestAnimationFrame(() => setStarted(true))
+    const whiteId = setTimeout(() => setLettersWhite(true), 600)
+    const glowOnId = setTimeout(() => setNameGlow(true), 700)
+    const glowOffId = setTimeout(() => setNameGlow(false), 1100)
+    const assembledId = setTimeout(() => setAssembled(true), 700)
+    return () => {
+      cancelAnimationFrame(startId)
+      clearTimeout(whiteId)
+      clearTimeout(glowOnId)
+      clearTimeout(glowOffId)
+      clearTimeout(assembledId)
+    }
+  }, [reduceMotion])
+
+  useEffect(() => {
+    if (reduceMotion) {
+      setActivated(true)
+      return
+    }
+    const activatedId = setTimeout(() => setActivated(true), 1100)
+    return () => clearTimeout(activatedId)
+  }, [reduceMotion])
+
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
-useEffect(() => {
-  const check = () => setIsMobile(window.innerWidth < 768)
-  window.addEventListener('resize', check)
-  return () => window.removeEventListener('resize', check)
-}, [])
+  const [isSmallScreen, setIsSmallScreen] = useState(() => window.innerWidth < 1280)
+  useEffect(() => {
+    const check = () => {
+      setIsMobile(window.innerWidth < 768)
+      setIsSmallScreen(window.innerWidth < 1280)
+    }
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  const nameFontSize = isMobile ? 32 : 68
 
   return (
     <>
@@ -570,39 +571,39 @@ useEffect(() => {
       id="intro"
       className="bg-[#050d1a] min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-6"
     >
-      <CircuitCanvas reduceMotion={reduceMotion} />
+      <CircuitCanvas reduceMotion={reduceMotion} activated={activated} />
 
       {/* Grid 2fr / 3fr en desktop, columna en móvil */}
       <div
-  className="z-10 w-full max-w-6xl px-6 md:px-12"
+  className="z-10 w-full max-w-5xl mx-auto px-12"
   style={{
     display: 'grid',
-    gridTemplateColumns: isMobile ? '1fr' : '2fr 3fr',
+    gridTemplateColumns: isMobile ? '1fr' : '3fr 2fr',
     alignItems: 'center',
-    gap: '2rem',
+    gap: '1rem',
   }}
 >
 
         {/* Columna izquierda: nombre */}
-        <div className="flex flex-col items-start text-left">
-          <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-6 opacity-60">
+        <div className="flex flex-col items-start text-left pl-8" style={{ overflow: 'visible' }}>
+          <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-3 opacity-60">
             Portfolio · 2025
           </p>
 
-          <div className="mb-5 flex flex-col gap-2">
+          <div className="mb-2 flex flex-col gap-1">
             {lettersFalling ? (
               <>
-                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '72px' }}>
+                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: `${nameFontSize}px` }}>
                   {'Zoe'.split('').map((char, i) => (
-                    <span key={i} className="letter-fall" style={{ color: '#ffffff', animationDelay: `${i * 35}ms` }}>{char}</span>
+                    <span key={i} className="letter-fall" style={{ color: '#e8a090', animationDelay: `${i * 35}ms` }}>{char}</span>
                   ))}
                 </div>
-                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '72px' }}>
+                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: `${nameFontSize}px` }}>
                   {'Mejia'.split('').map((char, i) => (
                     <span key={i} className="letter-fall" style={{ color: '#00d4ff', animationDelay: `${(3 + i) * 35}ms` }}>{char}</span>
                   ))}
                 </div>
-                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '72px' }}>
+                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: `${nameFontSize}px` }}>
                   {'Santana'.split('').map((char, i) => (
                     <span key={i} className="letter-fall" style={{ color: '#ffffff', animationDelay: `${(8 + i) * 35}ms` }}>{char}</span>
                   ))}
@@ -610,11 +611,73 @@ useEffect(() => {
               </>
             ) : (
               <>
-                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '72px', color: '#ffffff', lineHeight: 1.2 }}>Zoe</p>
-                <h1 id="main-title" aria-label="Mejia">
-                  <PixelRevealName reduceMotion={reduceMotion} />
+                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: `${nameFontSize}px`, lineHeight: 1.2, display: 'flex' }}>
+                  {'Zoe'.split('').map((char, i) => {
+                    const off = letterOffsets.Zoe[i]
+                    return (
+                      <span
+                        key={i}
+                        style={{
+                          display: 'inline-block',
+                          color: lettersWhite ? '#ffffff' : off.color,
+                          textShadow: nameGlow ? '0 0 20px #e8a090, 0 0 40px #e8a090' : 'none',
+                          transform: started ? 'translate(0px, 0px)' : `translate(${off.dx}px, ${off.dy}px)`,
+                          transition: reduceMotion
+                            ? 'none'
+                            : 'transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 200ms ease, text-shadow 400ms ease',
+                        }}
+                      >
+                        {char}
+                      </span>
+                    )
+                  })}
+                </p>
+                <h1
+                  id="main-title"
+                  aria-label="Mejia"
+                  style={{ fontFamily: "'Press Start 2P', monospace", fontSize: `${nameFontSize}px`, lineHeight: 1.2, display: 'flex' }}
+                >
+                  {'Mejia'.split('').map((char, i) => {
+                    const off = letterOffsets.Mejia[i]
+                    return (
+                      <span
+                        key={i}
+                        style={{
+                          display: 'inline-block',
+                          color: lettersWhite ? '#ffffff' : off.color,
+                          textShadow: nameGlow ? '0 0 20px #e8a090, 0 0 40px #e8a090' : 'none',
+                          transform: started ? 'translate(0px, 0px)' : `translate(${off.dx}px, ${off.dy}px)`,
+                          transition: reduceMotion
+                            ? 'none'
+                            : 'transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 200ms ease, text-shadow 400ms ease',
+                        }}
+                      >
+                        {char}
+                      </span>
+                    )
+                  })}
                 </h1>
-                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: isMobile ? '32px' : '72px', color: '#ffffff', lineHeight: 1.2 }}>Santana</p>
+                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: `${nameFontSize}px`, lineHeight: 1.2, display: 'flex' }}>
+                  {'Santana'.split('').map((char, i) => {
+                    const off = letterOffsets.Santana[i]
+                    return (
+                      <span
+                        key={i}
+                        style={{
+                          display: 'inline-block',
+                          color: lettersWhite ? '#ffffff' : off.color,
+                          textShadow: nameGlow ? '0 0 20px #e8a090, 0 0 40px #e8a090' : 'none',
+                          transform: started ? 'translate(0px, 0px)' : `translate(${off.dx}px, ${off.dy}px)`,
+                          transition: reduceMotion
+                            ? 'none'
+                            : 'transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 200ms ease, text-shadow 400ms ease',
+                        }}
+                      >
+                        {char}
+                      </span>
+                    )
+                  })}
+                </p>
               </>
             )}
           </div>
@@ -625,15 +688,17 @@ useEffect(() => {
         </div>
 
         {/* Columna derecha: frase + selector */}
-        <div className="flex flex-col items-center gap-10 pl-0 md:pl-8">
+        <div
+          className="flex flex-col items-center gap-4 pl-0 md:pl-8"
+          style={{ opacity: assembled ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 400ms ease' }}
+        >
 
           {/* Frase rotativa */}
           <p style={{ color: '#eab5a8' }} className="text-2xl italic tracking-wide text-center">
-            "El buen diseño no se nota. Se{' '}
+            "Un buen diseño se{' '}
             <span
               style={{
                 color: '#f5c4b4',
-                textDecoration: 'underline dotted rgba(245,196,180,0.45)',
                 opacity: wordVisible ? 1 : 0,
                 transition: 'opacity 300ms ease',
                 display: 'inline-block',
@@ -645,11 +710,11 @@ useEffect(() => {
 
           {/* Selector de versión + idioma */}
           <div className="flex flex-col items-center gap-6">
-            <p className="text-white/60 text-sm tracking-[3px] uppercase">
+            <p className="text-white/90 text-sm tracking-[3px] uppercase">
               Elige cómo quieres conocerme
             </p>
 
-            <div className="flex flex-row gap-4  justify-center">
+            <div className="flex flex-row gap-2  justify-center">
               {/* Botón Profesional */}
               <div className="flex flex-col items-center">
                 <div className="relative">
@@ -657,7 +722,7 @@ useEffect(() => {
                     onClick={() => handleModeSelect('professional')}
                     onMouseEnter={() => setTooltip('professional')}
                     onMouseLeave={() => setTooltip(null)}
-                    className={`mode-btn text-[#00d4ff] px-5 py-5 text-xs tracking-[2px] uppercase min-w-[140px] ${clickingMode === 'professional' ? 'mode-btn-clicking' : ''}`}
+                    className={`mode-btn text-[#00d4ff] ${isSmallScreen ? 'px-4 py-4' : 'px-4 py-3'} text-xs tracking-[2px] uppercase min-w-[120px] ${clickingMode === 'professional' ? 'mode-btn-clicking' : ''}`}
                   >
                     <span className="block text-base mb-1">Profesional</span>
                     <span className="opacity-70 normal-case tracking-normal text-xs">Proceso y resultados</span>
@@ -681,7 +746,7 @@ useEffect(() => {
                     onClick={() => handleModeSelect('creative')}
                     onMouseEnter={() => { handleCreativeEnter(); setTooltip('creative') }}
                     onMouseLeave={() => { handleCreativeLeave(); setTooltip(null) }}
-                    className={`mode-btn text-[#00d4ff] px-5 py-5 text-xs tracking-[2px] uppercase min-w-[140px] ${clickingMode === 'creative' ? 'mode-btn-clicking' : ''}`}
+                    className={`mode-btn text-[#00d4ff] ${isSmallScreen ? 'px-4 py-4' : 'px-4 py-3'} text-xs tracking-[2px] uppercase min-w-[120px] ${clickingMode === 'creative' ? 'mode-btn-clicking' : ''}`}
                   >
                     <span
                       className="block mb-1"
@@ -711,7 +776,7 @@ useEffect(() => {
             </div>
 
             {/* Selector de idioma */}
-            <div className="flex gap-4 items-center">
+            <div className="flex gap-4 items-center" style={{ width: 'fit-content', margin: '0 auto' }}>
               <button
                 onClick={() => setLanguage('es')}
                 className={`text-xs tracking-[2px] uppercase transition-all ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
