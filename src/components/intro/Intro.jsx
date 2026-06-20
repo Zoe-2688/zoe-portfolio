@@ -1,8 +1,20 @@
 import { useState, useRef, useEffect } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
+import RetroLoadingScreen from './RetroLoadingScreen'
 
 const STEP = 70
 const GLOW_COLOR = '#00d4ff'
+const NAME_COLORS = {
+  Zoe: '#e8a090',
+  Mejia: '#00d4ff',
+  Santana: '#e8a090',
+}
+const NAME_SHADOWS = {
+  Zoe: '1px 1px 0 #b8665a, 2px 2px 0 #b8665a, 3px 3px 0 #8a4a40, 4px 4px 0 #8a4a40, 5px 5px 8px rgba(0,0,0,0.4)',
+  Mejia: '1px 1px 0 #0090b8, 2px 2px 0 #0090b8, 3px 3px 0 #006688, 4px 4px 0 #006688, 5px 5px 8px rgba(0,0,0,0.4)',
+  Santana: '1px 1px 0 #b8665a, 2px 2px 0 #b8665a, 3px 3px 0 #8a4a40, 4px 4px 0 #8a4a40, 5px 5px 8px rgba(0,0,0,0.4)',
+}
+const NAME_GLOW = '0 0 20px #e8a090, 0 0 40px #e8a090'
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]]
 
 function buildCircuits(w, h) {
@@ -464,6 +476,7 @@ function Intro() {
   const [creativeVisible, setCreativeVisible] = useState(true)
   const [tooltip, setTooltip] = useState(null)
   const [clickingMode, setClickingMode] = useState(null)
+  const [loadingMode, setLoadingMode] = useState(null)
   const [lettersFalling, setLettersFalling] = useState(false)
   const [letterOffsets] = useState(() => {
     const rand = () => (Math.random() * 2 - 1) * 150
@@ -503,10 +516,14 @@ function Intro() {
   }
 
   const handleAnimationComplete = (mode) => {
-    setMode(mode)
-    if (mode === 'professional') window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })
-    setClickingMode(null)
-    setLettersFalling(false)
+    if (reduceMotion) {
+      setMode(mode)
+      if (mode === 'professional') window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })
+      setClickingMode(null)
+      setLettersFalling(false)
+      return
+    }
+    setLoadingMode(mode)
   }
 
   useEffect(() => {
@@ -603,96 +620,136 @@ function Intro() {
             Portfolio · 2025
           </p>
 
-          <div className="mb-2 flex flex-col gap-1">
-            {lettersFalling ? (
-              <>
-                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize }}>
-                  {'Zoe'.split('').map((char, i) => (
-                    <span key={i} className="letter-fall" style={{ color: '#e8a090', animationDelay: `${i * 35}ms` }}>{char}</span>
-                  ))}
-                </div>
-                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize }}>
-                  {'Mejia'.split('').map((char, i) => (
-                    <span key={i} className="letter-fall" style={{ color: '#00d4ff', animationDelay: `${(3 + i) * 35}ms` }}>{char}</span>
-                  ))}
-                </div>
-                <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize }}>
-                  {'Santana'.split('').map((char, i) => (
-                    <span key={i} className="letter-fall" style={{ color: '#ffffff', animationDelay: `${(8 + i) * 35}ms` }}>{char}</span>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <>
-                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize, lineHeight: 1.2, display: 'flex' }}>
-                  {'Zoe'.split('').map((char, i) => {
-                    const off = letterOffsets.Zoe[i]
-                    return (
-                      <span
-                        key={i}
-                        style={{
-                          display: 'inline-block',
-                          color: lettersWhite ? '#ffffff' : off.color,
-                          textShadow: nameGlow ? '0 0 20px #e8a090, 0 0 40px #e8a090' : 'none',
-                          transform: started ? 'translate(0px, 0px)' : `translate(${off.dx}px, ${off.dy}px)`,
-                          transition: reduceMotion
-                            ? 'none'
-                            : 'transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 200ms ease, text-shadow 400ms ease',
-                        }}
-                      >
-                        {char}
-                      </span>
-                    )
-                  })}
-                </p>
-                <h1
-                  id="main-title"
-                  aria-label="Mejia"
-                  style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize, lineHeight: 1.2, display: 'flex' }}
-                >
-                  {'Mejia'.split('').map((char, i) => {
-                    const off = letterOffsets.Mejia[i]
-                    return (
-                      <span
-                        key={i}
-                        style={{
-                          display: 'inline-block',
-                          color: lettersWhite ? '#ffffff' : off.color,
-                          textShadow: nameGlow ? '0 0 20px #e8a090, 0 0 40px #e8a090' : 'none',
-                          transform: started ? 'translate(0px, 0px)' : `translate(${off.dx}px, ${off.dy}px)`,
-                          transition: reduceMotion
-                            ? 'none'
-                            : 'transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 200ms ease, text-shadow 400ms ease',
-                        }}
-                      >
-                        {char}
-                      </span>
-                    )
-                  })}
-                </h1>
-                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize, lineHeight: 1.2, display: 'flex' }}>
-                  {'Santana'.split('').map((char, i) => {
-                    const off = letterOffsets.Santana[i]
-                    return (
-                      <span
-                        key={i}
-                        style={{
-                          display: 'inline-block',
-                          color: lettersWhite ? '#ffffff' : off.color,
-                          textShadow: nameGlow ? '0 0 20px #e8a090, 0 0 40px #e8a090' : 'none',
-                          transform: started ? 'translate(0px, 0px)' : `translate(${off.dx}px, ${off.dy}px)`,
-                          transition: reduceMotion
-                            ? 'none'
-                            : 'transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 200ms ease, text-shadow 400ms ease',
-                        }}
-                      >
-                        {char}
-                      </span>
-                    )
-                  })}
-                </p>
-              </>
-            )}
+          <div className="mb-2" style={{ position: 'relative' }}>
+            <div
+              style={{
+                position: 'absolute',
+                left: '-90px',
+                top: 0,
+                display: 'flex',
+                fontFamily: "'Press Start 2P', monospace",
+                fontSize: `calc(${nameSize} * 0.5)`,
+                color: '#00d4ff',
+                lineHeight: 1,
+              }}
+            >
+              <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '0ms' }}>&lt;</span>
+              <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '150ms' }}>&lt;</span>
+              <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '300ms' }}>&lt;</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              {lettersFalling ? (
+                <>
+                  <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize }}>
+                    {'Zoe'.split('').map((char, i) => (
+                      <span key={i} className="letter-fall" style={{ color: '#e8a090', animationDelay: `${i * 35}ms` }}>{char}</span>
+                    ))}
+                  </div>
+                  <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize }}>
+                    {'Mejia'.split('').map((char, i) => (
+                      <span key={i} className="letter-fall" style={{ color: '#00d4ff', animationDelay: `${(3 + i) * 35}ms` }}>{char}</span>
+                    ))}
+                  </div>
+                  <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize }}>
+                    {'Santana'.split('').map((char, i) => (
+                      <span key={i} className="letter-fall" style={{ color: NAME_COLORS.Santana, animationDelay: `${(8 + i) * 35}ms` }}>{char}</span>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize, lineHeight: 1.2, display: 'flex' }}>
+                    {'Zoe'.split('').map((char, i) => {
+                      const off = letterOffsets.Zoe[i]
+                      const baseColor = lettersWhite ? NAME_COLORS.Zoe : off.color
+                      const shadow = nameGlow ? `${NAME_SHADOWS.Zoe}, ${NAME_GLOW}` : NAME_SHADOWS.Zoe
+                      return (
+                        <span
+                          key={i}
+                          style={{
+                            display: 'inline-block',
+                            color: baseColor,
+                            textShadow: shadow,
+                            transform: started ? 'translate(0px, 0px)' : `translate(${off.dx}px, ${off.dy}px)`,
+                            transition: reduceMotion
+                              ? 'none'
+                              : 'transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 200ms ease, text-shadow 400ms ease',
+                          }}
+                        >
+                          {char}
+                        </span>
+                      )
+                    })}
+                  </p>
+                  <h1
+                    id="main-title"
+                    aria-label="Mejia"
+                    style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize, lineHeight: 1.2, display: 'flex' }}
+                  >
+                    {'Mejia'.split('').map((char, i) => {
+                      const off = letterOffsets.Mejia[i]
+                      const baseColor = lettersWhite ? NAME_COLORS.Mejia : off.color
+                      const shadow = nameGlow ? `${NAME_SHADOWS.Mejia}, ${NAME_GLOW}` : NAME_SHADOWS.Mejia
+                      return (
+                        <span
+                          key={i}
+                          style={{
+                            display: 'inline-block',
+                            color: baseColor,
+                            textShadow: shadow,
+                            transform: started ? 'translate(0px, 0px)' : `translate(${off.dx}px, ${off.dy}px)`,
+                            transition: reduceMotion
+                              ? 'none'
+                              : 'transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 200ms ease, text-shadow 400ms ease',
+                          }}
+                        >
+                          {char}
+                        </span>
+                      )
+                    })}
+                  </h1>
+                  <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: nameSize, lineHeight: 1.2, display: 'flex' }}>
+                    {'Santana'.split('').map((char, i) => {
+                      const off = letterOffsets.Santana[i]
+                      const baseColor = lettersWhite ? NAME_COLORS.Santana : off.color
+                      const shadow = nameGlow ? `${NAME_SHADOWS.Santana}, ${NAME_GLOW}` : NAME_SHADOWS.Santana
+                      return (
+                        <span
+                          key={i}
+                          style={{
+                            display: 'inline-block',
+                            color: baseColor,
+                            textShadow: shadow,
+                            transform: started ? 'translate(0px, 0px)' : `translate(${off.dx}px, ${off.dy}px)`,
+                            transition: reduceMotion
+                              ? 'none'
+                              : 'transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 200ms ease, text-shadow 400ms ease',
+                          }}
+                        >
+                          {char}
+                        </span>
+                      )
+                    })}
+                  </p>
+                </>
+              )}
+            </div>
+            <div
+              style={{
+                position: 'absolute',
+                right: '-90px',
+                bottom: 0,
+                display: 'flex',
+                fontFamily: "'Press Start 2P', monospace",
+                fontSize: `calc(${nameSize} * 0.5)`,
+                color: '#00d4ff',
+                lineHeight: 1,
+              }}
+            >
+              <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '300ms' }}>&gt;</span>
+              <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '150ms' }}>&gt;</span>
+              <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '0ms' }}>&gt;</span>
+            </div>
           </div>
 
           <p className="text-[#00d4ff] text-sm tracking-[3px] uppercase opacity-70">
@@ -707,7 +764,15 @@ function Intro() {
         >
 
           {/* Frase rotativa */}
-          <p style={{ color: '#eab5a8' }} className="text-2xl italic tracking-wide text-center">
+          <p
+            className="tracking-wide text-center"
+            style={{
+              color: '#eab5a8',
+              fontFamily: "'VT323', monospace",
+              fontSize: '32px',
+              letterSpacing: '0.5px',
+            }}
+          >
             "Un buen diseño se{' '}
             <span
               style={{
@@ -727,7 +792,7 @@ function Intro() {
               Elige cómo quieres conocerme
             </p>
 
-            <div className="flex flex-row gap-2  justify-center">
+            <div className="flex flex-row justify-center items-center" style={{ gap: '0px' }}>
               {/* Botón Profesional */}
               <div className="flex flex-col items-center">
                 <div className="relative">
@@ -751,6 +816,21 @@ function Intro() {
                   Proceso de diseño, casos de estudio y resultados
                 </p>
               </div>
+
+              <span
+                style={{
+                  fontFamily: "'Press Start 2P', monospace",
+                  fontSize: '32px',
+                  color: '#00d4ff',
+                  opacity: 0.5,
+                  display: 'flex',
+                  alignItems: 'center',
+                  margin: '0 -8px',
+                  marginTop: '-40px',
+                }}
+              >
+                ||
+              </span>
 
               {/* Botón Creativa */}
               <div className="flex flex-col items-center">
@@ -842,6 +922,24 @@ function Intro() {
         <A11yIcon />
       </button>
     </div>
+    <style>{`
+      @keyframes arrowPulse {
+        0%, 100% { opacity: 0.2; }
+        50% { opacity: 0.8; }
+      }
+    `}</style>
+      {loadingMode && (
+        <RetroLoadingScreen
+          reduceMotion={reduceMotion}
+          onComplete={() => {
+            setMode(loadingMode)
+            if (loadingMode === 'professional') window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })
+            setClickingMode(null)
+            setLettersFalling(false)
+            setLoadingMode(null)
+          }}
+        />
+      )}
     </>
   )
 }

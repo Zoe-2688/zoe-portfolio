@@ -50,18 +50,14 @@ function About() {
     return () => cancelAnimationFrame(id)
   }, [reduceMotion])
 
-  const scrollToProjects = () => {
-    document.getElementById('projects')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' })
-  }
-
   return (
-    <section id="about" className="bg-[#050d1a] py-24 px-6">
+    <section id="proceso" className="bg-[#050d1a] py-24 px-6">
       <div
-        className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
+        className="max-w-6xl mx-auto grid grid-cols-1 gap-12"
         style={{ opacity: visible ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 600ms ease' }}
       >
         <div className="flex flex-col gap-8">
-          <h2 className="text-white text-4xl md:text-5xl font-semibold">Sobre mí</h2>
+          <h2 className="text-white text-4xl md:text-5xl font-semibold">Proceso de Diseño</h2>
 
           <div className="flex flex-col gap-6">
             {BLOCKS.map(({ icon, label, text }) => (
@@ -76,29 +72,6 @@ function About() {
               </div>
             ))}
           </div>
-
-          <p className="text-[#00d4ff] text-sm opacity-50 tracking-wide">
-            4+ proyectos · 1 cliente internacional · Bilingüe ES/EN
-          </p>
-
-          <button
-            onClick={scrollToProjects}
-            className="self-start bg-[#e8a090] text-[#050d1a] font-semibold text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(232,160,144,0.5)]"
-          >
-            Ver proyectos
-          </button>
-        </div>
-
-        <div className="flex items-center justify-center">
-          <div
-            className="rounded-full"
-            style={{
-              width: '280px',
-              height: '280px',
-              border: '2px solid #00d4ff',
-              backgroundColor: 'rgba(0,212,255,0.05)',
-            }}
-          />
         </div>
       </div>
     </section>

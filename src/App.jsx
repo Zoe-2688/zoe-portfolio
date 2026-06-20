@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react'
 import Intro from './components/intro/Intro'
 import Hero from './components/hero/Hero'
-import About from './components/about/About'
+import CreativeHero from './components/creative/CreativeHero'
+import DesignProcess from './components/about/DesignProcess'
 import Projects from './components/projects/Projects'
-import Contact from './components/contact/Contact'
+import AboutMe from './components/aboutme/AboutMe'
+import Footer from './components/footer/Footer'
+import WhatsAppButton from './components/shared/WhatsAppButton'
+import CustomCursor from './components/shared/CustomCursor'
+import ScrollProgress from './components/shared/ScrollProgress'
 import { usePortfolio } from './context/PortfolioContext'
 
 function App() {
@@ -25,15 +30,21 @@ function App() {
 
   return (
     <main>
+      <ScrollProgress />
       {!mode && <Intro />}
       {mode && (
-        <div style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 500ms ease' }}>
-          <Hero />
-          <About />
-          <Projects />
-          <Contact />
-        </div>
+        <>
+          <CustomCursor />
+          <div style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 500ms ease' }}>
+            {mode === 'creative' ? <CreativeHero /> : <Hero />}
+            <Projects />
+            <DesignProcess />
+            <AboutMe />
+            <Footer />
+          </div>
+        </>
       )}
+      {mode && <WhatsAppButton />}
     </main>
   )
 }
