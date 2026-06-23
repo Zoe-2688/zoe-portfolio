@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
+import boostHome from '../../assets/projects/homescreen2.png'
+import boostGames from '../../assets/projects/gamescreen.png'
+import boostAdherence from '../../assets/projects/adherencescreen.png'
+import boostAccessibility from '../../assets/projects/accesibilityscreen.png'
 
 const STEP = 70
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]]
+const BOOST_SCREENS = [boostHome, boostGames, boostAdherence, boostAccessibility]
 
 function buildCircuits(w, h) {
   const circuits = []
@@ -142,11 +147,20 @@ function HeroCircuitCanvas({ reduceMotion }) {
 function Hero() {
   const { mode, language, reduceMotion } = usePortfolio()
   const [visible, setVisible] = useState(() => reduceMotion)
+  const [currentScreen, setCurrentScreen] = useState(0)
 
   useEffect(() => {
     if (reduceMotion) return
     const id = requestAnimationFrame(() => setVisible(true))
     return () => cancelAnimationFrame(id)
+  }, [reduceMotion])
+
+  useEffect(() => {
+    if (reduceMotion) return
+    const id = setInterval(() => {
+      setCurrentScreen((i) => (i + 1) % BOOST_SCREENS.length)
+    }, 3000)
+    return () => clearInterval(id)
   }, [reduceMotion])
 
   const scrollTo = (id) => {
@@ -163,39 +177,78 @@ function Hero() {
       <HeroCircuitCanvas reduceMotion={reduceMotion} />
 
       <div
-        className="z-10 w-full max-w-3xl flex flex-col items-center text-center gap-6"
+        className="z-10 w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-2 items-center"
         style={{ opacity: visible ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 600ms ease' }}
       >
-        <p className="text-[#00d4ff] text-xs md:text-sm tracking-[4px] uppercase opacity-80">
-          UX/UI Designer · Front-end · Accesibilidad
-        </p>
-
-        <h1 className="text-white text-2xl md:text-4xl lg:text-5xl font-semibold leading-snug">
-          Diseño experiencias digitales que conectan personas con tecnología.
-        </h1>
-
-        <div className="flex flex-col items-center gap-1 mt-2">
-          <p className="text-[#e8a090] text-base md:text-lg tracking-wide">Zoe Mejia Santana</p>
-          <p className="text-[#00d4ff] text-xs md:text-sm opacity-50">
-            Santiago, Chile · Disponible para trabajo remoto e híbrido
+        <div className="flex flex-col items-start text-left gap-6">
+          <p className="text-[#00d4ff] text-xs md:text-sm tracking-[4px] uppercase opacity-80">
+            UX/UI Designer · Front-end · Accesibilidad
           </p>
+
+          <h1 className="text-white text-2xl md:text-4xl lg:text-5xl font-semibold leading-snug">
+            Diseño experiencias digitales que conectan personas con tecnología.
+          </h1>
+
+          <div className="flex flex-col items-start gap-1 mt-2">
+            <p className="text-[#e8a090] text-base md:text-lg tracking-wide">Zoe Mejia Santana</p>
+            <p className="text-[#00d4ff] text-xs md:text-sm opacity-50">
+              Santiago, Chile · Disponible para trabajo remoto e híbrido
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-start justify-start gap-4 mt-4">
+            <button
+              onClick={() => scrollTo('projects')}
+              className="bg-[#e8a090] text-[#050d1a] font-semibold text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(232,160,144,0.5)]"
+            >
+              Ver proyectos
+            </button>
+            <button
+              onClick={() => scrollTo('contact')}
+              className="border-2 border-[#e8a090] text-[#e8a090] text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-colors hover:bg-[#e8a090]/10"
+            >
+              Contacto
+            </button>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
-          <button
-            onClick={() => scrollTo('projects')}
-            className="bg-[#e8a090] text-[#050d1a] font-semibold text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(232,160,144,0.5)]"
-          >
-            Ver proyectos
-          </button>
-          <button
-            onClick={() => scrollTo('contact')}
-            className="border-2 border-[#e8a090] text-[#e8a090] text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-colors hover:bg-[#e8a090]/10"
-          >
-            Contacto
-          </button>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: '-40px' }}>
+            {BOOST_SCREENS.map((screen, i) => (
+              <img
+                key={i}
+                src={screen}
+                alt={`Boost pantalla ${i + 1}`}
+                style={{
+                  position: i === 0 ? 'relative' : 'absolute',
+                  width: '100%',
+                  maxWidth: '460px',
+                  objectFit: 'contain',
+                  opacity: currentScreen === i ? 1 : 0,
+                  transition: reduceMotion ? 'none' : 'opacity 800ms ease',
+                  filter: 'drop-shadow(0 -10px 15px rgba(0,212,255,0.2)) drop-shadow(0 25px 35px rgba(232,160,144,0.4)) drop-shadow(0 15px 20px rgba(232,160,144,0.2))',
+                  animation: reduceMotion ? 'none' : 'phoneFloat 3s ease-in-out infinite',
+                }}
+              />
+            ))}
+            <div className="flex items-center gap-2" style={{ marginTop: '12px' }}>
+              {BOOST_SCREENS.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setCurrentScreen(i)}
+                  className={`h-3 w-3 rounded-full transition-colors ${currentScreen === i ? 'bg-[#00d4ff]' : 'bg-white/30 hover:bg-white/60'}`}
+                  aria-label={`Ver pantalla ${i + 1}`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
+      <style>{`@keyframes phoneFloat {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-12px); }
+        }`}</style>
     </section>
   )
 }

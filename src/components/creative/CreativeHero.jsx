@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
 import avatar from '../../assets/projects/avatar1.png'
 import avatar2 from '../../assets/projects/avatar2.png'
+import miawmiaw from '../../assets/muawmiaw.png'
 
 const STEP = 70
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]]
@@ -296,20 +297,20 @@ function CreativeHero() {
           </div>
         </div>
 
-        <div style={{ position: 'relative', width: '100%', height: '500px', marginTop: '100px' }}>
+        <div style={{ position: 'relative', width: '100%', height: 'auto', minHeight: '500px', marginTop: '40px' }}>
 
-          {/* Burbuja — posición absoluta arriba izquierda */}
+          {/* Burbuja */}
           <div style={{
             position: 'absolute',
             top: '0',
             left: '0',
-            maxWidth: '280px',
+            maxWidth: '220px',
             backgroundColor: 'rgba(0,212,255,0.08)',
             border: '1px solid rgba(0,212,255,0.3)',
             borderRadius: '12px',
-            padding: '10px 14px',
+            padding: '8px 12px',
             color: 'white',
-            fontSize: '9px',
+            fontSize: '8px',
             fontFamily: "'Press Start 2P', monospace",
             lineHeight: '2',
             zIndex: 2,
@@ -350,7 +351,7 @@ function CreativeHero() {
             </div>
           </div>
 
-          {/* Avatar — posición absoluta centrado abajo */}
+          {/* Avatar + MiawMiaw */}
           <div
             style={{
               position: 'absolute',
@@ -359,6 +360,7 @@ function CreativeHero() {
               transform: 'translateX(-50%)',
               maxWidth: '200px',
               width: '100%',
+              marginTop: 'auto',
             }}
           >
             <div style={{ position: 'relative', width: '100%' }}>
@@ -387,8 +389,37 @@ function CreativeHero() {
                   maxHeight: '100%',
                   opacity: avatarPhase === 2 ? 1 : 0,
                   transition: reduceMotion ? 'none' : 'opacity 800ms ease',
+                  filter: 'drop-shadow(0 -10px 20px rgba(0,212,255,0.2)) drop-shadow(0 30px 40px rgba(232,160,144,0.3))',
                 }}
               />
+
+              {/* MiawMiaw — más grande */}
+              <img
+                src={miawmiaw}
+                alt="MiawMiaw, la gata de Zoe"
+                style={{
+                  position: 'absolute',
+                  bottom: '-30px',
+                  right: '-80px',
+                  width: '170px',
+                  objectFit: 'contain',
+                  imageRendering: 'pixelated',
+                  filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.4))',
+                }}
+              />
+
+              {/* Sombra elíptica en el suelo */}
+              <div style={{
+                position: 'absolute',
+                bottom: '-10px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '80%',
+                height: '12px',
+                background: 'radial-gradient(ellipse, rgba(0,212,255,0.2) 0%, transparent 70%)',
+                borderRadius: '50%',
+                filter: 'blur(4px)',
+              }} />
             </div>
           </div>
         </div>
@@ -406,6 +437,10 @@ function CreativeHero() {
         @keyframes pixelReveal {
           from { opacity: 1; }
           to { opacity: 0; }
+        }
+        @keyframes phoneFloat {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
         }
       `}</style>
     </section>
