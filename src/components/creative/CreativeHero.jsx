@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
 import avatar from '../../assets/projects/avatar1.png'
 import avatar2 from '../../assets/projects/avatar2.png'
-import miawmiaw from '../../assets/muawmiaw.png'
+import miawmiaw from '../../assets/projects/miawmiaw.png'
 
 const STEP = 70
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]]
-const GREETING = '¡Hola! Bienvenid@ a mi portfolio. Soy Zoe, diseñadora UX/UI.'
+const GREETING = '¡Hola! Bienvenid@ a mi portfolio Creativo. Soy Zoe, diseñadora UX/UI y Frontend Developer.'
 const SECOND_GREETING = '¡Espero que disfrutes la experiencia! 🎮'
 const HEADLINE = 'Diseño experiencias digitales que conectan personas con tecnología.'
 const WORD_COLORS = ['#ffffff', '#00d4ff', '#e8a090']
@@ -84,7 +84,6 @@ function HeroCircuitCanvas({ reduceMotion }) {
       const n2 = circuit.nodes[p.si + 1]
       const x = n1.x + (n2.x - n1.x) * p.t
       const y = n1.y + (n2.y - n1.y) * p.t
-
       ctx.save()
       const glow = ctx.createRadialGradient(x, y, 0, x, y, 6)
       glow.addColorStop(0, 'rgba(0,212,255,0.8)')
@@ -124,23 +123,14 @@ function HeroCircuitCanvas({ reduceMotion }) {
       animId = requestAnimationFrame(tick)
     }
 
-    if (reduceMotion) {
-      drawFrame()
-    } else {
-      tick()
-    }
+    if (reduceMotion) { drawFrame() } else { tick() }
 
     const ro = new ResizeObserver(() => {
-      resize()
-      rebuildCircuits()
+      resize(); rebuildCircuits()
       if (reduceMotion) drawFrame()
     })
     ro.observe(canvas)
-
-    return () => {
-      cancelAnimationFrame(animId)
-      ro.disconnect()
-    }
+    return () => { cancelAnimationFrame(animId); ro.disconnect() }
   }, [reduceMotion])
 
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
@@ -149,19 +139,13 @@ function HeroCircuitCanvas({ reduceMotion }) {
 function useTypewriter(text, reduceMotion, speed = 35) {
   const chars = Array.from(text)
   const [count, setCount] = useState(() => (reduceMotion ? chars.length : 0))
-
   useEffect(() => {
     if (reduceMotion) return
     let i = 0
-    const id = setInterval(() => {
-      i++
-      setCount(i)
-      if (i >= chars.length) clearInterval(id)
-    }, speed)
+    const id = setInterval(() => { i++; setCount(i); if (i >= chars.length) clearInterval(id) }, speed)
     return () => clearInterval(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, reduceMotion, speed])
-
   return chars.slice(0, count).join('')
 }
 
@@ -171,26 +155,26 @@ function PixelAvatar({ src, alt, maxWidth, reduceMotion }) {
   const [cells] = useState(() =>
     Array.from({ length: PIXEL_GRID * PIXEL_GRID }, () => ({ delay: Math.random() * 1500 }))
   )
-
   return (
     <div style={{ position: 'relative', overflow: 'visible', width: '100%', maxWidth }}>
-      <img src={src} alt={alt} style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
+      <img src={src} alt={alt} style={{
+  width: '100%', display: 'block', objectFit: 'contain',
+  height: '300px',
+  filter: 'drop-shadow(0 -10px 20px rgba(0,212,255,0.2)) drop-shadow(0 30px 40px rgba(232,160,144,0.3))',
+}} />
       {!reduceMotion && cells.map((cell, i) => {
         const row = Math.floor(i / PIXEL_GRID)
         const col = i % PIXEL_GRID
         return (
-          <div
-            key={i}
-            style={{
-              position: 'absolute',
-              top: `${(row / PIXEL_GRID) * 100}%`,
-              left: `${(col / PIXEL_GRID) * 100}%`,
-              width: `${100 / PIXEL_GRID}%`,
-              height: `${100 / PIXEL_GRID}%`,
-              backgroundColor: '#050d1a',
-              animation: `pixelReveal 200ms ${cell.delay}ms forwards`,
-            }}
-          />
+          <div key={i} style={{
+            position: 'absolute',
+            top: `${(row / PIXEL_GRID) * 100}%`,
+            left: `${(col / PIXEL_GRID) * 100}%`,
+            width: `${100 / PIXEL_GRID}%`,
+            height: `${100 / PIXEL_GRID}%`,
+            backgroundColor: '#050d1a',
+            animation: `pixelReveal 200ms ${cell.delay}ms forwards`,
+          }} />
         )
       })}
     </div>
@@ -199,28 +183,16 @@ function PixelAvatar({ src, alt, maxWidth, reduceMotion }) {
 
 function FallingWordsHeading({ text, reduceMotion }) {
   const words = text.split(' ')
-
   return (
-    <h1
-      className="text-lg md:text-2xl lg:text-3xl leading-snug"
-      style={{ fontFamily: "'Press Start 2P', monospace" }}
-    >
+    <h1 className="text-lg md:text-2xl lg:text-3xl leading-snug" style={{ fontFamily: "'Press Start 2P', monospace" }}>
       {words.map((word, i) => (
-        <span
-          key={i}
-          style={{
-            display: 'inline-block',
-            marginRight: '0.4em',
-            color: WORD_COLORS[i % WORD_COLORS.length],
-            opacity: reduceMotion ? 1 : 0,
-            transform: reduceMotion ? 'none' : 'translateY(-120px)',
-            animation: reduceMotion
-              ? 'none'
-              : `wordFall 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${i * 120}ms forwards`,
-          }}
-        >
-          {word}
-        </span>
+        <span key={i} style={{
+          display: 'inline-block', marginRight: '0.4em',
+          color: WORD_COLORS[i % WORD_COLORS.length],
+          opacity: reduceMotion ? 1 : 0,
+          transform: reduceMotion ? 'none' : 'translateY(-120px)',
+          animation: reduceMotion ? 'none' : `wordFall 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${i * 120}ms forwards`,
+        }}>{word}</span>
       ))}
     </h1>
   )
@@ -249,199 +221,103 @@ function CreativeHero() {
   }
 
   return (
-    <section
-      id="hero"
-      lang={language}
-      data-mode={mode}
-      className="bg-[#050d1a] min-h-screen flex items-center relative overflow-hidden px-6"
+    <section id="hero" lang={language} data-mode={mode}
+      className="bg-[#050d1a] min-h-screen flex items-center relative overflow-visible px-6"
     >
       <HeroCircuitCanvas reduceMotion={reduceMotion} />
 
-      <div
-        className="z-10 w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start"
-        style={{
-          opacity: visible ? 1 : 0,
-          transition: reduceMotion ? 'none' : 'opacity 600ms ease',
-          paddingTop: '80px',
-          paddingBottom: '80px',
-        }}
+      <div className="z-10 w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start"
+        style={{ opacity: visible ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 600ms ease', paddingTop: '80px', paddingBottom: '80px' }}
       >
-        {/* Columna izquierda: contenido */}
+        {/* Columna izquierda */}
         <div className="flex flex-col items-start text-left gap-6">
           <p className="text-[#00d4ff] text-xs md:text-sm tracking-[4px] uppercase opacity-80">
             UX/UI Designer · Front-end · Accesibilidad
           </p>
-
           <FallingWordsHeading text={HEADLINE} reduceMotion={reduceMotion} />
-
           <div className="flex flex-col items-start gap-1">
             <p className="text-[#e8a090] text-base md:text-lg tracking-wide">Zoe Mejia Santana</p>
-            <p className="text-[#00d4ff] text-xs md:text-sm opacity-50">
-              Santiago, Chile · Disponible para trabajo remoto e híbrido
-            </p>
+            <p className="text-[#00d4ff] text-xs md:text-sm opacity-50">Santiago, Chile · Disponible para trabajo remoto e híbrido</p>
           </div>
-
           <div className="flex flex-wrap items-center gap-4 mt-2">
-            <button
-              onClick={() => scrollTo('projects')}
-              className="bg-[#e8a090] text-[#050d1a] font-semibold text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(232,160,144,0.5)]"
-            >
+            <button onClick={() => scrollTo('projects')}
+              className="bg-[#e8a090] text-[#050d1a] font-semibold text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(232,160,144,0.5)]">
               Ver proyectos
             </button>
-            <button
-              onClick={() => scrollTo('footer')}
-              className="border-2 border-[#e8a090] text-[#e8a090] text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-colors hover:bg-[#e8a090]/10"
-            >
+            <button onClick={() => scrollTo('footer')}
+              className="border-2 border-[#e8a090] text-[#e8a090] text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-colors hover:bg-[#e8a090]/10">
               Contacto
             </button>
           </div>
         </div>
 
+        {/* Columna derecha */}
         <div style={{ position: 'relative', width: '100%', height: 'auto', minHeight: '500px', marginTop: '40px' }}>
 
           {/* Burbuja */}
           <div style={{
-            position: 'absolute',
-            top: '0',
-            left: '0',
-            maxWidth: '220px',
-            backgroundColor: 'rgba(0,212,255,0.08)',
-            border: '1px solid rgba(0,212,255,0.3)',
-            borderRadius: '12px',
-            padding: '8px 12px',
-            color: 'white',
-            fontSize: '8px',
-            fontFamily: "'Press Start 2P', monospace",
-            lineHeight: '2',
-            zIndex: 2,
+            position: 'absolute', top: '0', left: '0', maxWidth: '220px',
+            backgroundColor: 'rgba(0,212,255,0.08)', border: '1px solid rgba(0,212,255,0.3)',
+            borderRadius: '12px', padding: '8px 12px', color: 'white',
+            fontSize: '8px', fontFamily: "'Press Start 2P', monospace", lineHeight: '2', zIndex: 2,
           }}>
-            <div style={{
-              opacity: avatarPhase === 2 ? 0 : 1,
-              transition: reduceMotion ? 'none' : 'opacity 800ms ease',
-            }}>
+            <div style={{ opacity: avatarPhase === 2 ? 0 : 1, transition: reduceMotion ? 'none' : 'opacity 800ms ease' }}>
               {typed}
-              <span style={{
-                display: 'inline-block',
-                width: '2px',
-                height: '1em',
-                backgroundColor: '#00d4ff',
-                marginLeft: '2px',
-                verticalAlign: 'text-bottom',
-                animation: reduceMotion ? 'none' : 'blink 1s step-end infinite',
-              }} />
+              <span style={{ display: 'inline-block', width: '2px', height: '1em', backgroundColor: '#00d4ff', marginLeft: '2px', verticalAlign: 'text-bottom', animation: reduceMotion ? 'none' : 'blink 1s step-end infinite' }} />
             </div>
-            <div style={{
-              position: 'absolute',
-              top: '10px',
-              left: '14px',
-              right: '14px',
-              opacity: avatarPhase === 2 ? 1 : 0,
-              transition: reduceMotion ? 'none' : 'opacity 800ms ease',
-            }}>
+            <div style={{ position: 'absolute', top: '10px', left: '14px', right: '14px', opacity: avatarPhase === 2 ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 800ms ease' }}>
               {SECOND_GREETING}
-              <span style={{
-                display: 'inline-block',
-                width: '2px',
-                height: '1em',
-                backgroundColor: '#00d4ff',
-                marginLeft: '2px',
-                verticalAlign: 'text-bottom',
-                animation: reduceMotion ? 'none' : 'blink 1s step-end infinite',
+              <span style={{ display: 'inline-block', width: '2px', height: '1em', backgroundColor: '#00d4ff', marginLeft: '2px', verticalAlign: 'text-bottom', animation: reduceMotion ? 'none' : 'blink 1s step-end infinite' }} />
+            </div>
+          </div>
+
+          {/* Avatar */}
+          <div style={{ position: 'absolute', bottom: '80px', left: '50%', transform: 'translateX(-50%)', maxWidth: '200px', width: '100%', overflow: 'visible' }}>
+            <div style={{ position: 'relative', width: '100%', overflow: 'visible' }}>
+              <div style={{ opacity: avatarPhase === 2 ? 0 : 1, transition: reduceMotion ? 'none' : 'opacity 800ms ease' }}>
+                <PixelAvatar src={avatar} alt="Avatar de Zoe Mejia Santana" maxWidth="200px" reduceMotion={reduceMotion} />
+              </div>
+              <img src={avatar2} alt="Avatar de Zoe Mejia Santana" style={{
+                position: 'absolute', top: 7, left: 11, width: '100%', maxWidth: '180px',height: '280px',
+                objectFit: 'contain', maxHeight: '100%',
+                opacity: avatarPhase === 2 ? 1 : 0,
+                transition: reduceMotion ? 'none' : 'opacity 800ms ease',
+                filter: 'drop-shadow(0 -10px 20px rgba(0,212,255,0.2)) drop-shadow(0 30px 40px rgba(232,160,144,0.3))',
+              }} />
+              {/* Sombra elíptica */}
+              <div style={{
+                position: 'absolute', bottom: '-10px', left: '50%', transform: 'translateX(-50%)',
+                width: '80%', height: '12px',
+                background: 'radial-gradient(ellipse, rgba(0,212,255,0.2) 0%, transparent 70%)',
+                borderRadius: '50%', filter: 'blur(4px)',
               }} />
             </div>
           </div>
 
-          {/* Avatar + MiawMiaw */}
-          <div
+          {/* MiawMiaw — dentro del div minHeight 500px */}
+          <img
+            src={miawmiaw}
+            alt="MiawMiaw, la gata de Zoe"
             style={{
               position: 'absolute',
-              bottom: '85px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              maxWidth: '200px',
-              width: '100%',
-              marginTop: 'auto',
+              bottom: '58px',
+              right: '90px',
+              width: '255px',
+              objectFit: 'contain',
+              imageRendering: 'pixelated',
+              filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.4))',
+              zIndex: 10,
             }}
-          >
-            <div style={{ position: 'relative', width: '100%' }}>
-              <div style={{
-                opacity: avatarPhase === 2 ? 0 : 1,
-                visibility: 'visible',
-                transition: reduceMotion ? 'none' : 'opacity 800ms ease',
-              }}>
-                <PixelAvatar
-                  src={avatar}
-                  alt="Avatar de Zoe Mejia Santana"
-                  maxWidth="200px"
-                  reduceMotion={reduceMotion}
-                />
-              </div>
-              <img
-                src={avatar2}
-                alt="Avatar de Zoe Mejia Santana"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  maxWidth: '190px',
-                  objectFit: 'contain',
-                  maxHeight: '100%',
-                  opacity: avatarPhase === 2 ? 1 : 0,
-                  transition: reduceMotion ? 'none' : 'opacity 800ms ease',
-                  filter: 'drop-shadow(0 -10px 20px rgba(0,212,255,0.2)) drop-shadow(0 30px 40px rgba(232,160,144,0.3))',
-                }}
-              />
+          />
 
-              {/* MiawMiaw — más grande */}
-              <img
-                src={miawmiaw}
-                alt="MiawMiaw, la gata de Zoe"
-                style={{
-                  position: 'absolute',
-                  bottom: '-30px',
-                  right: '-80px',
-                  width: '170px',
-                  objectFit: 'contain',
-                  imageRendering: 'pixelated',
-                  filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.4))',
-                }}
-              />
-
-              {/* Sombra elíptica en el suelo */}
-              <div style={{
-                position: 'absolute',
-                bottom: '-10px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '80%',
-                height: '12px',
-                background: 'radial-gradient(ellipse, rgba(0,212,255,0.2) 0%, transparent 70%)',
-                borderRadius: '50%',
-                filter: 'blur(4px)',
-              }} />
-            </div>
-          </div>
         </div>
       </div>
 
       <style>{`
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-        @keyframes wordFall {
-          from { opacity: 0; transform: translateY(-120px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pixelReveal {
-          from { opacity: 1; }
-          to { opacity: 0; }
-        }
-        @keyframes phoneFloat {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
-        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes wordFall { from { opacity: 0; transform: translateY(-120px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pixelReveal { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes phoneFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
       `}</style>
     </section>
   )

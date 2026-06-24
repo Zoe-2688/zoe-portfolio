@@ -275,7 +275,7 @@ function MagnifierMap({ reduceMotion }) {
 function CreativeDesignProcess() {
   const { reduceMotion } = usePortfolio()
   const [visible, setVisible] = useState(() => reduceMotion)
-  const titleChars = 'PROCESO'.split('')
+  const titleChars = 'PROCESO CREATIVO'.split('')
   const TITLE_COLORS = ['#e8a090', '#00d4ff', '#ffffff', '#e8a090', '#00d4ff', '#ffffff', '#e8a090']
 
   useEffect(() => {
@@ -315,7 +315,7 @@ function CreativeDesignProcess() {
               ))}
             </div>
           </div>
-          <p style={{ fontFamily: 'monospace', fontSize: '12px', color: 'rgba(255,255,255,0.4)', letterSpacing: '1px' }}>
+          <p style={{ fontFamily: 'monospace', fontSize: '12px', color: 'rgb(255, 255, 255)', letterSpacing: '1px' }}>
             // usa la lupa para explorar cada etapa del viaje →
           </p>
         </div>
