@@ -3,6 +3,7 @@ import Intro from './components/intro/Intro'
 import Hero from './components/hero/Hero'
 import CreativeHero from './components/creative/CreativeHero'
 import CreativeProjects from './components/creative/CreativeProjects'
+import CreativeDesignProcess from './components/creative/CreativeDesignProcess'
 import DesignProcess from './components/about/DesignProcess'
 import Projects from './components/projects/Projects'
 import AboutMe from './components/aboutme/AboutMe'
@@ -122,7 +123,7 @@ function App() {
           <div style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 500ms ease' }}>
             {mode === 'creative' ? <CreativeHero /> : <Hero />}
             {mode === 'professional' ? <Projects /> : <CreativeProjects />}
-            <DesignProcess />
+            {mode === 'professional' ? <DesignProcess /> : <CreativeDesignProcess />}
             <AboutMe />
             <Footer />
           </div>
