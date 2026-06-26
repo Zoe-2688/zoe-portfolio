@@ -4,6 +4,7 @@ import Hero from './components/hero/Hero'
 import CreativeHero from './components/creative/CreativeHero'
 import CreativeProjects from './components/creative/CreativeProjects'
 import CreativeDesignProcess from './components/creative/CreativeDesignProcess'
+import CreativeAboutMe from './components/creative/CreativeAboutMe'
 import DesignProcess from './components/about/DesignProcess'
 import Projects from './components/projects/Projects'
 import AboutMe from './components/aboutme/AboutMe'
@@ -124,7 +125,7 @@ function App() {
             {mode === 'creative' ? <CreativeHero /> : <Hero />}
             {mode === 'professional' ? <Projects /> : <CreativeProjects />}
             {mode === 'professional' ? <DesignProcess /> : <CreativeDesignProcess />}
-            <AboutMe />
+            {mode === 'professional' ? <AboutMe /> : <CreativeAboutMe />}
             <Footer />
           </div>
         </>
