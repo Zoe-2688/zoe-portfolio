@@ -9,11 +9,12 @@ const PROJECTS = [
     id: 'boost',
     image: boostImg,
     title: 'Boost',
-    description: 'App de Salud Cognitiva con IA e IoT',
-    longDescription: 'Rediseño de una app de juegos cognitivos a una plataforma de salud real, con IA e IoT. Flujo simplificado para dos perfiles (usuario y cuidador), pensado para personas con discapacidad cognitiva y adultos mayores.',
-    metric: 'Mejora del 34% en la tasa de finalización de tareas (IA + UX Heurísticas)',
+    description: 'Plataforma de Salud Cognitiva Inclusiva con IA e IoT',
+    longDescription: 'Rediseño UX/UI de una plataforma de salud cognitiva para adultos mayores, personas con discapacidad cognitiva y sus cuidadores. Integra IA para personalizar terapias y IoT para sincronizar un dispensador inteligente de medicación.',
+    metric: 'Mejora del 34% en tasa de finalización · WCAG 3/10 → 9/10',
     metricIcon: '💡',
-    tags: ['Figma', 'UX/UI', 'Accesibilidad', 'WCAG'],
+    tags: ['Figma', 'UX/UI', 'Accesibilidad', 'WCAG', 'IoT', 'IA'],
+    hasCaseStudy: true,
   },
   {
     id: 'johnny-rockets',
@@ -24,6 +25,7 @@ const PROJECTS = [
     metric: 'Diseño responsive con identidad americana y contexto chileno',
     metricIcon: '🇨🇱',
     tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
+    hasCaseStudy: false,
   },
   {
     id: 'flagship',
@@ -34,6 +36,7 @@ const PROJECTS = [
     metric: 'Diseño alineado a guías de marca y objetivos comerciales',
     metricIcon: '📘',
     tags: ['Figma', 'Canva', 'B2B'],
+    hasCaseStudy: false,
   },
 ]
 
@@ -66,8 +69,7 @@ function CircuitLines({ hovered, reduceMotion }) {
       viewBox="0 0 100 100"
       preserveAspectRatio="none"
       style={{
-        width: '100%',
-        height: '100%',
+        width: '100%', height: '100%',
         opacity: hovered ? 0.6 : 0.25,
         transition: reduceMotion ? 'none' : 'opacity 300ms ease',
       }}
@@ -80,12 +82,18 @@ function CircuitLines({ hovered, reduceMotion }) {
   )
 }
 
-function ProjectCard({ project, reduceMotion, isLarge = false }) {
+function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy }) {
   const [hovered, setHovered] = useState(false)
   const [cmdHovered, setCmdHovered] = useState(false)
 
   const imageHeight = isLarge ? 'h-80' : 'h-40'
   const titleSize = isLarge ? 'text-[20px]' : 'text-[11px]'
+
+  const handleVerCaso = () => {
+    if (project.hasCaseStudy) {
+      onOpenCaseStudy(project.id)
+    }
+  }
 
   return (
     <div
@@ -109,10 +117,7 @@ function ProjectCard({ project, reduceMotion, isLarge = false }) {
       </div>
 
       <div className="flex flex-col flex-1 gap-3 p-6">
-        <h3
-          className={`${titleSize} tracking-widest text-[#e8a090]`}
-          style={{ fontFamily: "'Press Start 2P', monospace" }}
-        >
+        <h3 className={`${titleSize} tracking-widest text-[#e8a090]`} style={{ fontFamily: "'Press Start 2P', monospace" }}>
           {project.title}
         </h3>
 
@@ -127,38 +132,24 @@ function ProjectCard({ project, reduceMotion, isLarge = false }) {
         )}
 
         {isLarge && project.metric && (
-          <div
-            className="flex items-start gap-2 rounded-md px-3 py-2 mt-1"
-            style={{ backgroundColor: 'rgba(232,160,144,0.08)', border: '1px solid rgba(232,160,144,0.2)' }}
-          >
+          <div className="flex items-start gap-2 rounded-md px-3 py-2 mt-1" style={{ backgroundColor: 'rgba(232,160,144,0.08)', border: '1px solid rgba(232,160,144,0.2)' }}>
             <span style={{ fontSize: '13px' }}>{project.metricIcon}</span>
-            <p className="text-[12px] text-[#e8a090] leading-snug" style={{ opacity: 0.9 }}>
-              {project.metric}
-            </p>
+            <p className="text-[12px] text-[#e8a090] leading-snug" style={{ opacity: 0.9 }}>{project.metric}</p>
           </div>
         )}
 
         {!isLarge && project.longDescription && (
-          <div
-            style={{
-              maxHeight: hovered ? '220px' : '0px',
-              opacity: hovered ? 1 : 0,
-              overflow: 'hidden',
-              transition: reduceMotion ? 'none' : 'max-height 350ms ease, opacity 300ms ease',
-            }}
-          >
-            <p className="text-[11px] text-white leading-relaxed" style={{ opacity: 0.8 }}>
-              {project.longDescription}
-            </p>
+          <div style={{
+            maxHeight: hovered ? '220px' : '0px',
+            opacity: hovered ? 1 : 0,
+            overflow: 'hidden',
+            transition: reduceMotion ? 'none' : 'max-height 350ms ease, opacity 300ms ease',
+          }}>
+            <p className="text-[11px] text-white leading-relaxed" style={{ opacity: 0.8 }}>{project.longDescription}</p>
             {project.metric && (
-              <div
-                className="flex items-start gap-2 rounded-md px-2.5 py-1.5 mt-2"
-                style={{ backgroundColor: 'rgba(232,160,144,0.08)', border: '1px solid rgba(232,160,144,0.2)' }}
-              >
+              <div className="flex items-start gap-2 rounded-md px-2.5 py-1.5 mt-2" style={{ backgroundColor: 'rgba(232,160,144,0.08)', border: '1px solid rgba(232,160,144,0.2)' }}>
                 <span style={{ fontSize: '11px' }}>{project.metricIcon}</span>
-                <p className="text-[10px] text-[#e8a090] leading-snug" style={{ opacity: 0.9 }}>
-                  {project.metric}
-                </p>
+                <p className="text-[10px] text-[#e8a090] leading-snug" style={{ opacity: 0.9 }}>{project.metric}</p>
               </div>
             )}
           </div>
@@ -182,6 +173,7 @@ function ProjectCard({ project, reduceMotion, isLarge = false }) {
           style={{ fontFamily: 'monospace', fontSize: '18px', fontWeight: 600, marginTop: '1rem' }}
           onMouseEnter={() => setCmdHovered(true)}
           onMouseLeave={() => setCmdHovered(false)}
+          onClick={handleVerCaso}
         >
           <span style={{ transition: reduceMotion ? 'none' : 'color 200ms ease', color: cmdHovered ? '#e8a090' : '#00d4ff' }}>
             <span style={{
@@ -204,7 +196,7 @@ function ProjectCard({ project, reduceMotion, isLarge = false }) {
   )
 }
 
-function Projects() {
+function Projects({ onOpenCaseStudy }) {
   const { reduceMotion } = usePortfolio()
   const [visible, setVisible] = useState(() => reduceMotion)
 
@@ -220,26 +212,22 @@ function Projects() {
         className="max-w-6xl mx-auto flex flex-col gap-12"
         style={{ opacity: visible ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 600ms ease' }}
       >
-        {/* Título modo profesional — mayúsculas con tracking */}
         <div className="flex flex-col items-center text-center gap-2">
           <p className="text-[#00d4ff] text-xs tracking-[4px] uppercase opacity-80">Casos de estudio</p>
-          <h2
-            className="text-white font-semibold"
-            style={{ fontSize: '2.5rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}
-          >
+          <h2 className="text-white font-semibold" style={{ fontSize: '2.5rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
             Proyectos
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8" style={{ gridAutoRows: '1fr' }}>
           <div className="h-full md:col-span-2 md:row-span-2">
-            <ProjectCard project={PROJECTS[0]} reduceMotion={reduceMotion} isLarge />
+            <ProjectCard project={PROJECTS[0]} reduceMotion={reduceMotion} isLarge onOpenCaseStudy={onOpenCaseStudy} />
           </div>
           <div className="h-full">
-            <ProjectCard project={PROJECTS[1]} reduceMotion={reduceMotion} />
+            <ProjectCard project={PROJECTS[1]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} />
           </div>
           <div className="h-full">
-            <ProjectCard project={PROJECTS[2]} reduceMotion={reduceMotion} />
+            <ProjectCard project={PROJECTS[2]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} />
           </div>
         </div>
       </div>

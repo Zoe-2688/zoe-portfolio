@@ -13,6 +13,7 @@ import WhatsAppButton from './components/shared/WhatsAppButton'
 import CustomCursor from './components/shared/CustomCursor'
 import ScrollProgress from './components/shared/ScrollProgress'
 import { usePortfolio } from './context/PortfolioContext'
+import BoostCaseStudy from './components/projects/BoostCaseStudy'
 
 function A11yIcon() {
   return (
@@ -44,14 +45,12 @@ function Toggle({ checked, onChange, label }) {
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={`relative w-9 h-5 rounded-full border transition-colors duration-200 flex-shrink-0 ${
-          checked ? 'bg-[#00d4ff]/20 border-[#00d4ff]' : 'bg-transparent border-[#00d4ff]/30'
-        }`}
+        className={`relative w-9 h-5 rounded-full border transition-colors duration-200 flex-shrink-0 ${checked ? 'bg-[#00d4ff]/20 border-[#00d4ff]' : 'bg-transparent border-[#00d4ff]/30'
+          }`}
       >
         <span
-          className={`toggle-thumb absolute top-0.5 left-0.5 w-4 h-4 rounded-full transition-transform duration-200 ${
-            checked ? 'translate-x-4 bg-[#00d4ff]' : 'translate-x-0 bg-white/30'
-          }`}
+          className={`toggle-thumb absolute top-0.5 left-0.5 w-4 h-4 rounded-full transition-transform duration-200 ${checked ? 'translate-x-4 bg-[#00d4ff]' : 'translate-x-0 bg-white/30'
+            }`}
         />
       </button>
     </label>
@@ -99,6 +98,7 @@ function A11yPanel() {
 function App() {
   const { highContrast, largeText, reduceMotion, mode } = usePortfolio()
   const [contentVisible, setContentVisible] = useState(false)
+  const [activeCaseStudy, setActiveCaseStudy] = useState(null)
 
   useEffect(() => {
     const root = document.documentElement
@@ -123,16 +123,22 @@ function App() {
           <CustomCursor />
           <div style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 500ms ease' }}>
             {mode === 'creative' ? <CreativeHero /> : <Hero />}
-            {mode === 'professional' ? <Projects /> : <CreativeProjects />}
+            {mode === 'professional'
+              ? <Projects onOpenCaseStudy={setActiveCaseStudy} />
+              : <CreativeProjects onOpenCaseStudy={setActiveCaseStudy} />
+            }
             {mode === 'professional' ? <DesignProcess /> : <CreativeDesignProcess />}
             {mode === 'professional' ? <AboutMe /> : <CreativeAboutMe />}
             <Footer />
           </div>
         </>
+        
       )}
-      {mode && <WhatsAppButton />}
+  {mode && <WhatsAppButton />}
+      {activeCaseStudy === 'boost' && (
+        <BoostCaseStudy onClose={() => setActiveCaseStudy(null)} />
+      )}
     </main>
   )
 }
-
 export default App

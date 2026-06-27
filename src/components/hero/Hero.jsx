@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
 import boostHome from '../../assets/projects/homescreen2.png'
-import boostGames from '../../assets/projects/gamescreen.png'
+import boostGames from '../../assets/projects/GamesScreen.png'
 import boostAdherence from '../../assets/projects/adherencescreen.png'
 import boostAccessibility from '../../assets/projects/accesibilityscreen.png'
 
