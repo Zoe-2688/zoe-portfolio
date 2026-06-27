@@ -62,7 +62,7 @@ function A11yPanel() {
   const [a11yOpen, setA11yOpen] = useState(false)
 
   return (
-    <div className="fixed top-6 right-6 z-50 flex flex-col-reverse items-end gap-2">
+    <div className="fixed top-6 right-6 z-[1100] flex flex-col-reverse items-end gap-2">
       {a11yOpen && (
         <div className="w-56 bg-[#050d1a] border border-[#00d4ff]/20 p-4 flex flex-col gap-3">
           <div className="flex items-center justify-between mb-1">

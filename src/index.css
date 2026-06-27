@@ -122,3 +122,6 @@ html {
   margin-left: 2px;
   font-weight: 300;
 }
+.high-contrast .boost-case-study {
+  background-color: #000 !important;
+}

@@ -1,5 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
+import { FaWhatsapp } from 'react-icons/fa'
+import { MdHome, MdKeyboardArrowUp } from 'react-icons/md'
+
+function A11yIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <circle cx="12" cy="4.5" r="2" fill="currentColor" />
+      <path d="M12 7v7.5M6.5 10.5h11M12 14.5l-3 5.5M12 14.5l3 5.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  )
+}
 
 import boostOverview from '../../assets/projects/BoostProjectOverview.png'
 import boostStructure from '../../assets/projects/Appstructure.png'
@@ -462,6 +473,8 @@ function Separador({ titulo }) {
 
 function BoostCaseStudy({ onClose }) {
   const { reduceMotion } = usePortfolio()
+  const containerRef = useRef(null)
+  const [showScroll, setShowScroll] = useState(false)
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -469,12 +482,54 @@ function BoostCaseStudy({ onClose }) {
     return () => { document.body.style.overflow = '' }
   }, [])
 
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+    const handleScroll = () => setShowScroll(container.scrollTop > 300)
+    container.addEventListener('scroll', handleScroll)
+    return () => container.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollToTop = () => containerRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+
+  const WHATSAPP = 'https://wa.me/56989774690'
+
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 1000, backgroundColor: '#050d1a', overflowY: 'auto', fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
+    <div ref={containerRef} className="boost-case-study" style={{ position: 'fixed', inset: 0, zIndex: 1000, backgroundColor: '#050d1a', overflowY: 'auto', fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
       {/* Circuitos de fondo en toda la página */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
         <CircuitCanvas reduceMotion={reduceMotion} />
       </div>
+
+      {/* Botones flotantes */}
+      {showScroll && (
+        <div style={{
+          position: 'fixed', bottom: '32px', right: '24px', zIndex: 50,
+          display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center',
+        }}>
+          {/* Subir */}
+          <button onClick={scrollToTop} title="Ir al inicio"
+            style={{ width: '44px', height: '44px', borderRadius: '50%', border: '1px solid rgba(0,212,255,0.4)', backgroundColor: 'rgba(5,13,26,0.9)', backdropFilter: 'blur(8px)', color: '#00d4ff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 200ms', boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(0,212,255,0.15)'; e.currentTarget.style.boxShadow = '0 0 16px rgba(0,212,255,0.3)' }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(5,13,26,0.9)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.3)' }}>
+            <MdKeyboardArrowUp size={24} />
+          </button>
+          {/* Volver a proyectos */}
+          <button onClick={onClose} title="Volver a proyectos"
+            style={{ width: '44px', height: '44px', borderRadius: '50%', border: '1px solid rgba(232,160,144,0.4)', backgroundColor: 'rgba(5,13,26,0.9)', backdropFilter: 'blur(8px)', color: '#e8a090', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 200ms', boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(232,160,144,0.15)'; e.currentTarget.style.boxShadow = '0 0 16px rgba(232,160,144,0.3)' }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(5,13,26,0.9)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.3)' }}>
+            <MdHome size={22} />
+          </button>
+          {/* WhatsApp */}
+          <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" title="WhatsApp"
+            style={{ width: '44px', height: '44px', borderRadius: '50%', border: '1px solid rgba(37,211,102,0.4)', backgroundColor: 'rgba(5,13,26,0.9)', backdropFilter: 'blur(8px)', color: '#25d366', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 200ms', boxShadow: '0 4px 16px rgba(0,0,0,0.3)', textDecoration: 'none' }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(37,211,102,0.15)'; e.currentTarget.style.boxShadow = '0 0 16px rgba(37,211,102,0.3)' }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(5,13,26,0.9)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.3)' }}>
+            <FaWhatsapp size={22} />
+          </a>
+        </div>
+      )}
 
       {/* Header sticky */}
       <div style={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: 'rgba(5,13,26,0.96)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(0,212,255,0.1)', padding: '14px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -487,7 +542,7 @@ function BoostCaseStudy({ onClose }) {
           <span style={{ color: 'rgba(255,255,255,0.15)' }}>|</span>
           <span style={{ fontSize: '13px', fontWeight: 600, color: '#F29251', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Boost</span>
         </div>
-        <a href="https://www.figma.com/proto/stYvd6qZJqLqMWupuM2dEt/Boost?node-id=223-2266"
+        <a href="https://www.figma.com/proto/stYvd6qZJqLqMWupuM2dEt/Boost?node-id=223-2266" target="_blank" rel="noopener noreferrer"
           style={{ fontSize: '12px', color: '#e8a090', border: '1px solid rgba(232,160,144,0.4)', padding: '7px 16px', textDecoration: 'none', fontFamily: 'monospace', transition: 'all 200ms', letterSpacing: '0.5px' }}
           onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(232,160,144,0.1)'; e.currentTarget.style.borderColor = '#e8a090' }}
           onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.borderColor = 'rgba(232,160,144,0.4)' }}>
