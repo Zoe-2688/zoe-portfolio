@@ -1,13 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
+import es from '../../locales/es'
+import en from '../../locales/en'
 import boostHome from '../../assets/projects/homescreen2.png'
-import boostGames from '../../assets/projects/GamesScreen.png'
+import boostGames from '../../assets/projects/gameScreenMockup.png'
 import boostAdherence from '../../assets/projects/adherencescreen.png'
+import boostDispenser from '../../assets/projects/smartDispenserMockup.png'
 import boostAccessibility from '../../assets/projects/accesibilityscreen.png'
 
 const STEP = 70
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]]
-const BOOST_SCREENS = [boostHome, boostGames, boostAdherence, boostAccessibility]
+const BOOST_SCREENS = [boostHome, boostGames, boostAdherence, boostDispenser, boostAccessibility]
+const SMALL_INDEXES = new Set([1, 3])
 
 function buildCircuits(w, h) {
   const circuits = []
@@ -146,6 +150,7 @@ function HeroCircuitCanvas({ reduceMotion }) {
 
 function Hero() {
   const { mode, language, reduceMotion } = usePortfolio()
+  const t = language === 'en' ? en : es
   const [visible, setVisible] = useState(() => reduceMotion)
   const [currentScreen, setCurrentScreen] = useState(0)
 
@@ -182,17 +187,17 @@ function Hero() {
       >
         <div className="flex flex-col items-start text-left gap-6">
           <p className="text-[#00d4ff] text-xs md:text-sm tracking-[4px] uppercase opacity-80">
-            UX/UI Designer · Front-end · Accesibilidad
+            {t.hero.tag}
           </p>
 
           <h1 className="text-white text-2xl md:text-4xl lg:text-5xl font-semibold leading-snug">
-            Diseño experiencias digitales que conectan personas con tecnología.
+            {t.hero.title}
           </h1>
 
           <div className="flex flex-col items-start gap-1 mt-2">
-            <p className="text-[#e8a090] text-base md:text-lg tracking-wide">Zoe Mejia Santana</p>
+            <p className="text-[#e8a090] text-base md:text-lg tracking-wide">{t.hero.name}</p>
             <p className="text-[#00d4ff] text-xs md:text-sm opacity-50">
-              Santiago, Chile · Disponible para trabajo remoto e híbrido
+              {t.hero.location}
             </p>
           </div>
 
@@ -201,13 +206,13 @@ function Hero() {
               onClick={() => scrollTo('projects')}
               className="bg-[#e8a090] text-[#050d1a] font-semibold text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(232,160,144,0.5)]"
             >
-              Ver proyectos
+              {t.hero.btnProjects}
             </button>
             <button
               onClick={() => scrollTo('contact')}
               className="border-2 border-[#e8a090] text-[#e8a090] text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-colors hover:bg-[#e8a090]/10"
             >
-              Contacto
+              {t.hero.btnContact}
             </button>
           </div>
         </div>
@@ -221,8 +226,8 @@ function Hero() {
                 alt={`Boost pantalla ${i + 1}`}
                 style={{
                   position: i === 0 ? 'relative' : 'absolute',
-                  width: '100%',
-                  maxWidth: '460px',
+                  width: SMALL_INDEXES.has(i) ? '45%' : '100%',
+                  maxWidth: SMALL_INDEXES.has(i) ? '210px' : '460px',
                   objectFit: 'contain',
                   opacity: currentScreen === i ? 1 : 0,
                   transition: reduceMotion ? 'none' : 'opacity 800ms ease',

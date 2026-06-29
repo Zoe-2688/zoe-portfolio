@@ -14,6 +14,7 @@ const PROJECTS = [
     metric: 'Mejora del 34% en la tasa de finalización de tareas (IA + UX Heurísticas)',
     metricIcon: '💡',
     tags: ['Figma', 'UX/UI', 'Accesibilidad', 'WCAG'],
+    hasCaseStudy: true,
   },
   {
     id: 'johnny-rockets',
@@ -70,12 +71,18 @@ function CircuitLines({ hovered, reduceMotion }) {
   )
 }
 
-function ProjectCard({ project, reduceMotion, isLarge = false }) {
+function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy }) {
   const [hovered, setHovered] = useState(false)
   const [cmdHovered, setCmdHovered] = useState(false)
 
   const imageHeight = isLarge ? 'h-80' : 'h-40'
   const titleSize = isLarge ? 'text-[20px]' : 'text-[11px]'
+
+  const handleVerCaso = () => {
+    if (project.hasCaseStudy && onOpenCaseStudy) {
+      onOpenCaseStudy(project.id)
+    }
+  }
 
   return (
     <div
@@ -148,10 +155,12 @@ function ProjectCard({ project, reduceMotion, isLarge = false }) {
           })}
         </div>
 
-        <div className="self-start mt-auto cursor-pointer"
+        <div
+          className="self-start mt-auto cursor-pointer"
           style={{ fontFamily: 'monospace', fontSize: '18px', fontWeight: 600, marginTop: '1rem' }}
           onMouseEnter={() => setCmdHovered(true)}
           onMouseLeave={() => setCmdHovered(false)}
+          onClick={handleVerCaso}
         >
           <span style={{ transition: reduceMotion ? 'none' : 'color 200ms ease', color: cmdHovered ? '#e8a090' : '#00d4ff' }}>
             <span style={{
@@ -172,7 +181,7 @@ function ProjectCard({ project, reduceMotion, isLarge = false }) {
   )
 }
 
-function CreativeProjects() {
+function CreativeProjects({ onOpenCaseStudy }) {
   const { reduceMotion } = usePortfolio()
   const [visible, setVisible] = useState(() => reduceMotion)
   const titleChars = 'PROYECTOS'.split('')
@@ -192,8 +201,6 @@ function CreativeProjects() {
         <div className="flex flex-col items-center text-center gap-3">
           <p className="text-[#00d4ff] text-xs tracking-[4px] uppercase opacity-80">Casos de estudio</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-
-            {/* Flechas izquierda pulsantes */}
             <div style={{ display: 'flex', fontFamily: "'Press Start 2P', monospace", fontSize: '14px', color: '#00d4ff' }}>
               {['<', '<', '<'].map((char, j) => (
                 <span key={j} style={{
@@ -202,15 +209,11 @@ function CreativeProjects() {
                 }}>{char}</span>
               ))}
             </div>
-
-            {/* Título pixel art con colores alternados */}
             <h2 style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 'clamp(1.2rem, 3vw, 2rem)', lineHeight: 1.4 }}>
               {titleChars.map((char, i) => (
                 <span key={i} style={{ color: TITLE_COLORS[i % TITLE_COLORS.length] }}>{char}</span>
               ))}
             </h2>
-
-            {/* Flechas derecha pulsantes */}
             <div style={{ display: 'flex', fontFamily: "'Press Start 2P', monospace", fontSize: '14px', color: '#00d4ff' }}>
               {['>', '>', '>'].map((char, j) => (
                 <span key={j} style={{
@@ -224,13 +227,13 @@ function CreativeProjects() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8" style={{ gridAutoRows: '1fr' }}>
           <div className="h-full md:col-span-2 md:row-span-2">
-            <ProjectCard project={PROJECTS[0]} reduceMotion={reduceMotion} isLarge />
+            <ProjectCard project={PROJECTS[0]} reduceMotion={reduceMotion} isLarge onOpenCaseStudy={onOpenCaseStudy} />
           </div>
           <div className="h-full">
-            <ProjectCard project={PROJECTS[1]} reduceMotion={reduceMotion} />
+            <ProjectCard project={PROJECTS[1]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} />
           </div>
           <div className="h-full">
-            <ProjectCard project={PROJECTS[2]} reduceMotion={reduceMotion} />
+            <ProjectCard project={PROJECTS[2]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} />
           </div>
         </div>
       </div>

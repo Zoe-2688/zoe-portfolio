@@ -25,7 +25,7 @@ const PROJECTS = [
     metric: 'Diseño responsive con identidad americana y contexto chileno',
     metricIcon: '🇨🇱',
     tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
-    hasCaseStudy: false,
+    hasCaseStudy: true,
   },
   {
     id: 'flagship',
@@ -36,7 +36,7 @@ const PROJECTS = [
     metric: 'Diseño alineado a guías de marca y objetivos comerciales',
     metricIcon: '📘',
     tags: ['Figma', 'Canva', 'B2B'],
-    hasCaseStudy: false,
+    hasCaseStudy: true,
   },
 ]
 

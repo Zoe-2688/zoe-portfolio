@@ -14,25 +14,14 @@ import CustomCursor from './components/shared/CustomCursor'
 import ScrollProgress from './components/shared/ScrollProgress'
 import { usePortfolio } from './context/PortfolioContext'
 import BoostCaseStudy from './components/projects/BoostCaseStudy'
+import FlagshipCaseStudy from './components/projects/FlagshipCaseStudy'
+import JohnnyRocketsCaseStudy from './components/projects/JohnnyRocketsCaseStudy'
 
 function A11yIcon() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width="24"
-      height="24"
-      aria-hidden="true"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
       <circle cx="12" cy="4.5" r="2" fill="currentColor" />
-      <path
-        d="M12 7v7.5M6.5 10.5h11M12 14.5l-3 5.5M12 14.5l3 5.5"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
+      <path d="M12 7v7.5M6.5 10.5h11M12 14.5l-3 5.5M12 14.5l3 5.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
     </svg>
   )
 }
@@ -45,20 +34,16 @@ function Toggle({ checked, onChange, label }) {
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={`relative w-9 h-5 rounded-full border transition-colors duration-200 flex-shrink-0 ${checked ? 'bg-[#00d4ff]/20 border-[#00d4ff]' : 'bg-transparent border-[#00d4ff]/30'
-          }`}
+        className={`relative w-9 h-5 rounded-full border transition-colors duration-200 flex-shrink-0 ${checked ? 'bg-[#00d4ff]/20 border-[#00d4ff]' : 'bg-transparent border-[#00d4ff]/30'}`}
       >
-        <span
-          className={`toggle-thumb absolute top-0.5 left-0.5 w-4 h-4 rounded-full transition-transform duration-200 ${checked ? 'translate-x-4 bg-[#00d4ff]' : 'translate-x-0 bg-white/30'
-            }`}
-        />
+        <span className={`toggle-thumb absolute top-0.5 left-0.5 w-4 h-4 rounded-full transition-transform duration-200 ${checked ? 'translate-x-4 bg-[#00d4ff]' : 'translate-x-0 bg-white/30'}`} />
       </button>
     </label>
   )
 }
 
 function A11yPanel() {
-  const { highContrast, setHighContrast, largeText, setLargeText, reduceMotion, setReduceMotion } = usePortfolio()
+  const { highContrast, setHighContrast, largeText, setLargeText, reduceMotion, setReduceMotion, language, setLanguage } = usePortfolio()
   const [a11yOpen, setA11yOpen] = useState(false)
 
   return (
@@ -80,9 +65,25 @@ function A11yPanel() {
           <Toggle checked={highContrast} onChange={setHighContrast} label="Alto contraste" />
           <Toggle checked={largeText} onChange={setLargeText} label="Texto grande" />
           <Toggle checked={reduceMotion} onChange={setReduceMotion} label="Reducir animaciones" />
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-white/70 text-[11px] tracking-[1px] uppercase">Idioma</span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setLanguage('es')}
+                className={`text-[11px] px-2 py-1 rounded transition-colors ${language === 'es' ? 'bg-[#00d4ff] text-[#050d1a] font-bold' : 'text-white/50 hover:text-white'}`}
+              >
+                ES
+              </button>
+              <button
+                onClick={() => setLanguage('en')}
+                className={`text-[11px] px-2 py-1 rounded transition-colors ${language === 'en' ? 'bg-[#00d4ff] text-[#050d1a] font-bold' : 'text-white/50 hover:text-white'}`}
+              >
+                EN
+              </button>
+            </div>
+          </div>
         </div>
       )}
-
       <button
         onClick={() => setA11yOpen((prev) => !prev)}
         aria-label="Opciones de accesibilidad"
@@ -132,11 +133,16 @@ function App() {
             <Footer />
           </div>
         </>
-        
       )}
-  {mode && <WhatsAppButton />}
+      {mode && <WhatsAppButton />}
       {activeCaseStudy === 'boost' && (
         <BoostCaseStudy onClose={() => setActiveCaseStudy(null)} />
+      )}
+      {activeCaseStudy === 'flagship' && (
+        <FlagshipCaseStudy onClose={() => setActiveCaseStudy(null)} />
+      )}
+      {activeCaseStudy === 'johnny-rockets' && (
+        <JohnnyRocketsCaseStudy onClose={() => setActiveCaseStudy(null)} />
       )}
     </main>
   )
