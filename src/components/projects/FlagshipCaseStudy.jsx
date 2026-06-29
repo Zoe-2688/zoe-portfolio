@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useWindowWidth, isMobile, isTablet } from '../../hooks/useWindowWidth'
 import { usePortfolio } from '../../context/PortfolioContext'
 import { FaWhatsapp } from 'react-icons/fa'
 import { MdHome, MdKeyboardArrowUp } from 'react-icons/md'
@@ -147,6 +148,9 @@ function VideoSection({ src, title, desc }) {
 function FlagshipCaseStudy({ onClose }) {
   const { reduceMotion, language } = usePortfolio()
   const isEn = language === 'en'
+  const w = useWindowWidth()
+  const mob = isMobile(w)
+  const tab = isTablet(w)
   const containerRef = useRef(null)
   const [showScroll, setShowScroll] = useState(false)
 
@@ -195,7 +199,7 @@ function FlagshipCaseStudy({ onClose }) {
       )}
 
       {/* Header */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: C.bg+'f5', backdropFilter: 'blur(12px)', borderBottom: `1px solid ${C.primary}1a`, padding: '14px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: C.bg+'f5', backdropFilter: 'blur(12px)', borderBottom: `1px solid ${C.primary}1a`, padding: mob ? '12px 16px' : '14px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'color 200ms', fontFamily: 'monospace' }} onMouseEnter={e => { e.currentTarget.style.color=C.primary }} onMouseLeave={e => { e.currentTarget.style.color='rgba(255,255,255,0.45)' }}>
             {isEn ? 'Back to projects' : 'Volver a proyectos'}
@@ -210,7 +214,7 @@ function FlagshipCaseStudy({ onClose }) {
 
       {/* HERO */}
       <div style={{ position: 'relative', overflow: 'hidden', borderBottom: `1px solid ${C.primary}14`, zIndex: 1 }}>
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1280px', margin: '0 auto', padding: '64px 32px', display: 'grid', gridTemplateColumns: '0.85fr 1.5fr', gap: '48px', alignItems: 'center' }}>
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1280px', margin: '0 auto', padding: mob ? '40px 20px' : '64px 32px', display: 'grid', gridTemplateColumns: mob ? '1fr' : '0.85fr 1.5fr', gap: mob ? '32px' : '48px', alignItems: 'center' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
             <p style={{ fontFamily: 'monospace', fontSize: '11px', color: C.primary, letterSpacing: '3px', textTransform: 'uppercase', opacity: 0.6, margin: 0 }}>
               {isEn ? 'Case Study · UX/UI · B2B · Upwork' : 'Caso de Estudio · UX/UI · B2B · Upwork'}
@@ -220,7 +224,7 @@ function FlagshipCaseStudy({ onClose }) {
               {isEn ? 'Landing Page + Digital Strategy for B2B Digital Signage platform' : 'Landing Page + Estrategia Digital para plataforma de Digital Signage B2B'}
             </p>
             <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', fontStyle: 'italic', lineHeight: 1.7, margin: 0, borderLeft: `2px solid ${C.primary}4d`, paddingLeft: '12px' }}>
-              {isEn ? '"The client asked for a PDF brochure — I proposed and delivered an interactive landing + three demo videos. The client used it for their sales presentations."' : '"El cliente pedía un folleto PDF — propuse y entregué una landing interactiva + tres videos demo. Lo usó para sus presentaciones de ventas."'}
+              {isEn ? '"The brief asked for a PDF brochure — I proposed and delivered an interactive landing + three demo videos. The client used it for their sales presentations."' : '"El brief pedía un folleto PDF — propuse y entregué una landing interactiva + tres videos demo. El cliente la usó para sus presentaciones de ventas."'}
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>{TAGS.map(t => <Tag key={t} label={t} />)}</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>{METRICAS.map(m => <MetricaCard key={m.label} valor={m.valor} label={m.label} />)}</div>
@@ -233,7 +237,7 @@ function FlagshipCaseStudy({ onClose }) {
       </div>
 
       {/* CONTENIDO */}
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '56px 32px 80px', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: '960px', margin: '0 auto', padding: mob ? '32px 16px 60px' : '56px 32px 80px', position: 'relative', zIndex: 1 }}>
 
         <Separador titulo={isEn ? 'The Project' : 'El Proyecto'} />
 
@@ -242,7 +246,7 @@ function FlagshipCaseStudy({ onClose }) {
           <SectionText>
             {isEn ? 'Flagship CMS needed to modernize its comparative brochure to compete in the SaaS market. My research revealed that competitors used interactive digital resources, while Flagship relied on static PDFs. I proposed a comprehensive solution: redesign the brochure and create a landing page + promotional videos to boost their communication.' : 'Flagship CMS necesitaba modernizar su folleto comparativo para competir en el mercado SaaS. Mi investigación reveló que los competidores usaban recursos digitales interactivos, mientras que Flagship dependía de PDFs estáticos. Propuse una solución integral: rediseñar el folleto y crear una landing page + videos promocionales para potenciar su comunicación.'}
           </SectionText>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
             {(isEn ? [
               { nombre: 'SimpleCTRL', icono: '🔁', desc: 'Looping playlists. Simple setup. Experience without learning curve.' },
               { nombre: 'ShowCTRL', icono: '🎛️', desc: 'Dynamic content with drag-and-drop. Widget/Canvas for interactive screens and video walls.' },
@@ -272,7 +276,7 @@ function FlagshipCaseStudy({ onClose }) {
           <SectionText>
             {isEn ? 'The existing brochure had dense design with low visual hierarchy — uniform text without emphasis on key advantages. The static format (PDF) fell short of competitors already using digital resources. The real risk: communication did not reflect the product\'s innovation.' : 'El folleto existente tenía diseño denso con baja jerarquía visual — texto uniforme sin énfasis en ventajas clave. El formato estático (PDF) quedaba por debajo de los competidores que ya usaban recursos digitales. El riesgo real: la comunicación no reflejaba la innovación del producto.'}
           </SectionText>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
             <div style={{ backgroundColor: `${C.primary}06`, border: `1px solid ${C.primary}1f`, borderRadius: '8px', padding: '16px' }}>
               <p style={{ fontSize: '12px', fontWeight: 700, color: C.light, margin: '0 0 12px 0', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'monospace' }}>🚨 {isEn ? 'Original brochure problems' : 'Problemas del folleto original'}</p>
               {(isEn ? ['Low visual hierarchy — uniform text without emphasis', 'Static format (PDF) vs. digital competitors', 'No interactivity or multimedia resources', 'Communication did not reflect product innovation'] : ['Baja jerarquía visual — texto uniforme sin énfasis', 'Formato estático (PDF) vs. competidores digitales', 'Sin interactividad ni recursos multimedia', 'La comunicación no reflejaba la innovación del producto']).map(item => (
@@ -299,7 +303,7 @@ function FlagshipCaseStudy({ onClose }) {
           <SectionText>
             {isEn ? 'I discovered 3 hidden opportunities: users did not retain technical data in PDF format, sales teams needed scannable resources, and the brand was losing credibility by not reflecting innovation. I didn\'t just modernize — I redefined the visual communication.' : 'Descubrí 3 oportunidades ocultas: los usuarios no retenían datos técnicos en formato PDF, los equipos de ventas necesitaban recursos escaneables, y la marca perdía credibilidad al no reflejar innovación. No solo modernicé — redefiní la comunicación visual.'}
           </SectionText>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : 'repeat(2, 1fr)', gap: '12px' }}>
             {(isEn ? [
               { icon: '🔍', rol: 'Initial Analysis', desc: 'Identified that users didn\'t retain technical data in PDF and sales teams needed scannable resources. The brand was losing credibility.' },
               { icon: '🎨', rol: 'Visual Redesign', desc: 'Reformulated the design to highlight key points organizing information clearly. Incorporated modern visual elements that convey trust and innovation.' },
@@ -389,7 +393,7 @@ function FlagshipCaseStudy({ onClose }) {
           <SectionText>
             {isEn ? 'The landing communicates Flagship\'s value in seconds: hero with direct CTA ("Get Started" + "Try a Demo"), the three solutions presented as comparative cards, and an expandable "Learn More" section that dives deeper into when to use each platform and the installation process — without leaving the page.' : 'La landing comunica el valor de Flagship en segundos: hero con CTA directo ("Get Started" + "Try a Demo"), las tres soluciones presentadas como cards comparativas, y una sección expandible "Learn More" que profundiza en cuándo usar cada plataforma y el proceso de instalación — sin salir de la página.'}
           </SectionText>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: '20px', alignItems: 'start' }}>
             <div>
               <p style={{ fontFamily: 'monospace', fontSize: '11px', color: 'rgba(255,255,255,0.35)', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 10px 0' }}>// {isEn ? 'Main view' : 'Vista principal'}</p>
               <img src={flagshipPrototype} alt="Flagship Landing — main view" style={{ width: '100%', borderRadius: '10px', border: `1px solid ${C.primary}33`, boxShadow: '0 12px 40px rgba(0,0,0,0.4)' }} />
@@ -427,7 +431,7 @@ function FlagshipCaseStudy({ onClose }) {
 
         <div style={{ marginBottom: '40px' }}>
           <SectionTitle numero={9} titulo={isEn ? 'Project Results' : 'Resultados del Proyecto'} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: '10px', marginBottom: '24px' }}>
             {(isEn ? [
               { num: '3×', label: 'Engagement opportunities', desc: 'Landing + videos + PDF = complete ecosystem' },
               { num: '+4', label: 'Deliverables produced', desc: '1 landing + 3 videos + 1 redesigned PDF' },
@@ -454,7 +458,7 @@ function FlagshipCaseStudy({ onClose }) {
 
         <div style={{ backgroundColor: `${C.primary}06`, border: `1px solid ${C.primary}1f`, borderRadius: '12px', padding: '28px', marginBottom: '48px' }}>
           <p style={{ fontFamily: 'monospace', fontSize: '10px', color: C.primary, letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 20px 0' }}>// {isEn ? 'Key Learnings' : 'Aprendizajes Clave'}</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : tab ? 'repeat(2, 1fr)' : '1fr 1fr 1fr', gap: '20px' }}>
             {(isEn ? [
               { title: '🧠 Strategic thinking', text: 'I identified the need for videos and landing before the client did. The PDF was the deliverable — but the landing was the real solution. Proposing that difference required confidence and clarity.' },
               { title: '🎬 SaaS B2B multimedia', text: 'Mastery of B2B resource creation: videos + interactive PDFs + navigable prototypes. Each format serves a specific function in the sales cycle.' },

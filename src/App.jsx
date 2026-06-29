@@ -19,76 +19,95 @@ import JohnnyRocketsCaseStudy from './components/projects/JohnnyRocketsCaseStudy
 
 function A11yIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      aria-hidden="true"
+    >
       <circle cx="12" cy="4.5" r="2" fill="currentColor" />
-      <path d="M12 7v7.5M6.5 10.5h11M12 14.5l-3 5.5M12 14.5l3 5.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path
+        d="M12 7v7.5M6.5 10.5h11M12 14.5l-3 5.5M12 14.5l3 5.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
     </svg>
   )
 }
 
 function Toggle({ checked, onChange, label }) {
+  const handleKey = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onChange(!checked) }
+  }
   return (
     <label className="flex items-center justify-between gap-4 cursor-pointer select-none">
-      <span className="text-white/70 text-[11px] tracking-[1px] uppercase">{label}</span>
+      <span className="text-white/70 text-[11px] tracking-[1px] uppercase" id={`toggle-${label}`}>{label}</span>
       <button
         role="switch"
         aria-checked={checked}
+        aria-labelledby={`toggle-${label}`}
         onClick={() => onChange(!checked)}
-        className={`relative w-9 h-5 rounded-full border transition-colors duration-200 flex-shrink-0 ${checked ? 'bg-[#00d4ff]/20 border-[#00d4ff]' : 'bg-transparent border-[#00d4ff]/30'}`}
+        onKeyDown={handleKey}
+        className={`relative w-9 h-5 rounded-full border transition-colors duration-200 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-[#00d4ff] focus:ring-offset-2 focus:ring-offset-[#050d1a] ${checked ? 'bg-[#00d4ff]/20 border-[#00d4ff]' : 'bg-transparent border-[#00d4ff]/30'}`}
       >
-        <span className={`toggle-thumb absolute top-0.5 left-0.5 w-4 h-4 rounded-full transition-transform duration-200 ${checked ? 'translate-x-4 bg-[#00d4ff]' : 'translate-x-0 bg-white/30'}`} />
+        <span
+          className={`toggle-thumb absolute top-0.5 left-0.5 w-4 h-4 rounded-full transition-transform duration-200 ${checked ? 'translate-x-4 bg-[#00d4ff]' : 'translate-x-0 bg-white/30'}`}
+        />
       </button>
     </label>
   )
 }
 
 function A11yPanel() {
-  const { highContrast, setHighContrast, largeText, setLargeText, reduceMotion, setReduceMotion, language, setLanguage } = usePortfolio()
+  const { highContrast, setHighContrast, largeText, setLargeText, reduceMotion, setReduceMotion, language } = usePortfolio()
   const [a11yOpen, setA11yOpen] = useState(false)
+  const isEn = language === 'en'
+
+  const handleKeyBtn = (e) => {
+    if (e.key === 'Escape') setA11yOpen(false)
+  }
 
   return (
-    <div className="fixed top-6 right-6 z-[1100] flex flex-col-reverse items-end gap-2">
+    <div className="fixed top-6 right-6 z-[1100] flex flex-col-reverse items-end gap-2" onKeyDown={handleKeyBtn}>
       {a11yOpen && (
-        <div className="w-56 bg-[#050d1a] border border-[#00d4ff]/20 p-4 flex flex-col gap-3">
+        <div
+          className="w-56 bg-[#050d1a] border border-[#00d4ff]/20 p-4 flex flex-col gap-3"
+          role="dialog"
+          aria-label={isEn ? 'Accessibility options' : 'Opciones de accesibilidad'}
+        >
+          <div aria-live="polite" aria-atomic="true" className="sr-only">
+            {highContrast ? (isEn ? 'High contrast on' : 'Alto contraste activado') : ''}
+            {largeText ? (isEn ? 'Large text on' : 'Texto grande activado') : ''}
+            {reduceMotion ? (isEn ? 'Reduced motion on' : 'Animaciones reducidas') : ''}
+          </div>
           <div className="flex items-center justify-between mb-1">
             <p className="text-[#00d4ff] text-[10px] tracking-[3px] uppercase opacity-60">
-              Accesibilidad
+              {isEn ? 'Accessibility' : 'Accesibilidad'}
             </p>
             <button
               onClick={() => setA11yOpen(false)}
-              aria-label="Cerrar opciones de accesibilidad"
-              className="text-white/40 hover:text-white/80 transition-colors text-xs leading-none"
+              aria-label={isEn ? 'Close accessibility options' : 'Cerrar opciones de accesibilidad'}
+              className="text-white/40 hover:text-white/80 transition-colors text-xs leading-none focus:outline-none focus:ring-1 focus:ring-[#00d4ff]"
             >
               ✕
             </button>
           </div>
-          <Toggle checked={highContrast} onChange={setHighContrast} label="Alto contraste" />
-          <Toggle checked={largeText} onChange={setLargeText} label="Texto grande" />
-          <Toggle checked={reduceMotion} onChange={setReduceMotion} label="Reducir animaciones" />
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-white/70 text-[11px] tracking-[1px] uppercase">Idioma</span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setLanguage('es')}
-                className={`text-[11px] px-2 py-1 rounded transition-colors ${language === 'es' ? 'bg-[#00d4ff] text-[#050d1a] font-bold' : 'text-white/50 hover:text-white'}`}
-              >
-                ES
-              </button>
-              <button
-                onClick={() => setLanguage('en')}
-                className={`text-[11px] px-2 py-1 rounded transition-colors ${language === 'en' ? 'bg-[#00d4ff] text-[#050d1a] font-bold' : 'text-white/50 hover:text-white'}`}
-              >
-                EN
-              </button>
-            </div>
-          </div>
+          <Toggle checked={highContrast} onChange={setHighContrast} label={isEn ? 'High contrast' : 'Alto contraste'} />
+          <Toggle checked={largeText} onChange={setLargeText} label={isEn ? 'Large text' : 'Texto grande'} />
+          <Toggle checked={reduceMotion} onChange={setReduceMotion} label={isEn ? 'Reduce motion' : 'Reducir animaciones'} />
         </div>
       )}
+
       <button
         onClick={() => setA11yOpen((prev) => !prev)}
-        aria-label="Opciones de accesibilidad"
+        aria-label={isEn ? 'Accessibility options' : 'Opciones de accesibilidad'}
         aria-expanded={a11yOpen}
-        className={`a11y-btn ${a11yOpen ? 'opacity-100' : 'opacity-60'}`}
+        aria-haspopup="dialog"
+        className={`a11y-btn focus:outline-none focus:ring-2 focus:ring-[#00d4ff] focus:ring-offset-2 focus:ring-offset-[#050d1a] ${a11yOpen ? 'opacity-100' : 'opacity-60'}`}
       >
         <A11yIcon />
       </button>
@@ -133,8 +152,9 @@ function App() {
             <Footer />
           </div>
         </>
+        
       )}
-      {mode && <WhatsAppButton />}
+  {mode && <WhatsAppButton />}
       {activeCaseStudy === 'boost' && (
         <BoostCaseStudy onClose={() => setActiveCaseStudy(null)} />
       )}

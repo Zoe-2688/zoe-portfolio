@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useWindowWidth, isMobile, isTablet } from '../../hooks/useWindowWidth'
 import { usePortfolio } from '../../context/PortfolioContext'
 import { FaWhatsapp } from 'react-icons/fa'
 import { MdHome, MdKeyboardArrowUp } from 'react-icons/md'
@@ -317,6 +318,9 @@ function DisenoVisual({ isEn }) {
 function BoostCaseStudy({ onClose }) {
   const { reduceMotion, language } = usePortfolio()
   const isEn = language === 'en'
+  const w = useWindowWidth()
+  const mob = isMobile(w)
+  const tab = isTablet(w)
   const METRICAS = getMetricas(isEn)
   const containerRef = useRef(null)
   const [showScroll, setShowScroll] = useState(false)
@@ -512,7 +516,7 @@ function BoostCaseStudy({ onClose }) {
       )}
 
       {/* Header */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: 'rgba(5,13,26,0.96)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(0,212,255,0.1)', padding: '14px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: 'rgba(5,13,26,0.96)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(0,212,255,0.1)', padding: mob ? '12px 16px' : '14px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'color 200ms', fontFamily: 'monospace' }} onMouseEnter={e => { e.currentTarget.style.color = '#00d4ff' }} onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.45)' }}>
             {isEn ? 'Back to projects' : 'Volver a proyectos'}
@@ -527,7 +531,7 @@ function BoostCaseStudy({ onClose }) {
 
       {/* HERO */}
       <div style={{ position: 'relative', overflow: 'hidden', borderBottom: '1px solid rgba(0,212,255,0.08)', zIndex: 1 }}>
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1280px', margin: '0 auto', padding: '64px 32px', display: 'grid', gridTemplateColumns: '0.85fr 1.5fr', gap: '48px', alignItems: 'center' }}>
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1280px', margin: '0 auto', padding: mob ? '40px 20px' : '64px 32px', display: 'grid', gridTemplateColumns: mob ? '1fr' : '0.85fr 1.5fr', gap: mob ? '32px' : '48px', alignItems: 'center' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
             <p style={{ fontFamily: 'monospace', fontSize: '11px', color: '#00d4ff', letterSpacing: '3px', textTransform: 'uppercase', opacity: 0.6, margin: 0 }}>{isEn ? 'Case Study · UX/UI · HealthTech' : 'Caso de Estudio · UX/UI · HealthTech'}</p>
             <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 700, color: '#F29251', margin: 0, lineHeight: 1.1 }}>BOOST</h1>
@@ -546,7 +550,7 @@ function BoostCaseStudy({ onClose }) {
       </div>
 
       {/* CONTENIDO */}
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '56px 32px 80px', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: '960px', margin: '0 auto', padding: mob ? '32px 16px 60px' : '56px 32px 80px', position: 'relative', zIndex: 1 }}>
 
         <Separador titulo={isEn ? 'Project Introduction' : 'Introducción al Proyecto'} />
 
@@ -558,7 +562,7 @@ function BoostCaseStudy({ onClose }) {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}>
             {publicoObj.map(p => <span key={p} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', backgroundColor: 'rgba(242,146,81,0.08)', border: '1px solid rgba(242,146,81,0.2)', borderRadius: '20px', padding: '4px 12px' }}>{p}</span>)}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : tab ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: '12px' }}>
             {features.map(item => (
               <div key={item.titulo} style={{ backgroundColor: 'rgba(0,212,255,0.04)', border: '1px solid rgba(0,212,255,0.12)', borderRadius: '8px', padding: '16px' }}>
                 <span style={{ fontSize: '24px', display: 'block', marginBottom: '8px' }}>{item.icon}</span>
@@ -571,7 +575,7 @@ function BoostCaseStudy({ onClose }) {
 
         <div style={{ marginBottom: '40px' }}>
           <SectionTitle numero={2} titulo={isEn ? 'The Problem' : 'El Problema'} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '32px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : 'repeat(2, 1fr)', gap: '12px', marginBottom: '32px' }}>
             {problemas.map(g => (
               <div key={g.cat} style={{ backgroundColor: 'rgba(242,146,81,0.04)', border: '1px solid rgba(242,146,81,0.15)', borderRadius: '8px', padding: '16px' }}>
                 <p style={{ fontSize: '12px', fontWeight: 700, color: g.color, margin: '0 0 10px 0', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'monospace' }}>{g.cat}</p>
@@ -587,7 +591,7 @@ function BoostCaseStudy({ onClose }) {
           <p style={{ fontFamily: 'monospace', fontSize: '11px', color: 'rgba(255,255,255,0.4)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '16px' }}>
             {isEn ? '// Original version vs Redesign' : '// Versión original vs Rediseño'}
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: '24px' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                 <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#F29251' }} />
@@ -629,7 +633,7 @@ function BoostCaseStudy({ onClose }) {
 
         <div style={{ marginBottom: '40px' }}>
           <SectionTitle numero={3} titulo={isEn ? 'My Role and Approach' : 'Mi Rol y Enfoque'} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : 'repeat(2, 1fr)', gap: '12px' }}>
             {roles.map(r => (
               <div key={r.titulo} style={{ backgroundColor: 'rgba(0,212,255,0.03)', border: '1px solid rgba(0,212,255,0.12)', borderRadius: '8px', padding: '16px' }}>
                 <p style={{ fontSize: '13px', fontWeight: 700, color: 'white', margin: '0 0 10px 0' }}>{r.icon} {r.titulo}</p>
@@ -767,7 +771,7 @@ function BoostCaseStudy({ onClose }) {
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#346BB1' }} />
               <p style={{ fontSize: '13px', fontWeight: 700, color: '#346BB1', margin: 0, fontFamily: 'monospace', letterSpacing: '1px', textTransform: 'uppercase' }}>Carmen — {isEn ? 'Goal: Improve her quality of life' : 'Objetivo: Mejorar su condición de vida'}</p>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : tab ? 'repeat(3, 1fr)' : 'repeat(5, 1fr)', gap: '8px' }}>
               {carmenJourney.map((paso, i) => (
                 <div key={i} style={{ backgroundColor: 'rgba(0,0,0,0.3)', border: `1px solid ${paso.color}40`, borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -792,7 +796,7 @@ function BoostCaseStudy({ onClose }) {
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#F29251' }} />
               <p style={{ fontSize: '13px', fontWeight: 700, color: '#F29251', margin: 0, fontFamily: 'monospace', letterSpacing: '1px', textTransform: 'uppercase' }}>Marcos — {isEn ? 'Goal: Know if his mother is okay and took her medication' : 'Objetivo: Saber si su madre está bien y tomó su medicación'}</p>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : tab ? 'repeat(3, 1fr)' : 'repeat(5, 1fr)', gap: '8px' }}>
               {marcosJourney.map((paso, i) => (
                 <div key={i} style={{ backgroundColor: 'rgba(0,0,0,0.3)', border: `1px solid ${paso.color}40`, borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -863,7 +867,7 @@ function BoostCaseStudy({ onClose }) {
           <SectionText>{isEn ? 'I started from low-fidelity wireframes to validate structure before applying the visual system. The before/after of the Home Screen shows the evolution: from a disorganized menu to a clear visual hierarchy with quick access and visible progress at first glance.' : 'Partí de wireframes de baja fidelidad para validar la estructura antes de aplicar el sistema visual. El before/after de la Home Screen muestra la evolución: de un menú desorganizado a una jerarquía visual clara con accesos rápidos y progreso visible a primera vista.'}</SectionText>
           <img src={boostWireframe} alt="Wireframe vs Prototype" style={{ width: '100%', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '16px', display: 'block' }} />
           <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace', textAlign: 'center', marginBottom: '12px' }}>// {isEn ? 'Registration flow — Account Registration User Flow' : 'Flujo de registro — Account Registration User Flow'}</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: '32px', alignItems: 'start' }}>
             <img src={boostUserFlow} alt="Registration User Flow" style={{ width: '100%', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.06)' }} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {wireframePoints.map(p => (
@@ -905,7 +909,7 @@ function BoostCaseStudy({ onClose }) {
 
         <div style={{ marginBottom: '40px' }}>
           <SectionTitle numero={14} titulo={isEn ? 'Profile — User and Partner' : 'Perfil — Usuario y Partner'} />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '32px', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1.4fr', gap: '32px', alignItems: 'start' }}>
             <img src={boostProfile} alt="Boost Profile" style={{ width: '100%', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.75)', lineHeight: 1.85, margin: 0 }}>
@@ -940,7 +944,7 @@ function BoostCaseStudy({ onClose }) {
           <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.9, margin: '0 0 16px 0' }}>
             {isEn ? 'I also researched the global impact of cognitive decline — today one of the fastest-growing public health problems — and expanded the scope to include parents of children with special needs who require regular medication.' : 'También investigué el impacto del deterioro cognitivo a nivel mundial — hoy es uno de los problemas de salud pública más crecientes — y amplié el alcance para incluir padres con hijos con necesidades especiales que requieren medicación regular.'}
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : 'repeat(3, 1fr)', gap: '12px' }}>
             {researchCards.map(item => (
               <div key={item.dato} style={{ backgroundColor: 'rgba(242,146,81,0.06)', borderRadius: '8px', padding: '14px' }}>
                 <span style={{ fontSize: '20px', display: 'block', marginBottom: '6px' }}>{item.icon}</span>
@@ -954,7 +958,7 @@ function BoostCaseStudy({ onClose }) {
         <div style={{ marginBottom: '40px' }}>
           <SectionTitle numero={15} titulo={isEn ? 'UX Detail — Empty State Messages' : 'Detalle UX — Mensajes de Estado Vacío'} />
           <SectionText>{isEn ? 'A key accessibility detail was designing clear messages for when the user has no registered data yet. This reduces confusion and guides the next action — especially important for seniors with little technological experience.' : 'Un detalle de accesibilidad clave fue diseñar mensajes claros para cuando el usuario aún no tiene datos registrados. Esto reduce la confusión y guía la acción siguiente — especialmente importante para adultos mayores con poca experiencia tecnológica.'}</SectionText>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : 'repeat(2, 1fr)', gap: '12px' }}>
             {emptyStates.map(m => (
               <div key={m.pantalla} style={{ backgroundColor: 'rgba(0,212,255,0.03)', border: '1px solid rgba(0,212,255,0.1)', borderRadius: '8px', padding: '14px' }}>
                 <p style={{ fontFamily: 'monospace', fontSize: '10px', color: '#00d4ff', margin: '0 0 8px 0', letterSpacing: '1px', textTransform: 'uppercase' }}>{m.pantalla}</p>
@@ -990,7 +994,7 @@ function BoostCaseStudy({ onClose }) {
         <div style={{ marginBottom: '40px' }}>
           <SectionTitle numero={17} titulo={isEn ? 'Usability Study' : 'Estudio de Usabilidad'} />
           <SectionText>{isEn ? 'I conducted an unmoderated usability study with 5 participants in Chile and the Dominican Republic (remote), 30 to 50 minutes each session. The findings directly impacted the redesign.' : 'Realicé un estudio de usabilidad no moderado con 5 participantes en Chile y República Dominicana (remoto), de 30 a 50 minutos cada sesión. Los hallazgos impactaron directamente en el rediseño.'}</SectionText>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : 'repeat(3, 1fr)', gap: '12px', marginBottom: '20px' }}>
             {[{ num: '5', label: isEn ? 'Participants' : 'Participantes' }, { num: '2', label: isEn ? 'Countries' : 'Países' }, { num: '30-50 min', label: isEn ? 'Per session' : 'Por sesión' }].map(s => (
               <div key={s.label} style={{ backgroundColor: 'rgba(0,212,255,0.04)', border: '1px solid rgba(0,212,255,0.15)', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
                 <p style={{ fontSize: '1.6rem', fontWeight: 700, color: '#00d4ff', margin: '0 0 4px 0' }}>{s.num}</p>
@@ -1001,7 +1005,7 @@ function BoostCaseStudy({ onClose }) {
           <p style={{ fontFamily: 'monospace', fontSize: '11px', color: 'rgba(255,255,255,0.4)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '12px' }}>// {isEn ? 'Findings and applied changes' : 'Hallazgos y cambios aplicados'}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {usabilityFindings.map(f => (
-              <div key={f.hallazgo} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', padding: '14px' }}>
+              <div key={f.hallazgo} style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: '12px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', padding: '14px' }}>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <span style={{ color: '#F29251', fontSize: '12px', flexShrink: 0 }}>✕</span>
                   <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', margin: 0, lineHeight: 1.5 }}>{f.hallazgo}</p>
@@ -1017,7 +1021,7 @@ function BoostCaseStudy({ onClose }) {
 
         <div style={{ backgroundColor: 'rgba(0,212,255,0.03)', border: '1px solid rgba(0,212,255,0.12)', borderRadius: '12px', padding: '28px', marginBottom: '48px' }}>
           <p style={{ fontFamily: 'monospace', fontSize: '10px', color: '#00d4ff', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 20px 0' }}>// {isEn ? 'Learnings' : 'Aprendizajes'}</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: '24px' }}>
             <div>
               <p style={{ fontSize: '13px', fontWeight: 700, color: 'white', margin: '0 0 10px 0' }}>💡 {isEn ? 'Impact' : 'Impacto'}</p>
               <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, margin: 0 }}>

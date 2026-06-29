@@ -429,9 +429,19 @@ function Intro() {
 
             {/* Selector de idioma */}
             <div className="flex gap-4 items-center" style={{ width: 'fit-content', margin: '0 auto' }}>
-              <button onClick={() => setLanguage('es')} className={`text-xs tracking-[2px] uppercase transition-all ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}>ES</button>
-              <span className="text-white/20">·</span>
-              <button onClick={() => setLanguage('en')} className={`text-xs tracking-[2px] uppercase transition-all ${language === 'en' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}>EN</button>
+              <button
+                onClick={() => setLanguage('es')}
+                aria-pressed={language === 'es'}
+                aria-label="Cambiar idioma a Español"
+                className={`text-xs tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
+              >ES</button>
+              <span className="text-white/20" aria-hidden="true">·</span>
+              <button
+                onClick={() => setLanguage('en')}
+                aria-pressed={language === 'en'}
+                aria-label="Switch language to English"
+                className={`text-xs tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] ${language === 'en' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
+              >EN</button>
             </div>
           </div>
         </div>
