@@ -63,7 +63,7 @@ function Toggle({ checked, onChange, label }) {
 }
 
 function A11yPanel() {
-  const { highContrast, setHighContrast, largeText, setLargeText, reduceMotion, setReduceMotion, language } = usePortfolio()
+  const { highContrast, setHighContrast, largeText, setLargeText, reduceMotion, setReduceMotion, language, setLanguage } = usePortfolio()
   const [a11yOpen, setA11yOpen] = useState(false)
   const isEn = language === 'en'
 
@@ -96,6 +96,28 @@ function A11yPanel() {
               ✕
             </button>
           </div>
+
+          {/* Language switcher */}
+          <div className="flex items-center justify-between">
+            <span className="text-white/70 text-[11px] tracking-[1px] uppercase">{isEn ? 'Language' : 'Idioma'}</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setLanguage('es')}
+                aria-pressed={language === 'es'}
+                aria-label="Cambiar a Español"
+                className={`text-[11px] tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-1 ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
+              >ES</button>
+              <span className="text-white/20 text-[10px]">·</span>
+              <button
+                onClick={() => setLanguage('en')}
+                aria-pressed={language === 'en'}
+                aria-label="Switch to English"
+                className={`text-[11px] tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-1 ${language === 'en' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
+              >EN</button>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 pt-1" />
           <Toggle checked={highContrast} onChange={setHighContrast} label={isEn ? 'High contrast' : 'Alto contraste'} />
           <Toggle checked={largeText} onChange={setLargeText} label={isEn ? 'Large text' : 'Texto grande'} />
           <Toggle checked={reduceMotion} onChange={setReduceMotion} label={isEn ? 'Reduce motion' : 'Reducir animaciones'} />
