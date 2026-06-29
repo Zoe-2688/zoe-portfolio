@@ -322,7 +322,7 @@ function JohnnyRocketsCaseStudy({ onClose }) {
               {METRICAS.map((m) => <MetricaCard key={m.label} valor={m.valor} label={m.label} />)}
             </div>
           </div>
-          <div style={{ position: 'relative', backgroundColor: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
+          <div style={{ position: 'relative', backgroundColor: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
             <style>{`
               @keyframes jrFloat {
                 0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -339,7 +339,7 @@ function JohnnyRocketsCaseStudy({ onClose }) {
             <img src={jrHeroImg} alt="Johnny Rockets Chile Redesign"
               style={{
                 position: 'relative', zIndex: 1,
-                width: '100%',
+                width: '130%',
                 height: 'auto',
                 display: 'block',
                 maskImage: 'radial-gradient(ellipse 75% 75% at 50% 50%, black 40%, transparent 100%)',

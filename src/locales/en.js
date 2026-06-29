@@ -1,4 +1,15 @@
 const en = {
+  intro: {
+    quote: 'Good design is',
+    chooseLabel: 'Choose how you want to know me',
+    professional: 'Professional',
+    professionalSub: 'Process and results',
+    professionalTooltip: 'Design process, case studies and results',
+    creative: 'Creative',
+    creativeSub: 'Interactive experience',
+    creativeTooltip: 'Interactive experience with animations and my story',
+    rotatingWords: ['felt', 'lived', 'used', 'remembered', 'shared'],
+  },
   hero: {
     tag: 'UX/UI Designer · Front-end · Accessibility',
     title: 'I design digital experiences that connect people with technology.',
@@ -6,7 +17,114 @@ const en = {
     location: 'Santiago, Chile · Available for remote and hybrid work',
     btnProjects: 'View projects',
     btnContact: 'Contact',
-  }
+  },
+  projects: {
+    tag: 'Case studies',
+    title: 'Projects',
+    verCaso: '// view_case',
+    boost: {
+      description: 'Inclusive Cognitive Health Platform with AI & IoT',
+      longDescription: 'UX/UI redesign of a cognitive health platform for older adults, people with cognitive disabilities and their caregivers. Integrates AI to personalize therapies and IoT to sync a smart medication dispenser.',
+      metric: '34% improvement in completion rate · WCAG 3/10 → 9/10',
+    },
+    johnnyRockets: {
+      description: 'Web Redesign + Front-end',
+      longDescription: 'UX/UI redesign + front-end development of the national landing page, integrating clear navigation and cultural elements like Chilean national holidays. Improved accessibility and emotional connection with local users.',
+      metric: 'Responsive design with American identity and Chilean context',
+    },
+    flagship: {
+      description: 'Landing Page + Digital Strategy',
+      longDescription: 'The brief asked for a PDF brochure — I proposed and designed an interactive landing page + promotional videos, identifying that the static format did not communicate the product\'s innovation.',
+      metric: 'Design aligned with brand guidelines and commercial objectives',
+    },
+  },
+  designProcess: {
+    tag: 'My process',
+    title: 'Design Process',
+    subtitle: 'For me, design is not just about creating attractive interfaces, but functional solutions that reflect the essence of the brand and prioritize user needs.',
+    phases: [
+      {
+        phase: 'Phase 1',
+        phaseLabel: 'Exploration',
+        blocks: [
+          { label: '// analysis', text: 'I start with a deep analysis of users, market and competition, identifying key needs, behaviors and opportunities.' },
+          { label: '// user connection', text: 'I conduct interviews, surveys and direct observations to understand user needs, emotions and frustrations.' },
+        ],
+      },
+      {
+        phase: 'Phase 2',
+        phaseLabel: 'Main Challenge',
+        blocks: [
+          { label: '// synthesis', text: 'I synthesize data to identify key challenges and set clear objectives that will guide the design.' },
+          { label: '// gaps & needs', text: 'I detect gaps in existing solutions and unmet needs.' },
+          { label: '// wireframing', text: 'I start transforming ideas into wireframes, organizing the basic structure of the interface.' },
+        ],
+      },
+      {
+        phase: 'Phase 3',
+        phaseLabel: 'Building the World',
+        blocks: [
+          { label: '// interactive prototype', text: 'I convert wireframes into interactive prototypes, adding interactions, colors and visual details.' },
+          { label: '// user testing', text: 'I conduct tests with real users to gather feedback and identify potential issues.' },
+          { label: '// final documentation', text: 'I compile all final resources — designs, technical documentation and implementation guides.' },
+        ],
+      },
+    ],
+    creative: {
+      title: 'CREATIVE PROCESS',
+      hint: '// use the magnifier to explore each stage of the journey →',
+      mapTexts: [
+      { id: 'investigacion', emoji: '🗺️', title: 'Research & Brainstorming', text: 'I analyze users, market and competition to identify design opportunities.' },
+      { id: 'empatizar', emoji: '💬', title: 'Empathize', text: 'I listen to real users. Empathy is the compass of good UX design.' },
+      { id: 'definir', emoji: '🎯', title: 'Define the Problem', text: 'I clearly define the challenges and objectives that will guide the design.' },
+      { id: 'oportunidades', emoji: '🔍', title: 'Identify Opportunities', text: 'I find unmet needs. This is where the value proposition is born.' },
+      { id: 'wireframes', emoji: '✏️', title: 'Wireframes', text: 'I design the structure and flow of the interface before adding visual details.' },
+      { id: 'prototipo', emoji: '🎨', title: 'Create Prototypes', text: 'Wireframes come to life with real interactions and colors.' },
+      { id: 'probar', emoji: '🧪', title: 'Test & Validate', text: 'The prototype reaches real users to gather feedback and adjust the design.' },
+      { id: 'entrega', emoji: '🏆', title: 'Delivery', text: 'Mission complete! Designs, documentation and design system ready. Now a ☕🥐' },
+    ],
+    },
+  },
+  aboutMe: {
+    tag: 'About me',
+    title: 'About me',
+    skillsTag: 'Stack & Skills',
+    skillsTitle: 'Skills',
+    bio1: 'Hi, I\'m Zoe. I design digital experiences and also enjoy understanding how they\'re built. That\'s why I move between UX/UI and front-end, combining design, accessibility and technology to create clearer, more useful and human products.',
+    bio2: 'My path to design hasn\'t been linear. I\'ve worked with people from different countries, learned from very different fields and discovered that the best solutions often come from listening, observing and staying curious even when things seem difficult.',
+    bio3: 'I like to learn, experiment and find ways to simplify the complex. I enjoy helping people through design and creating experiences that feel close, accessible and easy to use.',
+    quote: '"I believe technology should adapt to people, not the other way around."',
+    creative: {
+      tag: 'About me',
+      title: 'MY STORY',
+      subtitle: '// a story of art, technology and coffee ☕',
+      narratorLabel: 'Meet the narrator ;)',
+      adventure: '⚔ THE ADVENTURE ⚔',
+      inventory: '⚔ UNLOCKED INVENTORY ⚔',
+      inventorySubtitle: '// skills acquired throughout the journey',
+      youtubeBtn: 'Watch my animated story →',
+      youtubeSubtitle: '// concept, script, art direction & production — all made by me',
+      poderes: [
+        { nombre: 'User-centered design', nivel: 75 },
+        { nombre: 'Creative problem solving', nivel: 87 },
+        { nombre: 'Coffee lover', nivel: 100 },
+        { nombre: 'Magic front-end', nivel: 60 },
+        { nombre: 'Epic illustration & graphic design', nivel: 78 },
+      ],
+      capitulos: [
+        { titulo: '', texto: '' },
+        { titulo: 'The Tropical Island', texto: 'My journey began on a tropical island, where the sun and warm days were my first stage. From a young age, I was always fascinated by art, especially drawing, and that marked the beginning of my creative adventure.' },
+        { titulo: 'Battle of Castle University', texto: 'I studied fashion design at university, but felt that world wasn\'t enough to fill my creative heart. Like Link facing dragons in Zelda, I persevered until I discovered something I was truly passionate about. And it was in Chile, with my partner (who is a backend programmer), where I found the world of UX/UI design.' },
+        { titulo: 'The Great UX/UI Discovery', texto: 'Here I discovered I could combine my love of art with my desire to help people. I dedicated myself to learning and perfecting my skills, even studying Front-end to complement my work.' },
+        { titulo: '⚡ Energy Recharge', texto: 'Every hero needs to recharge. Coffee is my favorite magic potion — without it, no design adventure would be possible. ☕' },
+        { titulo: 'The Great Mission: Create Accessible Technology', texto: 'Now I dream of participating in projects that contribute to the world, making it more accessible, inclusive and easy for everyone, because I believe that with technology and a simple click, we can make a difference.' },
+      ],
+    },
+  },
+  footer: {
+    title: "Let's talk?",
+    credit: 'Designed and developed by Zoe Mejia Santana · 2026',
+  },
 }
 
 export default en

@@ -3,12 +3,11 @@ import { usePortfolio } from '../../context/PortfolioContext'
 import avatar from '../../assets/projects/avatar1.png'
 import avatar2 from '../../assets/projects/avatar2.png'
 import miawmiaw from '../../assets/projects/miawmiaw.png'
+import es from '../../locales/es'
+import en from '../../locales/en'
 
 const STEP = 70
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]]
-const GREETING = '¡Hola! Bienvenid@ a mi portfolio Creativo. Soy Zoe, diseñadora UX/UI y Frontend Developer.'
-const SECOND_GREETING = '¡Espero que disfrutes la experiencia! 🎮'
-const HEADLINE = 'Diseño experiencias digitales que conectan personas con tecnología.'
 const WORD_COLORS = ['#ffffff', '#00d4ff', '#e8a090']
 
 function buildCircuits(w, h) {
@@ -200,6 +199,12 @@ function FallingWordsHeading({ text, reduceMotion }) {
 
 function CreativeHero() {
   const { mode, language, reduceMotion } = usePortfolio()
+  const t = language === 'en' ? en : es
+  const GREETING = language === 'en'
+    ? '👋 Welcome to my Creative portfolio! I\'m Zoe, UX/UI Designer & Frontend Developer.'
+    : '¡Hola! Bienvenid@ a mi portfolio Creativo. Soy Zoe, diseñadora UX/UI y Frontend Developer.'
+  const SECOND_GREETING = language === 'en' ? 'Hope you enjoy the experience! 🎮' : '¡Espero que disfrutes la experiencia! 🎮'
+  const HEADLINE = t.hero.title
   const [visible, setVisible] = useState(() => reduceMotion)
   const [avatarPhase, setAvatarPhase] = useState(() => (reduceMotion ? 2 : 1))
   const typed = useTypewriter(GREETING, reduceMotion)
@@ -232,21 +237,21 @@ function CreativeHero() {
         {/* Columna izquierda */}
         <div className="flex flex-col items-start text-left gap-6">
           <p className="text-[#00d4ff] text-xs md:text-sm tracking-[4px] uppercase opacity-80">
-            UX/UI Designer · Front-end · Accesibilidad
+            {t.hero.tag}
           </p>
           <FallingWordsHeading text={HEADLINE} reduceMotion={reduceMotion} />
           <div className="flex flex-col items-start gap-1">
-            <p className="text-[#e8a090] text-base md:text-lg tracking-wide">Zoe Mejia Santana</p>
-            <p className="text-[#00d4ff] text-xs md:text-sm opacity-50">Santiago, Chile · Disponible para trabajo remoto e híbrido</p>
+            <p className="text-[#e8a090] text-base md:text-lg tracking-wide">{t.hero.name}</p>
+            <p className="text-[#00d4ff] text-xs md:text-sm opacity-50">{t.hero.location}</p>
           </div>
           <div className="flex flex-wrap items-center gap-4 mt-2">
             <button onClick={() => scrollTo('projects')}
               className="bg-[#e8a090] text-[#050d1a] font-semibold text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(232,160,144,0.5)]">
-              Ver proyectos
+              {t.hero.btnProjects}
             </button>
             <button onClick={() => scrollTo('footer')}
               className="border-2 border-[#e8a090] text-[#e8a090] text-sm tracking-[1px] uppercase px-6 py-3 rounded-lg transition-colors hover:bg-[#e8a090]/10">
-              Contacto
+              {t.hero.btnContact}
             </button>
           </div>
         </div>

@@ -3,42 +3,46 @@ import { usePortfolio } from '../../context/PortfolioContext'
 import boostImg from '../../assets/projects/boost.png'
 import johnnyRocketsImg from '../../assets/projects/johnny-rockets.png'
 import flagshipImg from '../../assets/projects/flagship.png'
+import es from '../../locales/es'
+import en from '../../locales/en'
 
-const PROJECTS = [
-  {
-    id: 'boost',
-    image: boostImg,
-    title: 'Boost',
-    description: 'Plataforma de Salud Cognitiva Inclusiva con IA e IoT',
-    longDescription: 'Rediseño UX/UI de una plataforma de salud cognitiva para adultos mayores, personas con discapacidad cognitiva y sus cuidadores. Integra IA para personalizar terapias y IoT para sincronizar un dispensador inteligente de medicación.',
-    metric: 'Mejora del 34% en tasa de finalización · WCAG 3/10 → 9/10',
-    metricIcon: '💡',
-    tags: ['Figma', 'UX/UI', 'Accesibilidad', 'WCAG', 'IoT', 'IA'],
-    hasCaseStudy: true,
-  },
-  {
-    id: 'johnny-rockets',
-    image: johnnyRocketsImg,
-    title: 'Johnny Rockets Chile',
-    description: 'Rediseño Web + Front-end',
-    longDescription: 'Rediseño UX/UI + desarrollo front-end de la landing nacional, integrando navegación clara y elementos culturales como las Fiestas Patrias. Mejoró la accesibilidad y la conexión emocional con el usuario local.',
-    metric: 'Diseño responsive con identidad americana y contexto chileno',
-    metricIcon: '🇨🇱',
-    tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
-    hasCaseStudy: true,
-  },
-  {
-    id: 'flagship',
-    image: flagshipImg,
-    title: 'Flagship CMS',
-    description: 'Landing Page + Estrategia Digital',
-    longDescription: 'El brief pedía solo un folleto en PDF — propuse y diseñé una landing page interactiva + videos promocionales, identificando que el formato estático no comunicaba la innovación del producto.',
-    metric: 'Diseño alineado a guías de marca y objetivos comerciales',
-    metricIcon: '📘',
-    tags: ['Figma', 'Canva', 'B2B'],
-    hasCaseStudy: true,
-  },
-]
+function getProjects(t) {
+  return [
+    {
+      id: 'boost',
+      image: boostImg,
+      title: 'Boost',
+      description: t.projects.boost.description,
+      longDescription: t.projects.boost.longDescription,
+      metric: t.projects.boost.metric,
+      metricIcon: '💡',
+      tags: ['Figma', 'UX/UI', 'Accesibilidad', 'WCAG', 'IoT', 'IA'],
+      hasCaseStudy: true,
+    },
+    {
+      id: 'johnny-rockets',
+      image: johnnyRocketsImg,
+      title: 'Johnny Rockets Chile',
+      description: t.projects.johnnyRockets.description,
+      longDescription: t.projects.johnnyRockets.longDescription,
+      metric: t.projects.johnnyRockets.metric,
+      metricIcon: '🇨🇱',
+      tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
+      hasCaseStudy: true,
+    },
+    {
+      id: 'flagship',
+      image: flagshipImg,
+      title: 'Flagship CMS',
+      description: t.projects.flagship.description,
+      longDescription: t.projects.flagship.longDescription,
+      metric: t.projects.flagship.metric,
+      metricIcon: '📘',
+      tags: ['Figma', 'Canva', 'B2B'],
+      hasCaseStudy: true,
+    },
+  ]
+}
 
 function CircuitNode({ corner, hovered, reduceMotion }) {
   const cornerStyles = {
@@ -82,7 +86,7 @@ function CircuitLines({ hovered, reduceMotion }) {
   )
 }
 
-function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy }) {
+function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy, verCaso }) {
   const [hovered, setHovered] = useState(false)
   const [cmdHovered, setCmdHovered] = useState(false)
 
@@ -182,7 +186,7 @@ function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy }
                 : '0 0 6px rgba(0,212,255,0.5), 0 0 12px rgba(0,212,255,0.2)',
               transition: reduceMotion ? 'none' : 'text-shadow 200ms ease',
             }}>
-              // ver_caso{' '}
+              {verCaso}{' '}
             </span>
             <span style={{
               display: 'inline-block',
@@ -197,7 +201,9 @@ function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy }
 }
 
 function Projects({ onOpenCaseStudy }) {
-  const { reduceMotion } = usePortfolio()
+  const { reduceMotion, language } = usePortfolio()
+  const t = language === 'en' ? en : es
+  const PROJECTS = getProjects(t)
   const [visible, setVisible] = useState(() => reduceMotion)
 
   useEffect(() => {
@@ -213,21 +219,21 @@ function Projects({ onOpenCaseStudy }) {
         style={{ opacity: visible ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 600ms ease' }}
       >
         <div className="flex flex-col items-center text-center gap-2">
-          <p className="text-[#00d4ff] text-xs tracking-[4px] uppercase opacity-80">Casos de estudio</p>
+          <p className="text-[#00d4ff] text-xs tracking-[4px] uppercase opacity-80">{t.projects.tag}</p>
           <h2 className="text-white font-semibold" style={{ fontSize: '2.5rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-            Proyectos
+            {t.projects.title}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8" style={{ gridAutoRows: '1fr' }}>
           <div className="h-full md:col-span-2 md:row-span-2">
-            <ProjectCard project={PROJECTS[0]} reduceMotion={reduceMotion} isLarge onOpenCaseStudy={onOpenCaseStudy} />
+            <ProjectCard project={PROJECTS[0]} reduceMotion={reduceMotion} isLarge onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
           </div>
           <div className="h-full">
-            <ProjectCard project={PROJECTS[1]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} />
+            <ProjectCard project={PROJECTS[1]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
           </div>
           <div className="h-full">
-            <ProjectCard project={PROJECTS[2]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} />
+            <ProjectCard project={PROJECTS[2]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
           </div>
         </div>
       </div>
