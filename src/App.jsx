@@ -62,78 +62,134 @@ function Toggle({ checked, onChange, label }) {
   )
 }
 
-function A11yPanel() {
-  const { highContrast, setHighContrast, largeText, setLargeText, reduceMotion, setReduceMotion, language, setLanguage } = usePortfolio()
+function NavBar() {
+  const {
+    mode, setMode, language, setLanguage,
+    highContrast, setHighContrast, largeText, setLargeText, reduceMotion, setReduceMotion,
+  } = usePortfolio()
   const [a11yOpen, setA11yOpen] = useState(false)
   const isEn = language === 'en'
+  if (!mode) return null
 
-  const handleKeyBtn = (e) => {
+  const targetMode = mode === 'professional' ? 'creative' : 'professional'
+  const switchLabel = isEn
+    ? (mode === 'professional' ? 'Switch to Creative' : 'Switch to Professional')
+    : (mode === 'professional' ? 'Modo Creativo' : 'Modo Profesional')
+
+  const handleSwitchMode = () => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+    setMode(targetMode)
+  }
+
+  const handleBackToIntro = () => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+    setMode(null)
+  }
+
+  const scrollToId = (id) => {
+    const el = document.getElementById(id)
+    if (el) el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' })
+  }
+
+  const handlePanelKey = (e) => {
     if (e.key === 'Escape') setA11yOpen(false)
   }
 
+  const navBtnClass = "text-white hover:text-[#00d4ff] text-[11px] tracking-[1px] uppercase transition-colors focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-2 py-1"
+
   return (
-    <div className="fixed top-6 right-6 z-[1100] flex flex-col-reverse items-end gap-2" onKeyDown={handleKeyBtn}>
-      {a11yOpen && (
-        <div
-          className="w-56 bg-[#050d1a] border border-[#00d4ff]/20 p-4 flex flex-col gap-3"
-          role="dialog"
-          aria-label={isEn ? 'Accessibility options' : 'Opciones de accesibilidad'}
-        >
-          <div aria-live="polite" aria-atomic="true" className="sr-only">
-            {highContrast ? (isEn ? 'High contrast on' : 'Alto contraste activado') : ''}
-            {largeText ? (isEn ? 'Large text on' : 'Texto grande activado') : ''}
-            {reduceMotion ? (isEn ? 'Reduced motion on' : 'Animaciones reducidas') : ''}
-          </div>
-          <div className="flex items-center justify-between mb-1">
-            <p className="text-[#00d4ff] text-[10px] tracking-[3px] uppercase opacity-60">
-              {isEn ? 'Accessibility' : 'Accesibilidad'}
-            </p>
-            <button
-              onClick={() => setA11yOpen(false)}
-              aria-label={isEn ? 'Close accessibility options' : 'Cerrar opciones de accesibilidad'}
-              className="text-white/40 hover:text-white/80 transition-colors text-xs leading-none focus:outline-none focus:ring-1 focus:ring-[#00d4ff]"
-            >
-              ✕
-            </button>
-          </div>
-
-          {/* Language switcher */}
-          <div className="flex items-center justify-between">
-            <span className="text-white/70 text-[11px] tracking-[1px] uppercase">{isEn ? 'Language' : 'Idioma'}</span>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setLanguage('es')}
-                aria-pressed={language === 'es'}
-                aria-label="Cambiar a Español"
-                className={`text-[11px] tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-1 ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
-              >ES</button>
-              <span className="text-white/20 text-[10px]">·</span>
-              <button
-                onClick={() => setLanguage('en')}
-                aria-pressed={language === 'en'}
-                aria-label="Switch to English"
-                className={`text-[11px] tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-1 ${language === 'en' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
-              >EN</button>
-            </div>
-          </div>
-
-          <div className="border-t border-white/10 pt-1" />
-          <Toggle checked={highContrast} onChange={setHighContrast} label={isEn ? 'High contrast' : 'Alto contraste'} />
-          <Toggle checked={largeText} onChange={setLargeText} label={isEn ? 'Large text' : 'Texto grande'} />
-          <Toggle checked={reduceMotion} onChange={setReduceMotion} label={isEn ? 'Reduce motion' : 'Reducir animaciones'} />
+    <nav
+      className="fixed top-0 left-0 right-0 z-[1100] bg-[#050d1a]/95 backdrop-blur-sm border-b border-[#00d4ff] shadow-[0_1px_12px_rgba(0,212,255,0.25)]"
+      style={{ height: '56px' }}
+      aria-label={isEn ? 'Main navigation' : 'Navegación principal'}
+    >
+      <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1 sm:gap-3">
+          <button
+            onClick={handleBackToIntro}
+            aria-label={isEn ? 'Back to intro' : 'Volver al inicio'}
+            className={navBtnClass}
+          >
+            ← <span className="hidden sm:inline">{isEn ? 'Intro' : 'Inicio'}</span>
+          </button>
+          <span className="text-white/25 hidden sm:inline">|</span>
+          <button
+            onClick={handleSwitchMode}
+            aria-label={switchLabel}
+            className={navBtnClass}
+          >
+            {switchLabel}
+          </button>
         </div>
-      )}
 
-      <button
-        onClick={() => setA11yOpen((prev) => !prev)}
-        aria-label={isEn ? 'Accessibility options' : 'Opciones de accesibilidad'}
-        aria-expanded={a11yOpen}
-        aria-haspopup="dialog"
-        className={`a11y-btn focus:outline-none focus:ring-2 focus:ring-[#00d4ff] focus:ring-offset-2 focus:ring-offset-[#050d1a] ${a11yOpen ? 'opacity-100' : 'opacity-60'}`}
-      >
-        <A11yIcon />
-      </button>
-    </div>
+        <div className="hidden md:flex items-center gap-1">
+          <button onClick={() => scrollToId('projects')} className={navBtnClass}>{isEn ? 'Projects' : 'Proyectos'}</button>
+          <button onClick={() => scrollToId('about')} className={navBtnClass}>{isEn ? 'About' : 'Sobre mí'}</button>
+        </div>
+
+        <div className="flex items-center gap-2 sm:gap-3 relative">
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setLanguage('es')}
+              aria-pressed={language === 'es'}
+              aria-label="Cambiar a Español"
+              className={`text-[11px] tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-1 ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
+            >ES</button>
+            <span className="text-white/20 text-[10px]">·</span>
+            <button
+              onClick={() => setLanguage('en')}
+              aria-pressed={language === 'en'}
+              aria-label="Switch to English"
+              className={`text-[11px] tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-1 ${language === 'en' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
+            >EN</button>
+          </div>
+
+          <span className="text-white/25">|</span>
+
+          <div className="relative" onKeyDown={handlePanelKey}>
+            <button
+              onClick={() => setA11yOpen(p => !p)}
+              aria-label={isEn ? 'Accessibility options' : 'Opciones de accesibilidad'}
+              aria-expanded={a11yOpen}
+              aria-haspopup="dialog"
+              className={`flex items-center justify-center text-[#00d4ff] hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-[#00d4ff] focus:ring-offset-2 focus:ring-offset-[#050d1a]`}
+              style={{ filter: 'drop-shadow(0 0 6px rgba(0,212,255,0.9)) drop-shadow(0 0 12px rgba(0,212,255,0.5))' }}
+            >
+              <A11yIcon />
+            </button>
+
+            {a11yOpen && (
+              <div
+                className="absolute top-[calc(100%+8px)] right-0 w-56 bg-[#050d1a] border border-[#00d4ff]/20 p-4 flex flex-col gap-3"
+                role="dialog"
+                aria-label={isEn ? 'Accessibility options' : 'Opciones de accesibilidad'}
+              >
+                <div aria-live="polite" aria-atomic="true" className="sr-only">
+                  {highContrast ? (isEn ? 'High contrast on' : 'Alto contraste activado') : ''}
+                  {largeText ? (isEn ? 'Large text on' : 'Texto grande activado') : ''}
+                  {reduceMotion ? (isEn ? 'Reduced motion on' : 'Animaciones reducidas') : ''}
+                </div>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-[#00d4ff] text-[10px] tracking-[3px] uppercase opacity-60">
+                    {isEn ? 'Accessibility' : 'Accesibilidad'}
+                  </p>
+                  <button
+                    onClick={() => setA11yOpen(false)}
+                    aria-label={isEn ? 'Close accessibility options' : 'Cerrar opciones de accesibilidad'}
+                    className="text-white/40 hover:text-white/80 transition-colors text-xs leading-none focus:outline-none focus:ring-1 focus:ring-[#00d4ff]"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <Toggle checked={highContrast} onChange={setHighContrast} label={isEn ? 'High contrast' : 'Alto contraste'} />
+                <Toggle checked={largeText} onChange={setLargeText} label={isEn ? 'Large text' : 'Texto grande'} />
+                <Toggle checked={reduceMotion} onChange={setReduceMotion} label={isEn ? 'Reduce motion' : 'Reducir animaciones'} />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </nav>
   )
 }
 
@@ -158,12 +214,12 @@ function App() {
   return (
     <main>
       <ScrollProgress />
-      <A11yPanel />
+      <NavBar />
       {!mode && <Intro />}
       {mode && (
         <>
           <CustomCursor />
-          <div style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 500ms ease' }}>
+          <div style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 500ms ease', paddingTop: '56px' }}>
             {mode === 'creative' ? <CreativeHero /> : <Hero />}
             {mode === 'professional'
               ? <Projects onOpenCaseStudy={setActiveCaseStudy} />
