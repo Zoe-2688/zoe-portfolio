@@ -340,7 +340,7 @@ function Intro() {
       <div className="z-10 w-full max-w-4xl mx-auto" style={{ padding: isMobile ? '0 20px' : '0 32px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'auto auto', justifyContent: 'center', alignItems: 'center', gap: isMobile ? '2rem' : '1.5rem' }}>
         {/* Columna izquierda: nombre */}
         <div className="flex flex-col items-start text-left" style={{ overflow: 'visible', paddingLeft: isMobile ? '0' : '2rem' }}>
-          <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-3 opacity-60" style={{ marginLeft: hideArrows ? '0' : `calc(${nameSize} * 1.5 + 1rem)` }}>Portfolio · 2025</p>
+          <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-3 opacity-60" style={{ marginLeft: hideArrows ? '0' : `calc(${nameSize} * 1.5 + 1rem)` }}>Portfolio · 2026</p>
           <div className="mb-2" style={{ display: 'flex', alignItems: 'stretch', gap: hideArrows ? '0' : '1rem' }}>
             {!hideArrows && (
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexShrink: 0 }}>
