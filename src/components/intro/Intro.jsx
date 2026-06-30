@@ -322,8 +322,9 @@ function Intro() {
 
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
   const [isSmallScreen, setIsSmallScreen] = useState(() => window.innerWidth < 1280)
+  const [hideArrows, setHideArrows] = useState(() => window.innerWidth < 900)
   useEffect(() => {
-    const check = () => { setIsMobile(window.innerWidth < 768); setIsSmallScreen(window.innerWidth < 1280) }
+    const check = () => { setIsMobile(window.innerWidth < 768); setIsSmallScreen(window.innerWidth < 1280); setHideArrows(window.innerWidth < 900) }
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
   }, [])
@@ -336,16 +337,23 @@ function Intro() {
     <>
     <section id="intro" className="bg-[#050d1a] min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-6">
       <CircuitCanvas reduceMotion={reduceMotion} activated={activated} />
-      <div className="z-10 w-full max-w-5xl mx-auto px-12" style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '3fr 2fr', alignItems: 'center', gap: '1rem' }}>
+      <div className="z-10 w-full max-w-5xl mx-auto" style={{ padding: isMobile ? '0 20px' : '0 48px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '3fr 2fr', alignItems: 'center', gap: isMobile ? '2rem' : '1rem' }}>
         {/* Columna izquierda: nombre */}
-        <div className="flex flex-col items-start text-left pl-8" style={{ overflow: 'visible' }}>
-          <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-3 opacity-60">Portfolio · 2025</p>
-          <div className="mb-2" style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '-90px', top: 0, display: 'flex', fontFamily: "'Press Start 2P', monospace", fontSize: `calc(${nameSize} * 0.5)`, color: '#00d4ff', lineHeight: 1 }}>
-              <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '0ms' }}>&lt;</span>
-              <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '150ms' }}>&lt;</span>
-              <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '300ms' }}>&lt;</span>
-            </div>
+        <div className="flex flex-col items-start text-left" style={{ overflow: 'visible', paddingLeft: isMobile ? '0' : '2rem' }}>
+          <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-3 opacity-60" style={{ marginLeft: hideArrows ? '0' : `calc(${nameSize} * 1.5 + 1rem)` }}>Portfolio · 2025</p>
+          <div className="mb-2" style={{ display: 'flex', alignItems: 'stretch', gap: hideArrows ? '0' : '1rem' }}>
+            {!hideArrows && (
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexShrink: 0 }}>
+                <div style={{ display: 'flex', fontFamily: "'Press Start 2P', monospace", fontSize: `calc(${nameSize} * 0.5)`, color: '#00d4ff', lineHeight: 1 }}>
+                  <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '0ms' }}>&lt;</span>
+                  <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '150ms' }}>&lt;</span>
+                  <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '300ms' }}>&lt;</span>
+                </div>
+                <div style={{ display: 'flex', fontFamily: "'Press Start 2P', monospace", fontSize: `calc(${nameSize} * 0.5)`, color: '#00d4ff', lineHeight: 1, opacity: 0 }} aria-hidden="true">
+                  <span>&lt;</span><span>&lt;</span><span>&lt;</span>
+                </div>
+              </div>
+            )}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
               {lettersFalling ? (
                 <>
@@ -370,13 +378,20 @@ function Intro() {
                 </>
               )}
             </div>
-            <div style={{ position: 'absolute', right: '-90px', bottom: 0, display: 'flex', fontFamily: "'Press Start 2P', monospace", fontSize: `calc(${nameSize} * 0.5)`, color: '#00d4ff', lineHeight: 1 }}>
-              <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '300ms' }}>&gt;</span>
-              <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '150ms' }}>&gt;</span>
-              <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '0ms' }}>&gt;</span>
-            </div>
+            {!hideArrows && (
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexShrink: 0 }}>
+                <div style={{ display: 'flex', fontFamily: "'Press Start 2P', monospace", fontSize: `calc(${nameSize} * 0.5)`, color: '#00d4ff', lineHeight: 1, opacity: 0 }} aria-hidden="true">
+                  <span>&gt;</span><span>&gt;</span><span>&gt;</span>
+                </div>
+                <div style={{ display: 'flex', fontFamily: "'Press Start 2P', monospace", fontSize: `calc(${nameSize} * 0.5)`, color: '#00d4ff', lineHeight: 1 }}>
+                  <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '300ms' }}>&gt;</span>
+                  <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '150ms' }}>&gt;</span>
+                  <span style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: '0ms' }}>&gt;</span>
+                </div>
+              </div>
+            )}
           </div>
-          <p className="text-[#00d4ff] text-sm tracking-[3px] uppercase opacity-70">UX/UI · Front-end · Design</p>
+          <p className="text-[#00d4ff] text-sm tracking-[3px] uppercase opacity-70" style={{ marginLeft: hideArrows ? '0' : `calc(${nameSize} * 1.5 + 1rem)` }}>UX/UI · Front-end · Design</p>
         </div>
 
         {/* Columna derecha */}
