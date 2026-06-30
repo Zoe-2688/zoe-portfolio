@@ -337,7 +337,7 @@ function Intro() {
     <>
     <section id="intro" className="bg-[#050d1a] min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-6">
       <CircuitCanvas reduceMotion={reduceMotion} activated={activated} />
-      <div className="z-10 w-full max-w-5xl mx-auto" style={{ padding: isMobile ? '0 20px' : '0 48px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '3fr 2fr', alignItems: 'center', gap: isMobile ? '2rem' : '1rem' }}>
+      <div className="z-10 w-full max-w-4xl mx-auto" style={{ padding: isMobile ? '0 20px' : '0 32px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'auto auto', justifyContent: 'center', alignItems: 'center', gap: isMobile ? '2rem' : '1.5rem' }}>
         {/* Columna izquierda: nombre */}
         <div className="flex flex-col items-start text-left" style={{ overflow: 'visible', paddingLeft: isMobile ? '0' : '2rem' }}>
           <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-3 opacity-60" style={{ marginLeft: hideArrows ? '0' : `calc(${nameSize} * 1.5 + 1rem)` }}>Portfolio · 2025</p>
@@ -395,7 +395,7 @@ function Intro() {
         </div>
 
         {/* Columna derecha */}
-        <div className="flex flex-col items-center gap-4 pl-0 md:pl-8" style={{ opacity: assembled ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 400ms ease' }}>
+        <div className="flex flex-col items-center gap-4" style={{ opacity: assembled ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 400ms ease' }}>
           <p className="tracking-wide text-center" style={{ color: '#eab5a8', fontFamily: "'VT323', monospace", fontSize: '32px', letterSpacing: '0.5px' }}>
             "{intro.quote || 'Un buen diseño se'}{' '}
             <span style={{ color: '#f5c4b4', opacity: wordVisible ? 1 : 0, transition: 'opacity 300ms ease', display: 'inline-block' }}>
