@@ -260,7 +260,7 @@ function CuidadorScreen({ isEn }) {
       <p style={{ fontSize: '15px', fontWeight: 800, color: c.ink, margin: '0 0 2px 0' }}>{isEn ? 'Hi, Marcos' : 'Hola, Marcos'}</p>
       <p style={{ fontSize: '9px', color: c.muted, margin: '0 0 10px 0' }}>{isEn ? 'You care for Cármen Mercédes' : 'Cuidas a Cármen Mercédes'}</p>
       <div style={{ backgroundColor: c.subtle, borderRadius: '10px', padding: '9px 11px', marginBottom: '12px' }}>
-        <p style={{ fontSize: '9px', color: c.green, margin: 0, lineHeight: 1.5 }}>{isEn ? 'Your doctor invited you to follow Cármen\'s treatment. Here you see how it\'s going and can notify them if you notice something.' : 'Tu médico te invitó a seguir el tratamiento de Cármen. Aquí ves cómo va y puedes avisarle si notas algo.'}</p>
+        <p style={{ fontSize: '9px', color: c.green, margin: 0, lineHeight: 1.5 }}>{isEn ? "You're with Cármen every day; the doctor isn't. If you notice anything unusual in her, let the doctor know." : 'Tú estás con Cármen cada día; la doctora no. Si notas algo raro en ella, avisa a la doctora.'}</p>
       </div>
       <div style={{ border: `1px solid ${c.line}`, borderRadius: '12px', padding: '9px 11px', marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -489,10 +489,12 @@ export default function BoostCareCaseStudy({ onClose }) {
     { q: '"Why does it show some María\'s data?"', fix: 'Welcome screen that explains the role and lets you pick doctor/caregiver.' },
     { q: '"What is adherence?"', fix: 'Contextual definition in the welcome: "adherence (how well they follow treatment)".' },
     { q: '"Wouldn\'t it be better \'Everything you need for your consultation\'?"', fix: 'Rewrote the landing headline to the clearer version.' },
+    { q: '"Does the app watch the patient, or is it telling me to do it?"', fix: 'Reworded the caregiver onboarding to make the role clear: "You\'re with Cármen every day; the doctor isn\'t."' },
   ] : [
     { q: '"¿Por qué muestra los datos de una tal María?"', fix: 'Pantalla de bienvenida que explica el rol y deja elegir médico/cuidador.' },
     { q: '"¿Qué es adherencia?"', fix: 'Definición contextual en la bienvenida: "adherencia (qué tan bien siguen su tratamiento)".' },
     { q: '"¿No sería mejor \'Todo lo que necesitas para tu consulta\'?"', fix: 'Reescribí el h2 de la landing a la versión más clara.' },
+    { q: '"¿La app vigila al paciente, o me está mandando a mí a hacerlo?"', fix: 'Reformulé el onboarding del cuidador para dejar claro su rol: "Tú estás con Cármen cada día; la doctora no."' },
   ]
 
   /* Hipótesis abiertas (madurez: no adivinar, validar) */
@@ -803,7 +805,7 @@ export default function BoostCareCaseStudy({ onClose }) {
               </div>
             ))}
           </div>
-          <p style={{ fontFamily: 'monospace', fontSize: '11px', color: 'rgba(255,255,255,0.4)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '12px' }}>// {isEn ? 'Cold feedback (technical user, non-medical profile)' : 'Feedback en frío (usuario técnico, perfil no-médico)'}</p>
+          <p style={{ fontFamily: 'monospace', fontSize: '11px', color: 'rgba(255,255,255,0.4)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '12px' }}>// {isEn ? 'Feedback from real users (non-medical profile + caregivers)' : 'Feedback de usuarios reales (perfil no-médico + cuidadores)'}</p>
           <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : 'repeat(3, 1fr)', gap: '10px' }}>
             {feedback.map(f => (
               <div key={f.q} style={{ backgroundColor: 'rgba(0,212,255,0.03)', border: '1px solid rgba(0,212,255,0.12)', borderRadius: '8px', padding: '14px' }}>
