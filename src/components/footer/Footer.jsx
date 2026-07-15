@@ -25,8 +25,8 @@ function Footer() {
       >
         <div className="flex flex-col gap-3">
           <h3 className="text-white text-2xl font-semibold">{f.title || '¿Hablamos?'}</h3>
-          <a href="mailto:zoe26mejiasantana@gmail.com" className={linkClass}>zoe.mejia.ux@gmail.com</a>
-          <a href="https://linkedin.com/in/zoe-mejia" target="_blank" rel="noopener noreferrer" className={linkClass}>linkedin.com/in/zoe-mejia</a>
+          <a href="mailto:zoe26mejiasantana@gmail.com" className={linkClass}>zoe26mejiasantana@gmail.com</a>
+          <a href="https://www.linkedin.com/in/zoe-m-99a9b382/" target="_blank" rel="noopener noreferrer" className={linkClass}>linkedin.com/in/zoe-mejia</a>
           <a href="https://github.com/Zoe-2688" target="_blank" rel="noopener noreferrer" className={linkClass}>github.com/Zoe-2688</a>
           <p className="text-white/70 text-sm">Santiago, Chile</p>
         </div>
