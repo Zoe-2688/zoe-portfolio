@@ -65,7 +65,7 @@ function CircuitLines({ hovered, reduceMotion }) {
 function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy, verCaso }) {
   const [hovered, setHovered] = useState(false)
   const [cmdHovered, setCmdHovered] = useState(false)
-  const imageHeight = isLarge ? 'h-96' : 'h-44'
+  const imageHeight = isLarge ? 'h-56 sm:h-72 md:h-96' : 'h-44'
   const titleSize = isLarge ? 'text-[20px]' : 'text-[11px]'
   const handleVerCaso = () => { if (project.hasCaseStudy && onOpenCaseStudy) onOpenCaseStudy(project.id) }
 

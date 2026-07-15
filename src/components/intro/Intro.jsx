@@ -329,15 +329,15 @@ function Intro() {
     return () => window.removeEventListener('resize', check)
   }, [])
 
-  const getNameSize = () => { const w = window.innerWidth; if (w < 768) return '28px'; if (w < 1100) return '44px'; if (w < 1500) return '54px'; return '68px' }
+  const getNameSize = () => { const w = window.innerWidth; if (w < 380) return '22px'; if (w < 768) return '30px'; if (w < 1100) return '44px'; if (w < 1500) return '54px'; return '68px' }
   const [nameSize, setNameSize] = useState(getNameSize)
   useEffect(() => { const check = () => setNameSize(getNameSize()); window.addEventListener('resize', check); return () => window.removeEventListener('resize', check) }, [])
 
   return (
     <>
-    <section id="intro" className="bg-[#050d1a] min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-6">
+    <section id="intro" className="bg-[#050d1a] min-h-[100svh] flex flex-col items-center justify-center relative overflow-x-hidden overflow-y-auto px-4 sm:px-6 py-16 sm:py-0">
       <CircuitCanvas reduceMotion={reduceMotion} activated={activated} />
-      <div className="z-10 w-full max-w-4xl mx-auto" style={{ padding: isMobile ? '0 20px' : '0 32px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'auto auto', justifyContent: 'center', alignItems: 'center', gap: isMobile ? '2rem' : '1.5rem' }}>
+      <div className="z-10 w-full max-w-4xl mx-auto" style={{ padding: isMobile ? '0 8px' : '0 32px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'auto auto', justifyContent: 'center', alignItems: 'center', gap: isMobile ? '1.5rem' : '1.5rem' }}>
         {/* Columna izquierda: nombre */}
         <div className="flex flex-col items-start text-left" style={{ overflow: 'visible', paddingLeft: isMobile ? '0' : '2rem' }}>
           <p className="text-[#00d4ff] text-xs tracking-[6px] uppercase mb-3 opacity-60" style={{ marginLeft: hideArrows ? '0' : `calc(${nameSize} * 1.5 + 1rem)` }}>Portfolio · 2026</p>
@@ -396,7 +396,7 @@ function Intro() {
 
         {/* Columna derecha */}
         <div className="flex flex-col items-center gap-4" style={{ opacity: assembled ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 400ms ease' }}>
-          <p className="tracking-wide text-center" style={{ color: '#eab5a8', fontFamily: "'VT323', monospace", fontSize: '32px', letterSpacing: '0.5px' }}>
+          <p className="tracking-wide text-center" style={{ color: '#eab5a8', fontFamily: "'VT323', monospace", fontSize: isMobile ? '24px' : '32px', letterSpacing: '0.5px' }}>
             "{intro.quote || 'Un buen diseño se'}{' '}
             <span style={{ color: '#f5c4b4', opacity: wordVisible ? 1 : 0, transition: 'opacity 300ms ease', display: 'inline-block' }}>
               {rotatingWords[wordIndex]}
@@ -406,7 +406,7 @@ function Intro() {
           <div className="flex flex-col items-center gap-6">
             <p className="text-white/90 text-sm tracking-[3px] uppercase">{intro.chooseLabel || 'Elige cómo quieres conocerme'}</p>
 
-            <div className="flex flex-row justify-center items-center" style={{ gap: '0px' }}>
+            <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} justify-center items-center`} style={{ gap: isMobile ? '20px' : '0px' }}>
               {/* Botón Profesional */}
               <div className="flex flex-col items-center">
                 <div className="relative">
@@ -422,7 +422,7 @@ function Intro() {
                 </p>
               </div>
 
-              <span style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '32px', color: '#00d4ff', opacity: 0.5, display: 'flex', alignItems: 'center', margin: '0 -8px', marginTop: '-40px' }}>||</span>
+              {!isMobile && <span style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '32px', color: '#00d4ff', opacity: 0.5, display: 'flex', alignItems: 'center', margin: '0 -8px', marginTop: '-40px' }}>||</span>}
 
               {/* Botón Creativa */}
               <div className="flex flex-col items-center">

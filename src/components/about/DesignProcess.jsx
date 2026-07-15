@@ -109,6 +109,7 @@ function DesignProcess() {
   const t = language === 'en' ? en : es
   const dp = t.designProcess
   const [visible, setVisible] = useState(() => reduceMotion)
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : false))
 
   if (!dp) return null
 
@@ -117,6 +118,12 @@ function DesignProcess() {
     const id = requestAnimationFrame(() => setVisible(true))
     return () => cancelAnimationFrame(id)
   }, [reduceMotion])
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   let globalIndex = 0
 
@@ -141,7 +148,7 @@ function DesignProcess() {
         {dp.phases.map((phase, pi) => (
           <div key={phase.phase} className="flex flex-col gap-6">
             <PhaseHeader phase={phase.phase} phaseLabel={phase.phaseLabel} reduceMotion={reduceMotion} />
-            <div className="grid grid-cols-1 gap-6" style={{ gridTemplateColumns: phase.blocks.length === 2 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)' }}>
+            <div className="grid grid-cols-1 gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : (phase.blocks.length === 2 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)') }}>
               {phase.blocks.map(({ label, text }) => {
                 const idx = globalIndex++
                 return (

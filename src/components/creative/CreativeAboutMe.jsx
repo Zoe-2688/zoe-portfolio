@@ -128,7 +128,7 @@ function BarraXP({ nivel }) {
   )
 }
 
-function TarjetaPersonaje({ poderes, language }) {
+function TarjetaPersonaje({ poderes, language, isMobile }) {
   const isEn = language === 'en'
   return (
     <div style={{ border: '2px solid #00d4ff', borderRadius: '8px', backgroundColor: 'rgba(0,212,255,0.05)', padding: '20px', maxWidth: '480px', margin: '0 auto', boxShadow: '0 0 30px rgba(0,212,255,0.1)' }}>
@@ -160,9 +160,9 @@ function TarjetaPersonaje({ poderes, language }) {
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {poderes.map((p, i) => (
-          <div key={p.nombre} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div key={p.nombre} style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
             <img src={PODER_ICONS[i]} alt={p.nombre} style={{ width: '20px', height: '20px', objectFit: 'contain', flexShrink: 0 }} />
-            <span style={{ fontFamily: 'monospace', fontSize: '10px', color: 'rgba(255,255,255,0.8)', minWidth: '200px' }}>
+            <span style={{ fontFamily: 'monospace', fontSize: '10px', color: 'rgba(255,255,255,0.8)', minWidth: isMobile ? '0' : '200px' }}>
               {p.nombre} <span style={{ color: 'rgba(255,255,255,0.4)' }}>({isEn ? 'Level' : 'Nivel'} {p.nivel})</span>
             </span>
             <BarraXP nivel={p.nivel} />
@@ -173,8 +173,17 @@ function TarjetaPersonaje({ poderes, language }) {
   )
 }
 
-function Capitulo({ cap, video, lado }) {
+function Capitulo({ cap, video, lado, isMobile }) {
   const esIzquierda = lado === 'izquierda'
+  if (isMobile) return (
+    <div style={{ marginBottom: '24px', padding: '0 16px' }}>
+      <div style={{ maxWidth: '300px', margin: '0 auto' }}><Video src={video} /></div>
+      <div style={{ textAlign: 'center', marginTop: '6px', maxWidth: '380px', marginLeft: 'auto', marginRight: 'auto' }}>
+        <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '9px', color: '#e8a090', marginBottom: '8px', lineHeight: 1.6, textShadow: '0 2px 8px rgba(0,0,0,0.9)' }}>{cap.titulo}</p>
+        <p style={{ fontFamily: 'monospace', fontSize: '12px', color: 'rgba(255,255,255,0.9)', lineHeight: 1.7, textShadow: '0 2px 8px rgba(0,0,0,0.9)' }}>{cap.texto}</p>
+      </div>
+    </div>
+  )
   if (lado === 'centro') return (
     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '-30px' }}>
       <div style={{ width: '60%' }}><Video src={video} /></div>
@@ -209,6 +218,7 @@ function CreativeAboutMe() {
   const poderes = am.poderes || []
   const capitulos = am.capitulos || []
   const [visible, setVisible] = useState(() => reduceMotion)
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : false))
   const titleChars = (am.title || 'MI HISTORIA').split('')
   const TITLE_COLORS = ['#e8a090', '#00d4ff', '#ffffff']
 
@@ -217,6 +227,12 @@ function CreativeAboutMe() {
     const id = requestAnimationFrame(() => setVisible(true))
     return () => cancelAnimationFrame(id)
   }, [reduceMotion])
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   const isEn = language === 'en'
   const inventoryGroups = [
@@ -265,7 +281,7 @@ function CreativeAboutMe() {
           </div>
           <div>
             <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '10px', color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginBottom: '20px' }}>{am.narratorLabel}</p>
-            <TarjetaPersonaje poderes={poderes} language={language} />
+            <TarjetaPersonaje poderes={poderes} language={language} isMobile={isMobile} />
           </div>
           <div style={{ textAlign: 'center' }}>
             <span style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '12px', color: '#e8a090', letterSpacing: '4px' }}>{am.adventure}</span>
@@ -275,7 +291,7 @@ function CreativeAboutMe() {
         <div style={{ position: 'relative', marginTop: '-20px', width: '100%' }}>
           <AboutCircuitCanvas reduceMotion={reduceMotion} />
           {capitulos.map((cap, i) => (
-            <Capitulo key={i} cap={cap} video={CHAPTER_VIDEOS[i]} lado={CHAPTER_SIDES[i]} />
+            <Capitulo key={i} cap={cap} video={CHAPTER_VIDEOS[i]} lado={CHAPTER_SIDES[i]} isMobile={isMobile} />
           ))}
         </div>
 

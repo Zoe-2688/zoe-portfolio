@@ -45,7 +45,7 @@ function TextLabel({ item, pos, zoomed = false }) {
 const LENS_SIZE = 240
 const ZOOM = 3
 
-function MagnifierMap({ reduceMotion, mapTexts }) {
+function MagnifierMap({ reduceMotion, mapTexts, isMobile }) {
   const containerRef = useRef(null)
   const [mouse, setMouse] = useState({ x: 0, y: 0 })
   const [hovering, setHovering] = useState(false)
@@ -70,6 +70,27 @@ function MagnifierMap({ reduceMotion, mapTexts }) {
 
   const imgLeft = -mouse.x * ZOOM + LENS_SIZE / 2
   const imgTop = -mouse.y * ZOOM + LENS_SIZE / 2
+
+  if (isMobile) {
+    return (
+      <div style={{ width: '100%' }}>
+        <div style={{ maxWidth: '340px', margin: '0 auto', lineHeight: 0, WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%)', maskImage: 'linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%)' }}>
+          <video autoPlay loop muted playsInline style={{ width: '100%', display: 'block' }}><source src={mapaVideo} type="video/mp4" /></video>
+        </div>
+        <div style={{ display: 'grid', gap: '10px', padding: '20px 16px 0', maxWidth: '440px', margin: '0 auto' }}>
+          {mapTexts.map((item, i) => {
+            const color = TEXT_POSITIONS[i] ? TEXT_POSITIONS[i].color : '#e8a090'
+            return (
+              <div key={item.id} style={{ border: `1px solid ${color}44`, backgroundColor: `${color}0d`, borderRadius: '6px', padding: '10px 12px', boxShadow: `2px 2px 0 ${color}22` }}>
+                <p style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '9px', color, margin: '0 0 8px 0', lineHeight: 1.5 }}>{item.emoji} {item.title}</p>
+                <p style={{ fontFamily: 'monospace', fontSize: '12px', color: 'rgba(255,255,255,0.8)', margin: 0, lineHeight: 1.6 }}>{item.text}</p>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div ref={containerRef} onMouseMove={handleMouseMove}
@@ -105,6 +126,7 @@ function CreativeDesignProcess() {
   const creative = dp.creative || {}
   const mapTexts = creative.mapTexts || []
   const [visible, setVisible] = useState(() => reduceMotion)
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : false))
   const titleChars = (creative.title || 'PROCESO CREATIVO').split('')
   const TITLE_COLORS = ['#e8a090', '#00d4ff', '#ffffff', '#e8a090', '#00d4ff', '#ffffff', '#e8a090']
 
@@ -113,6 +135,12 @@ function CreativeDesignProcess() {
     const id = requestAnimationFrame(() => setVisible(true))
     return () => cancelAnimationFrame(id)
   }, [reduceMotion])
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   return (
     <section id="proceso" className="bg-[#050d1a] py-24 px-6">
@@ -130,11 +158,11 @@ function CreativeDesignProcess() {
               {['>', '>', '>'].map((char, j) => <span key={j} style={{ animation: reduceMotion ? 'none' : 'arrowPulse 1.5s ease-in-out infinite', animationDelay: `${(2 - j) * 150}ms` }}>{char}</span>)}
             </div>
           </div>
-          <p style={{ fontFamily: 'monospace', fontSize: '12px', color: 'rgb(255, 255, 255)', letterSpacing: '1px' }}>{creative.hint}</p>
+          <p style={{ fontFamily: 'monospace', fontSize: '12px', color: 'rgb(255, 255, 255)', letterSpacing: '1px' }}>{isMobile ? (language === 'en' ? 'The stages of my design process' : 'Las etapas de mi proceso de diseño') : creative.hint}</p>
         </div>
       </div>
       <div style={{ width: '100%', marginTop: '2rem', opacity: visible ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 600ms ease' }}>
-        <MagnifierMap reduceMotion={reduceMotion} mapTexts={mapTexts} />
+        <MagnifierMap reduceMotion={reduceMotion} mapTexts={mapTexts} isMobile={isMobile} />
       </div>
       <style>{`@keyframes arrowPulse { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.8; } }`}</style>
     </section>

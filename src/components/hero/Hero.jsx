@@ -153,6 +153,13 @@ function Hero() {
   const t = language === 'en' ? en : es
   const [visible, setVisible] = useState(() => reduceMotion)
   const [currentScreen, setCurrentScreen] = useState(0)
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : false))
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   useEffect(() => {
     if (reduceMotion) return
@@ -177,7 +184,7 @@ function Hero() {
       id="hero"
       lang={language}
       data-mode={mode}
-      className="bg-[#050d1a] min-h-screen flex items-center justify-center relative overflow-hidden px-6"
+      className="bg-[#050d1a] min-h-[100svh] flex items-center justify-center relative overflow-hidden px-4 sm:px-6 py-20 md:py-0"
     >
       <HeroCircuitCanvas reduceMotion={reduceMotion} />
 
@@ -218,7 +225,7 @@ function Hero() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: '-40px' }}>
+          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: isMobile ? '4px' : '-40px' }}>
             {BOOST_SCREENS.map((screen, i) => (
               <img
                 key={i}
@@ -227,7 +234,7 @@ function Hero() {
                 style={{
                   position: i === 0 ? 'relative' : 'absolute',
                   width: SMALL_INDEXES.has(i) ? '45%' : '100%',
-                  maxWidth: SMALL_INDEXES.has(i) ? '210px' : '460px',
+                  maxWidth: SMALL_INDEXES.has(i) ? (isMobile ? '108px' : '210px') : (isMobile ? '230px' : '460px'),
                   objectFit: 'contain',
                   opacity: currentScreen === i ? 1 : 0,
                   transition: reduceMotion ? 'none' : 'opacity 800ms ease',
