@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Intro from './components/intro/Intro'
 import Hero from './components/hero/Hero'
 import CreativeHero from './components/creative/CreativeHero'
@@ -13,6 +13,7 @@ import WhatsAppButton from './components/shared/WhatsAppButton'
 import CustomCursor from './components/shared/CustomCursor'
 import ScrollProgress from './components/shared/ScrollProgress'
 import { usePortfolio } from './context/PortfolioContext'
+import BoostCareCaseStudy from './components/projects/BoostCareCaseStudy'
 import BoostCaseStudy from './components/projects/BoostCaseStudy'
 import FlagshipCaseStudy from './components/projects/FlagshipCaseStudy'
 import JohnnyRocketsCaseStudy from './components/projects/JohnnyRocketsCaseStudy'
@@ -74,7 +75,7 @@ function NavBar() {
   const targetMode = mode === 'professional' ? 'creative' : 'professional'
   const switchLabel = isEn
     ? (mode === 'professional' ? 'Switch to Creative' : 'Switch to Professional')
-    : (mode === 'professional' ? 'Modo Creativo' : 'Modo Profesional')
+    : (mode === 'professional' ? 'Cambiar a Creativo' : 'Cambiar a Profesional')
 
   const handleSwitchMode = () => {
     window.scrollTo({ top: 0, behavior: 'instant' })
@@ -197,6 +198,26 @@ function App() {
   const { highContrast, largeText, reduceMotion, mode } = usePortfolio()
   const [contentVisible, setContentVisible] = useState(false)
   const [activeCaseStudy, setActiveCaseStudy] = useState(null)
+  const scrollPosRef = useRef(0)
+
+  // Al abrir un caso, guardamos la posición exacta del scroll
+  const openCaseStudy = (id) => {
+    scrollPosRef.current = window.scrollY
+    setActiveCaseStudy(id)
+  }
+
+  // Al cerrar, esperamos a que el modal se desmonte (doble rAF) y restauramos
+  // la posición anterior. El modo (creativo/profesional) se conserva porque
+  // vive en el contexto, así que vuelve a la sección de proyectos correcta.
+  const closeCaseStudy = () => {
+    const y = scrollPosRef.current
+    setActiveCaseStudy(null)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.scrollTo(0, y)
+      })
+    })
+  }
 
   useEffect(() => {
     const root = document.documentElement
@@ -222,8 +243,8 @@ function App() {
           <div style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 500ms ease', paddingTop: '56px' }}>
             {mode === 'creative' ? <CreativeHero /> : <Hero />}
             {mode === 'professional'
-              ? <Projects onOpenCaseStudy={setActiveCaseStudy} />
-              : <CreativeProjects onOpenCaseStudy={setActiveCaseStudy} />
+              ? <Projects onOpenCaseStudy={openCaseStudy} />
+              : <CreativeProjects onOpenCaseStudy={openCaseStudy} />
             }
             {mode === 'professional' ? <DesignProcess /> : <CreativeDesignProcess />}
             {mode === 'professional' ? <AboutMe /> : <CreativeAboutMe />}
@@ -233,14 +254,17 @@ function App() {
         
       )}
   {mode && <WhatsAppButton />}
+      {activeCaseStudy === 'boostcare' && (
+        <BoostCareCaseStudy onClose={closeCaseStudy} />
+      )}
       {activeCaseStudy === 'boost' && (
-        <BoostCaseStudy onClose={() => setActiveCaseStudy(null)} />
+        <BoostCaseStudy onClose={closeCaseStudy} />
       )}
       {activeCaseStudy === 'flagship' && (
-        <FlagshipCaseStudy onClose={() => setActiveCaseStudy(null)} />
+        <FlagshipCaseStudy onClose={closeCaseStudy} />
       )}
       {activeCaseStudy === 'johnny-rockets' && (
-        <JohnnyRocketsCaseStudy onClose={() => setActiveCaseStudy(null)} />
+        <JohnnyRocketsCaseStudy onClose={closeCaseStudy} />
       )}
     </main>
   )

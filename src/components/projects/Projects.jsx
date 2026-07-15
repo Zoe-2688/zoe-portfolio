@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
+import boostcareImg from '../../assets/projects/boostcare-card.svg'
 import boostImg from '../../assets/projects/boost.png'
 import johnnyRocketsImg from '../../assets/projects/johnny-rockets.png'
 import flagshipImg from '../../assets/projects/flagship.png'
@@ -8,6 +9,17 @@ import en from '../../locales/en'
 
 function getProjects(t) {
   return [
+    {
+      id: 'boostcare',
+      image: boostcareImg,
+      title: 'BoostCare',
+      description: t.projects.boostcare.description,
+      longDescription: t.projects.boostcare.longDescription,
+      metric: t.projects.boostcare.metric,
+      metricIcon: '🌐',
+      tags: ['Figma', 'Design Tokens', 'React', 'Tailwind', 'WCAG', 'AI-native'],
+      hasCaseStudy: true,
+    },
     {
       id: 'boost',
       image: boostImg,
@@ -90,7 +102,7 @@ function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy, 
   const [hovered, setHovered] = useState(false)
   const [cmdHovered, setCmdHovered] = useState(false)
 
-  const imageHeight = isLarge ? 'h-80' : 'h-40'
+  const imageHeight = isLarge ? 'h-96' : 'h-44'
   const titleSize = isLarge ? 'text-[20px]' : 'text-[11px]'
 
   const handleVerCaso = () => {
@@ -103,12 +115,18 @@ function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy, 
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={handleVerCaso}
+      role={project.hasCaseStudy ? 'button' : undefined}
+      tabIndex={project.hasCaseStudy ? 0 : undefined}
+      aria-label={project.hasCaseStudy ? `${project.title} — ${verCaso}` : undefined}
+      onKeyDown={(e) => { if (project.hasCaseStudy && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); handleVerCaso() } }}
       className="flex flex-col h-full rounded-lg overflow-hidden"
       style={{
         backgroundColor: 'rgba(0,212,255,0.03)',
         border: `1px solid ${hovered ? 'rgba(0,212,255,0.5)' : 'rgba(0,212,255,0.15)'}`,
         transform: hovered ? 'translateY(-6px)' : 'translateY(0)',
         transition: reduceMotion ? 'none' : 'border-color 300ms ease, transform 300ms ease',
+        cursor: project.hasCaseStudy ? 'pointer' : 'default',
       }}
     >
       <div className={`relative ${imageHeight} overflow-hidden flex-shrink-0`}>
@@ -125,7 +143,7 @@ function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy, 
           {project.title}
         </h3>
 
-        <p className="text-[11px] text-[#00d4ff]" style={{ opacity: 0.6, fontFamily: 'monospace' }}>
+        <p className="text-[13px] text-[#00d4ff]" style={{ opacity: 0.75, fontFamily: 'monospace' }}>
           // {project.description}
         </p>
 
@@ -149,11 +167,11 @@ function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy, 
             overflow: 'hidden',
             transition: reduceMotion ? 'none' : 'max-height 350ms ease, opacity 300ms ease',
           }}>
-            <p className="text-[11px] text-white leading-relaxed" style={{ opacity: 0.8 }}>{project.longDescription}</p>
+            <p className="text-[13px] text-white leading-relaxed" style={{ opacity: 0.85 }}>{project.longDescription}</p>
             {project.metric && (
               <div className="flex items-start gap-2 rounded-md px-2.5 py-1.5 mt-2" style={{ backgroundColor: 'rgba(232,160,144,0.08)', border: '1px solid rgba(232,160,144,0.2)' }}>
                 <span style={{ fontSize: '11px' }}>{project.metricIcon}</span>
-                <p className="text-[10px] text-[#e8a090] leading-snug" style={{ opacity: 0.9 }}>{project.metric}</p>
+                <p className="text-[12px] text-[#e8a090] leading-snug" style={{ opacity: 0.9 }}>{project.metric}</p>
               </div>
             )}
           </div>
@@ -163,7 +181,7 @@ function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy, 
           {project.tags.map((tag, index) => {
             const color = index % 2 === 0 ? '#00d4ff' : '#e8a090'
             return (
-              <div key={tag} className="flex items-center gap-1" style={{ fontFamily: 'monospace', fontSize: '9px' }}>
+              <div key={tag} className="flex items-center gap-1" style={{ fontFamily: 'monospace', fontSize: '11px' }}>
                 <div className="rounded-full flex-shrink-0" style={{ width: '4px', height: '4px', backgroundColor: color }} />
                 <div className="flex-shrink-0" style={{ width: '16px', height: '1px', backgroundColor: color, opacity: 0.6 }} />
                 <span style={{ color, opacity: 0.85 }}>{tag}</span>
@@ -225,15 +243,18 @@ function Projects({ onOpenCaseStudy }) {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8" style={{ gridAutoRows: '1fr' }}>
-          <div className="h-full md:col-span-2 md:row-span-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="h-full">
             <ProjectCard project={PROJECTS[0]} reduceMotion={reduceMotion} isLarge onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
           </div>
           <div className="h-full">
-            <ProjectCard project={PROJECTS[1]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
+            <ProjectCard project={PROJECTS[1]} reduceMotion={reduceMotion} isLarge onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
           </div>
           <div className="h-full">
             <ProjectCard project={PROJECTS[2]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
+          </div>
+          <div className="h-full">
+            <ProjectCard project={PROJECTS[3]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
           </div>
         </div>
       </div>

@@ -22,6 +22,11 @@ const es = {
     tag: 'Casos de estudio',
     title: 'Proyectos',
     verCaso: '// ver_caso',
+    boostcare: {
+      description: 'Plataforma SaaS de Salud · del diseño al código',
+      longDescription: 'Diseñada y desarrollada de principio a fin: design system en Figma con arquitectura de tokens, 15 pantallas mobile-first y prototipo multi-rol, construido en React + Tailwind y desplegado en producción. Un flujo AI-native.',
+      metric: 'En vivo · 98/100 en accesibilidad (Lighthouse) · Figma → React → deploy',
+    },
     boost: {
       description: 'Plataforma de Salud Cognitiva Inclusiva con IA e IoT',
       longDescription: 'Rediseño UX/UI de una plataforma de salud cognitiva para adultos mayores, personas con discapacidad cognitiva y sus cuidadores. Integra IA para personalizar terapias y IoT para sincronizar un dispensador inteligente de medicación.',

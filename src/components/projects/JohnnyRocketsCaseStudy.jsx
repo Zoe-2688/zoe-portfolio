@@ -182,7 +182,7 @@ function JohnnyRocketsCaseStudy({ onClose }) {
   const containerRef = useRef(null)
   const [showScroll, setShowScroll] = useState(false)
 
-  useEffect(() => { document.body.style.overflow = 'hidden'; window.scrollTo(0, 0); return () => { document.body.style.overflow = '' } }, [])
+  useEffect(() => { document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = '' } }, [])
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
@@ -203,7 +203,7 @@ function JohnnyRocketsCaseStudy({ onClose }) {
   const TAGS = ['HTML', 'Tailwind CSS', 'JavaScript', 'Canva', 'UX/UI', 'Responsive']
 
   return (
-    <div ref={containerRef} className="jr-case-study" style={{ position: 'fixed', inset: 0, zIndex: 1000, backgroundColor: BG, overflowY: 'auto', fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
+    <div ref={containerRef} className="jr-case-study" style={{ position: 'fixed', inset: 0, zIndex: 2000, backgroundColor: BG, overflowY: 'auto', fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}><CircuitCanvas reduceMotion={reduceMotion} /></div>
 
       {showScroll && (

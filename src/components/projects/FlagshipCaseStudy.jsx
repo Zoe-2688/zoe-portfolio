@@ -154,7 +154,7 @@ function FlagshipCaseStudy({ onClose }) {
   const containerRef = useRef(null)
   const [showScroll, setShowScroll] = useState(false)
 
-  useEffect(() => { document.body.style.overflow = 'hidden'; window.scrollTo(0, 0); return () => { document.body.style.overflow = '' } }, [])
+  useEffect(() => { document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = '' } }, [])
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -187,7 +187,7 @@ function FlagshipCaseStudy({ onClose }) {
   const btnBase = { width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(5,17,29,0.9)', backdropFilter: 'blur(8px)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 200ms', boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }
 
   return (
-    <div ref={containerRef} style={{ position: 'fixed', inset: 0, zIndex: 1000, backgroundColor: C.bg, overflowY: 'auto', fontFamily: "'Albert Sans', 'Inter', 'Segoe UI', sans-serif" }}>
+    <div ref={containerRef} style={{ position: 'fixed', inset: 0, zIndex: 2000, backgroundColor: C.bg, overflowY: 'auto', fontFamily: "'Albert Sans', 'Inter', 'Segoe UI', sans-serif" }}>
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}><CircuitCanvas reduceMotion={reduceMotion} /></div>
 
       {showScroll && (
