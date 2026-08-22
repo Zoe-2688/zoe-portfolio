@@ -16,7 +16,9 @@ import { usePortfolio } from './context/PortfolioContext'
 import BoostCareCaseStudy from './components/projects/BoostCareCaseStudy'
 import BoostCaseStudy from './components/projects/BoostCaseStudy'
 import FlagshipCaseStudy from './components/projects/FlagshipCaseStudy'
+import BoostHealthCaseStudy from './components/projects/BoostHealthCaseStudy'
 import JohnnyRocketsCaseStudy from './components/projects/JohnnyRocketsCaseStudy'
+import { trackEvent } from './utils/analytics'
 
 function A11yIcon() {
   return (
@@ -131,14 +133,14 @@ function NavBar() {
         <div className="flex items-center gap-2 sm:gap-3 relative">
           <div className="flex items-center gap-1">
             <button
-              onClick={() => setLanguage('es')}
+              onClick={() => { trackEvent('cambio_idioma', { idioma: 'es' }); setLanguage('es') }}
               aria-pressed={language === 'es'}
               aria-label="Cambiar a Español"
               className={`text-[11px] tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-1 ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
             >ES</button>
             <span className="text-white/20 text-[10px]">·</span>
             <button
-              onClick={() => setLanguage('en')}
+              onClick={() => { trackEvent('cambio_idioma', { idioma: 'en' }); setLanguage('en') }}
               aria-pressed={language === 'en'}
               aria-label="Switch to English"
               className={`text-[11px] tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-1 ${language === 'en' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
@@ -149,7 +151,11 @@ function NavBar() {
 
           <div className="relative" onKeyDown={handlePanelKey}>
             <button
-              onClick={() => setA11yOpen(p => !p)}
+              onClick={() => {
+                const next = !a11yOpen
+                if (next) trackEvent('abrir_a11y')
+                setA11yOpen(next)
+              }}
               aria-label={isEn ? 'Accessibility options' : 'Opciones de accesibilidad'}
               aria-expanded={a11yOpen}
               aria-haspopup="dialog"
@@ -203,6 +209,7 @@ function App() {
   // Al abrir un caso, guardamos la posición exacta del scroll
   const openCaseStudy = (id) => {
     scrollPosRef.current = window.scrollY
+    trackEvent('ver_caso', { proyecto: id })
     setActiveCaseStudy(id)
   }
 
@@ -232,6 +239,11 @@ function App() {
     return () => cancelAnimationFrame(id)
   }, [mode])
 
+  useEffect(() => {
+    if (!mode) return
+    trackEvent('seleccion_modo', { modo: mode })
+  }, [mode])
+
   return (
     <main>
       <ScrollProgress />
@@ -251,9 +263,9 @@ function App() {
             <Footer />
           </div>
         </>
-        
+
       )}
-  {mode && <WhatsAppButton />}
+      {mode && <WhatsAppButton />}
       {activeCaseStudy === 'boostcare' && (
         <BoostCareCaseStudy onClose={closeCaseStudy} />
       )}
@@ -265,6 +277,10 @@ function App() {
       )}
       {activeCaseStudy === 'johnny-rockets' && (
         <JohnnyRocketsCaseStudy onClose={closeCaseStudy} />
+
+      )}
+      {activeCaseStudy === 'boosthealth' && (
+        <BoostHealthCaseStudy onClose={closeCaseStudy} />
       )}
     </main>
   )
