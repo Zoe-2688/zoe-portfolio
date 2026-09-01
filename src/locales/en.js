@@ -22,6 +22,7 @@ const en = {
     tag: 'Case studies',
     title: 'Projects',
     verCaso: '// view_case',
+    destacado: 'Latest project',
     boosthealth: {
       description: 'B2B2C SaaS for clinics · Booking + AI assistant',
       longDescription: 'One product each clinic sells as their own: they configure their brand, specialities and documents, and get their own booking site with Sage, an assistant trained only on that information. I designed the whole product — patient and admin flows, the design system, and the specification for development. The hardest part wasn\'t the screens: it was defining what an AI working with health must refuse to answer.',

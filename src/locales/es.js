@@ -22,6 +22,7 @@ const es = {
     tag: 'Casos de estudio',
     title: 'Proyectos',
     verCaso: '// ver_caso',
+    destacado: 'Último proyecto',
     boosthealth: {
       description: 'SaaS B2B2C para clínicas · Reservas + asistente con IA',
       longDescription: 'Un mismo producto que cada clínica vende como suyo: configura su marca, sus especialidades y sus documentos, y obtiene su propio sitio de reservas con Sage, un asistente entrenado solo con esa información. Diseñé el producto completo — los flujos de paciente y de administrador, el sistema de diseño y la especificación para desarrollo. Lo más difícil no fueron las pantallas: fue definir qué debe negarse a responder una IA que trabaja con salud.',

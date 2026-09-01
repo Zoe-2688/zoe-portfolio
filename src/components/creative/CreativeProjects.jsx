@@ -70,7 +70,7 @@ function CircuitLines({ hovered, reduceMotion }) {
   )
 }
 
-function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy, verCaso }) {
+function ProjectCard({ project, reduceMotion, isLarge = false, isFeatured = false, onOpenCaseStudy, verCaso, destacadoLabel }) {
   const [hovered, setHovered] = useState(false)
   const [cmdHovered, setCmdHovered] = useState(false)
   const imageHeight = isLarge ? 'h-56 sm:h-72 md:h-96' : 'h-44'
@@ -85,10 +85,21 @@ function ProjectCard({ project, reduceMotion, isLarge = false, onOpenCaseStudy, 
       aria-label={project.hasCaseStudy ? `${project.title} — ${verCaso}` : undefined}
       onKeyDown={(e) => { if (project.hasCaseStudy && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); handleVerCaso() } }}
       className="flex flex-col h-full rounded-lg overflow-hidden"
-      style={{ backgroundColor: 'rgba(0,212,255,0.03)', border: `1px solid ${hovered ? 'rgba(0,212,255,0.5)' : 'rgba(0,212,255,0.15)'}`, transform: hovered ? 'translateY(-6px)' : 'translateY(0)', transition: reduceMotion ? 'none' : 'border-color 300ms ease, transform 300ms ease', cursor: project.hasCaseStudy ? 'pointer' : 'default' }}
+      style={{
+        backgroundColor: isFeatured ? 'rgba(0,212,255,0.06)' : 'rgba(0,212,255,0.03)',
+        border: isFeatured ? `2px solid ${hovered ? 'rgba(0,212,255,0.9)' : 'rgba(0,212,255,0.55)'}` : `1px solid ${hovered ? 'rgba(0,212,255,0.5)' : 'rgba(0,212,255,0.15)'}`,
+        boxShadow: isFeatured ? (hovered ? '0 0 0 1px rgba(0,212,255,0.3), 0 14px 48px rgba(0,212,255,0.28)' : '0 0 0 1px rgba(0,212,255,0.15), 0 8px 32px rgba(0,212,255,0.16)') : 'none',
+        transform: hovered ? 'translateY(-6px)' : 'translateY(0)',
+        transition: reduceMotion ? 'none' : 'border-color 300ms ease, transform 300ms ease, box-shadow 300ms ease',
+        cursor: project.hasCaseStudy ? 'pointer' : 'default' }}
     >
-      <div className={`relative ${imageHeight} overflow-hidden flex-shrink-0`}>
+      <div className={`relative ${isFeatured ? 'h-56 sm:h-72 md:h-80 lg:h-96' : imageHeight} overflow-hidden flex-shrink-0`}>
         <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+        {isFeatured && destacadoLabel && (
+          <div className="absolute top-4 left-4 px-4 py-2 rounded-full" style={{ backgroundColor: 'rgba(0,212,255,0.95)', boxShadow: '0 4px 18px rgba(0,212,255,0.45)' }}>
+            <span style={{ fontFamily: 'monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px', textTransform: 'uppercase', color: '#050d1a' }}>{destacadoLabel}</span>
+          </div>
+        )}
         <CircuitLines hovered={hovered} reduceMotion={reduceMotion} />
         <CircuitNode corner="top-left" hovered={hovered} reduceMotion={reduceMotion} />
         <CircuitNode corner="top-right" hovered={hovered} reduceMotion={reduceMotion} />
@@ -172,19 +183,15 @@ function CreativeProjects({ onOpenCaseStudy }) {
             </div>
           </div>
         </div>
+        <div className="h-full mb-8">
+          <ProjectCard project={PROJECTS[0]} reduceMotion={reduceMotion} isLarge isFeatured onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} destacadoLabel={t.projects.destacado} />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="h-full">
-            <ProjectCard project={PROJECTS[0]} reduceMotion={reduceMotion} isLarge onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
-          </div>
-          <div className="h-full">
-            <ProjectCard project={PROJECTS[1]} reduceMotion={reduceMotion} isLarge onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
-          </div>
-          <div className="h-full">
-            <ProjectCard project={PROJECTS[2]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
-          </div>
-          <div className="h-full">
-            <ProjectCard project={PROJECTS[3]} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
-          </div>
+          {PROJECTS.slice(1).map((p, i) => (
+            <div key={p.id} className="h-full">
+              <ProjectCard project={p} reduceMotion={reduceMotion} isLarge={i === 0} onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
+            </div>
+          ))}
         </div>
       </div>
       <style>{`@keyframes arrowPulse { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.8; } }`}</style>
