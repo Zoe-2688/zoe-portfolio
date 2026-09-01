@@ -22,6 +22,11 @@ const es = {
     tag: 'Casos de estudio',
     title: 'Proyectos',
     verCaso: '// ver_caso',
+    boosthealth: {
+      description: 'SaaS B2B2C para clínicas · Reservas + asistente con IA',
+      longDescription: 'Un mismo producto que cada clínica vende como suyo: configura su marca, sus especialidades y sus documentos, y obtiene su propio sitio de reservas con Sage, un asistente entrenado solo con esa información. Diseñé el producto completo — los flujos de paciente y de administrador, el sistema de diseño y la especificación para desarrollo. Lo más difícil no fueron las pantallas: fue definir qué debe negarse a responder una IA que trabaja con salud.',
+      metric: 'Multi-tenant · 28 pantallas · 12 documentos de especificación · WCAG 2.1 AA',
+    },
     boostcare: {
       description: 'Plataforma SaaS de Salud · del diseño al código',
       longDescription: 'Diseñada y desarrollada de principio a fin: design system en Figma con arquitectura de tokens, 15 pantallas mobile-first y prototipo multi-rol, construido en React + Tailwind y desplegado en producción. Un flujo AI-native.',

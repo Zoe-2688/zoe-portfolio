@@ -22,6 +22,11 @@ const en = {
     tag: 'Case studies',
     title: 'Projects',
     verCaso: '// view_case',
+    boosthealth: {
+      description: 'B2B2C SaaS for clinics · Booking + AI assistant',
+      longDescription: 'One product each clinic sells as their own: they configure their brand, specialities and documents, and get their own booking site with Sage, an assistant trained only on that information. I designed the whole product — patient and admin flows, the design system, and the specification for development. The hardest part wasn\'t the screens: it was defining what an AI working with health must refuse to answer.',
+      metric: 'Multi-tenant · 28 screens · 12 specification documents · WCAG 2.1 AA',
+    },
     boostcare: {
       description: 'Health SaaS Platform · from design to code',
       longDescription: 'Designed and developed end-to-end: design system in Figma with token architecture, 15 mobile-first screens and a multi-role prototype, built in React + Tailwind and deployed to production. An AI-native workflow.',

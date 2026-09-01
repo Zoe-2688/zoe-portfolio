@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
+import boosthealthImg from '../../assets/projects/boosthealth-card.png'
 import boostcareImg from '../../assets/projects/boostcare-card.svg'
 import boostImg from '../../assets/projects/boost.png'
 import johnnyRocketsImg from '../../assets/projects/johnny-rockets.png'
@@ -9,6 +10,17 @@ import en from '../../locales/en'
 
 function getProjects(t) {
   return [
+    {
+      id: 'boosthealth',
+      image: boosthealthImg,
+      title: 'BoostHealth',
+      description: t.projects.boosthealth.description,
+      longDescription: t.projects.boosthealth.longDescription,
+      metric: t.projects.boosthealth.metric,
+      metricIcon: '🏥',
+      tags: ['SaaS B2B2C', 'White-label', 'Design System', 'IA', 'WCAG 2.1', 'React'],
+      hasCaseStudy: true,
+    },
     {
       id: 'boostcare',
       image: boostcareImg,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
+import boosthealthImg from '../../assets/projects/boosthealth-card.png'
 import boostcareImg from '../../assets/projects/boostcare-card.svg'
 import boostImg from '../../assets/projects/boost.png'
 import johnnyRocketsImg from '../../assets/projects/johnny-rockets.png'
@@ -11,6 +12,13 @@ const TITLE_COLORS = ['#e8a090', '#00d4ff', '#ffffff', '#e8a090', '#00d4ff', '#f
 
 function getProjects(t) {
   return [
+    {
+      id: 'boosthealth', image: boosthealthImg, title: 'BoostHealth',
+      description: t.projects.boosthealth.description,
+      longDescription: t.projects.boosthealth.longDescription,
+      metric: t.projects.boosthealth.metric,
+      metricIcon: '🏥', tags: ['SaaS B2B2C', 'White-label', 'Design System', 'IA', 'WCAG 2.1'], hasCaseStudy: true,
+    },
     {
       id: 'boostcare', image: boostcareImg, title: 'BoostCare',
       description: t.projects.boostcare.description,
