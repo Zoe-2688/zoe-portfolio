@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import Intro from './components/intro/Intro'
 import Hero from './components/hero/Hero'
 import CreativeHero from './components/creative/CreativeHero'
@@ -13,12 +13,36 @@ import WhatsAppButton from './components/shared/WhatsAppButton'
 import CustomCursor from './components/shared/CustomCursor'
 import ScrollProgress from './components/shared/ScrollProgress'
 import { usePortfolio } from './context/PortfolioContext'
-import BoostCareCaseStudy from './components/projects/BoostCareCaseStudy'
-import BoostCaseStudy from './components/projects/BoostCaseStudy'
-import FlagshipCaseStudy from './components/projects/FlagshipCaseStudy'
-import BoostHealthCaseStudy from './components/projects/BoostHealthCaseStudy'
-import JohnnyRocketsCaseStudy from './components/projects/JohnnyRocketsCaseStudy'
 import { trackEvent } from './utils/analytics'
+
+// Cada case study pesa varios cientos de KB de JS (mockups inline, SVGs, imágenes
+// importadas) y solo se necesita si alguien hace clic en "ver caso" — se cargan
+// bajo demanda para no inflar el bundle inicial que bloquea el primer paint.
+const BoostCareCaseStudy = lazy(() => import('./components/projects/BoostCareCaseStudy'))
+const BoostCaseStudy = lazy(() => import('./components/projects/BoostCaseStudy'))
+const FlagshipCaseStudy = lazy(() => import('./components/projects/FlagshipCaseStudy'))
+const BoostHealthCaseStudy = lazy(() => import('./components/projects/BoostHealthCaseStudy'))
+const JohnnyRocketsCaseStudy = lazy(() => import('./components/projects/JohnnyRocketsCaseStudy'))
+
+function CaseStudyFallback() {
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 2000, backgroundColor: '#050d1a' }} aria-hidden="true" />
+  )
+}
+
+const ROBOT_AVATAR_SVG = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 5' shape-rendering='crispEdges'>
+  <rect width='5' height='5' fill='#050d1a'/>
+  <rect x='2' y='0' width='1' height='1' fill='#00d4ff'/>
+  <rect x='1' y='1' width='3' height='1' fill='#00d4ff'/>
+  <rect x='0' y='2' width='1' height='1' fill='#00d4ff'/>
+  <rect x='1' y='2' width='1' height='1' fill='#e8a090'/>
+  <rect x='2' y='2' width='1' height='1' fill='#00d4ff'/>
+  <rect x='3' y='2' width='1' height='1' fill='#e8a090'/>
+  <rect x='4' y='2' width='1' height='1' fill='#00d4ff'/>
+  <rect x='0' y='3' width='5' height='1' fill='#00d4ff'/>
+  <rect x='1' y='4' width='3' height='1' fill='#00d4ff'/>
+</svg>`
+const ROBOT_AVATAR_SRC = `data:image/svg+xml;utf8,${encodeURIComponent(ROBOT_AVATAR_SVG)}`
 
 function A11yIcon() {
   return (
@@ -48,7 +72,7 @@ function Toggle({ checked, onChange, label }) {
   }
   return (
     <label className="flex items-center justify-between gap-4 cursor-pointer select-none">
-      <span className="text-white/70 text-[11px] tracking-[1px] uppercase" id={`toggle-${label}`}>{label}</span>
+      <span className="text-white/70 text-xs tracking-[1px] uppercase" id={`toggle-${label}`}>{label}</span>
       <button
         role="switch"
         aria-checked={checked}
@@ -76,8 +100,8 @@ function NavBar() {
 
   const targetMode = mode === 'professional' ? 'creative' : 'professional'
   const switchLabel = isEn
-    ? (mode === 'professional' ? 'Switch to Creative' : 'Switch to Professional')
-    : (mode === 'professional' ? 'Cambiar a Creativo' : 'Cambiar a Profesional')
+    ? (mode === 'professional' ? 'Creative mode' : 'Professional mode')
+    : (mode === 'professional' ? 'Modo creativo' : 'Modo profesional')
 
   const handleSwitchMode = () => {
     window.scrollTo({ top: 0, behavior: 'instant' })
@@ -89,6 +113,10 @@ function NavBar() {
     setMode(null)
   }
 
+  const handleAvatarClick = () => {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'instant' : 'smooth' })
+  }
+
   const scrollToId = (id) => {
     const el = document.getElementById(id)
     if (el) el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' })
@@ -98,7 +126,7 @@ function NavBar() {
     if (e.key === 'Escape') setA11yOpen(false)
   }
 
-  const navBtnClass = "text-white hover:text-[#00d4ff] text-[11px] tracking-[1px] uppercase transition-colors focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-2 py-1"
+  const navBtnClass = "text-white hover:text-[#00d4ff] text-xs tracking-[1px] uppercase transition-colors focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-2 py-1"
 
   return (
     <nav
@@ -108,6 +136,18 @@ function NavBar() {
     >
       <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-2">
         <div className="flex items-center gap-1 sm:gap-3">
+          <button
+            onClick={handleAvatarClick}
+            className="flex-shrink-0 rounded-full focus:outline-none focus:ring-2 focus:ring-[#00d4ff] focus:ring-offset-2 focus:ring-offset-[#050d1a]"
+          >
+            <img
+              src={ROBOT_AVATAR_SRC}
+              alt="Zoe Mejía Santana"
+              width={26}
+              height={26}
+              style={{ display: 'block', borderRadius: '50%', border: '1px solid rgba(0,212,255,0.5)', imageRendering: 'pixelated' }}
+            />
+          </button>
           <button
             onClick={handleBackToIntro}
             aria-label={isEn ? 'Back to intro' : 'Volver al inicio'}
@@ -136,14 +176,14 @@ function NavBar() {
               onClick={() => { trackEvent('cambio_idioma', { idioma: 'es' }); setLanguage('es') }}
               aria-pressed={language === 'es'}
               aria-label="Cambiar a Español"
-              className={`text-[11px] tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-1 ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
+              className={`text-xs tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-1 ${language === 'es' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
             >ES</button>
-            <span className="text-white/20 text-[10px]">·</span>
+            <span className="text-white/20 text-xs">·</span>
             <button
               onClick={() => { trackEvent('cambio_idioma', { idioma: 'en' }); setLanguage('en') }}
               aria-pressed={language === 'en'}
               aria-label="Switch to English"
-              className={`text-[11px] tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-1 ${language === 'en' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
+              className={`text-xs tracking-[2px] uppercase transition-all focus:outline-none focus:ring-1 focus:ring-[#00d4ff] px-1 ${language === 'en' ? 'text-[#00d4ff]' : 'text-white/30 hover:text-white/60'}`}
             >EN</button>
           </div>
 
@@ -177,7 +217,7 @@ function NavBar() {
                   {reduceMotion ? (isEn ? 'Reduced motion on' : 'Animaciones reducidas') : ''}
                 </div>
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-[#00d4ff] text-[10px] tracking-[3px] uppercase opacity-60">
+                  <p className="text-[#00d4ff] text-xs tracking-[3px] uppercase opacity-60">
                     {isEn ? 'Accessibility' : 'Accesibilidad'}
                   </p>
                   <button
@@ -207,9 +247,9 @@ function App() {
   const scrollPosRef = useRef(0)
 
   // Al abrir un caso, guardamos la posición exacta del scroll
-  const openCaseStudy = (id) => {
+  const openCaseStudy = (id, nombre) => {
     scrollPosRef.current = window.scrollY
-    trackEvent('ver_caso', { proyecto: id })
+    trackEvent('ver_caso', { nombre_caso: nombre })
     setActiveCaseStudy(id)
   }
 
@@ -241,7 +281,7 @@ function App() {
 
   useEffect(() => {
     if (!mode) return
-    trackEvent('seleccion_modo', { modo: mode })
+    trackEvent('seleccion_modo', { modo: mode === 'creative' ? 'creativa' : 'profesional' })
   }, [mode])
 
   return (
@@ -263,24 +303,26 @@ function App() {
             <Footer />
           </div>
         </>
-
       )}
       {mode && <WhatsAppButton />}
-      {activeCaseStudy === 'boostcare' && (
-        <BoostCareCaseStudy onClose={closeCaseStudy} />
-      )}
-      {activeCaseStudy === 'boost' && (
-        <BoostCaseStudy onClose={closeCaseStudy} />
-      )}
-      {activeCaseStudy === 'flagship' && (
-        <FlagshipCaseStudy onClose={closeCaseStudy} />
-      )}
-      {activeCaseStudy === 'johnny-rockets' && (
-        <JohnnyRocketsCaseStudy onClose={closeCaseStudy} />
-
-      )}
-      {activeCaseStudy === 'boosthealth' && (
-        <BoostHealthCaseStudy onClose={closeCaseStudy} />
+      {activeCaseStudy && (
+        <Suspense fallback={<CaseStudyFallback />}>
+          {activeCaseStudy === 'boostcare' && (
+            <BoostCareCaseStudy onClose={closeCaseStudy} />
+          )}
+          {activeCaseStudy === 'boost' && (
+            <BoostCaseStudy onClose={closeCaseStudy} />
+          )}
+          {activeCaseStudy === 'flagship' && (
+            <FlagshipCaseStudy onClose={closeCaseStudy} />
+          )}
+          {activeCaseStudy === 'johnny-rockets' && (
+            <JohnnyRocketsCaseStudy onClose={closeCaseStudy} />
+          )}
+          {activeCaseStudy === 'boosthealth' && (
+            <BoostHealthCaseStudy onClose={closeCaseStudy} />
+          )}
+        </Suspense>
       )}
     </main>
   )

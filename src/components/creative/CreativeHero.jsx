@@ -156,7 +156,7 @@ function PixelAvatar({ src, alt, maxWidth, reduceMotion }) {
   )
   return (
     <div style={{ position: 'relative', overflow: 'visible', width: '100%', maxWidth }}>
-      <img src={src} alt={alt} style={{
+      <img src={src} alt={alt} width={153} height={263} fetchPriority="high" style={{
   width: '100%', display: 'block', objectFit: 'contain',
   height: '300px',
   filter: 'drop-shadow(0 -10px 20px rgba(0,212,255,0.2)) drop-shadow(0 30px 40px rgba(232,160,144,0.3))',
@@ -282,7 +282,7 @@ function CreativeHero() {
               <div style={{ opacity: avatarPhase === 2 ? 0 : 1, transition: reduceMotion ? 'none' : 'opacity 800ms ease' }}>
                 <PixelAvatar src={avatar} alt="Avatar de Zoe Mejia Santana" maxWidth="200px" reduceMotion={reduceMotion} />
               </div>
-              <img src={avatar2} alt="Avatar de Zoe Mejia Santana" style={{
+              <img src={avatar2} alt="Avatar de Zoe Mejia Santana" width={428} height={729} fetchPriority="low" style={{
                 position: 'absolute', top: 7, left: 11, width: '100%', maxWidth: '180px',height: '280px',
                 objectFit: 'contain', maxHeight: '100%',
                 opacity: avatarPhase === 2 ? 1 : 0,
@@ -303,6 +303,9 @@ function CreativeHero() {
           <img
             src={miawmiaw}
             alt="MiawMiaw, la gata de Zoe"
+            width={1920}
+            height={1080}
+            decoding="async"
             style={{
               position: 'absolute',
               bottom: '58px',

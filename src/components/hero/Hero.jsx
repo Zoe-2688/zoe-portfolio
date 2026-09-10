@@ -10,7 +10,13 @@ import boostAccessibility from '../../assets/projects/accesibilityscreen.png'
 
 const STEP = 70
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]]
-const BOOST_SCREENS = [boostHome, boostGames, boostAdherence, boostDispenser, boostAccessibility]
+const BOOST_SCREENS = [
+  { src: boostHome, width: 2240, height: 2000 },
+  { src: boostGames, width: 424, height: 845 },
+  { src: boostAdherence, width: 2240, height: 2000 },
+  { src: boostDispenser, width: 422, height: 847 },
+  { src: boostAccessibility, width: 2240, height: 2000 },
+]
 const SMALL_INDEXES = new Set([1, 3])
 
 function buildCircuits(w, h) {
@@ -229,8 +235,13 @@ function Hero() {
             {BOOST_SCREENS.map((screen, i) => (
               <img
                 key={i}
-                src={screen}
+                src={screen.src}
+                width={screen.width}
+                height={screen.height}
                 alt={`Boost pantalla ${i + 1}`}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                fetchPriority={i === 0 ? 'high' : 'low'}
                 style={{
                   position: i === 0 ? 'relative' : 'absolute',
                   width: SMALL_INDEXES.has(i) ? '45%' : '100%',

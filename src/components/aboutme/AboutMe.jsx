@@ -3,9 +3,9 @@ import { usePortfolio } from '../../context/PortfolioContext'
 import {
   SiFigma, SiCanva, SiBlender, SiGithub, SiNpm, SiTrello, SiReact,
   SiHtml5, SiJavascript, SiTailwindcss, SiBootstrap, SiCss,
-  SiVite, SiGit,
+  SiVite, SiGit, SiGoogleanalytics, SiHotjar,
 } from 'react-icons/si'
-import { FiLayout, FiUser, FiEye, FiSmartphone, FiPackage, FiGlobe, FiPenTool, FiCode } from 'react-icons/fi'
+import { FiLayout, FiUser, FiEye, FiSmartphone, FiPackage, FiGlobe, FiPenTool, FiCode, FiBarChart2 } from 'react-icons/fi'
 import es from '../../locales/es'
 import en from '../../locales/en'
 
@@ -48,7 +48,6 @@ function getSkillGroups(t) {
       color: 'cyan',
       skills: [
         { name: 'Figma', icon: SiFigma, brandColor: '#F24E1E' },
-        { name: 'Adobe XD', icon: FiPenTool, brandColor: '#FF61F6' },
         { name: 'Adobe Illustrator', icon: FiPenTool, brandColor: '#FF9A00' },
         { name: 'Adobe Photoshop', icon: FiLayout, brandColor: '#31A8FF' },
         { name: 'Affinity Designer', icon: FiPenTool, brandColor: '#1B72BE' },
@@ -58,6 +57,9 @@ function getSkillGroups(t) {
         { name: 'GitHub', icon: SiGithub, brandColor: '#ffffff' },
         { name: 'npm', icon: SiNpm, brandColor: '#CB3837' },
         { name: 'Trello', icon: SiTrello, brandColor: '#0052CC' },
+        { name: 'Google Analytics 4', icon: SiGoogleanalytics, brandColor: '#E37400' },
+        { name: 'Hotjar', icon: SiHotjar, brandColor: '#FD3A5C' },
+        { name: 'Contentsquare', icon: FiBarChart2, brandColor: '#00C9A7' },
       ],
     },
     {

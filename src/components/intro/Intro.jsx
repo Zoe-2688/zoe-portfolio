@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
-import RetroLoadingScreen from './RetroLoadingScreen'
 import es from '../../locales/es'
 import en from '../../locales/en'
 
@@ -253,18 +252,14 @@ function BorderParticle({ onComplete }) {
 }
 
 function Intro() {
-  const { setMode, language, setLanguage, highContrast, setHighContrast, largeText, setLargeText, reduceMotion, setReduceMotion } = usePortfolio()
+  const { setMode, language, setLanguage, reduceMotion } = usePortfolio()
   const t = language === 'en' ? en : es
   const intro = t.intro || {}
-  const rotatingWords = intro.rotatingWords || ['siente', 'vive', 'usa', 'recuerda', 'comparte']
 
-  const [wordIndex, setWordIndex] = useState(0)
-  const [wordVisible, setWordVisible] = useState(true)
   const [creativePixel, setCreativePixel] = useState(false)
   const [creativeVisible, setCreativeVisible] = useState(true)
   const [tooltip, setTooltip] = useState(null)
   const [clickingMode, setClickingMode] = useState(null)
-  const [loadingMode, setLoadingMode] = useState(null)
   const [lettersFalling, setLettersFalling] = useState(false)
   const [letterOffsets] = useState(() => {
     const rand = () => (Math.random() * 2 - 1) * 150
@@ -280,6 +275,41 @@ function Intro() {
   const [activated, setActivated] = useState(() => reduceMotion)
   const creativeTid = useRef(null)
 
+  // Además del toggle propio del sitio, respetamos la preferencia real del SO.
+  const [osReduceMotion, setOsReduceMotion] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false
+  )
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const handler = (e) => setOsReduceMotion(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+  const motionDisabled = reduceMotion || osReduceMotion
+
+  const rotatingPhrases = intro.rotatingPhrases || [t.hero.title]
+  const [phraseIndex, setPhraseIndex] = useState(0)
+  const [phraseVisible, setPhraseVisible] = useState(true)
+  const PHRASE_INTERVAL_MS = 5000 // también actúa como la espera inicial antes de la primera rotación
+  const PHRASE_FADE_MS = 300
+
+  useEffect(() => {
+    setPhraseIndex(0)
+    setPhraseVisible(true)
+    if (motionDisabled) return
+    const intervalId = setInterval(() => {
+      setPhraseVisible(false)
+      setTimeout(() => {
+        setPhraseIndex((i) => (i + 1) % rotatingPhrases.length)
+        setPhraseVisible(true)
+      }, PHRASE_FADE_MS)
+    }, PHRASE_INTERVAL_MS)
+    return () => clearInterval(intervalId)
+  }, [motionDisabled, language, rotatingPhrases.length])
+
   const handleCreativeEnter = () => { clearTimeout(creativeTid.current); setCreativeVisible(false); creativeTid.current = setTimeout(() => { setCreativePixel(true); setCreativeVisible(true) }, 180) }
   const handleCreativeLeave = () => { clearTimeout(creativeTid.current); setCreativeVisible(false); creativeTid.current = setTimeout(() => { setCreativePixel(false); setCreativeVisible(true) }, 180) }
 
@@ -291,18 +321,11 @@ function Intro() {
   }
 
   const handleAnimationComplete = (mode) => {
-    if (reduceMotion) { setMode(mode); if (mode === 'professional') window.scrollTo({ top: window.innerHeight, behavior: 'smooth' }); setClickingMode(null); setLettersFalling(false); return }
-    setLoadingMode(mode)
+    setMode(mode)
+    if (mode === 'professional') window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })
+    setClickingMode(null)
+    setLettersFalling(false)
   }
-
-  useEffect(() => {
-    if (reduceMotion) return
-    const id = setInterval(() => {
-      setWordVisible(false)
-      setTimeout(() => { setWordIndex(i => (i + 1) % rotatingWords.length); setWordVisible(true) }, 300)
-    }, 2500)
-    return () => clearInterval(id)
-  }, [reduceMotion, rotatingWords.length])
 
   useEffect(() => {
     if (reduceMotion) { setStarted(true); setLettersWhite(true); setNameGlow(false); setAssembled(true); return }
@@ -391,17 +414,32 @@ function Intro() {
               </div>
             )}
           </div>
-          <p className="text-[#00d4ff] text-sm tracking-[3px] uppercase opacity-70" style={{ marginLeft: hideArrows ? '0' : `calc(${nameSize} * 1.5 + 1rem)` }}>UX/UI · Front-end · Design</p>
+          <p className="text-[#00d4ff] text-xl font-semibold tracking-[3px] uppercase opacity-90" style={{ marginLeft: hideArrows ? '0' : `calc(${nameSize} * 1.5 + 1rem)` }}>UX/UI · Front-end · AI-Native</p>
         </div>
 
         {/* Columna derecha */}
         <div className="flex flex-col items-center gap-4" style={{ opacity: assembled ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 400ms ease' }}>
-          <p className="tracking-wide text-center" style={{ color: '#eab5a8', fontFamily: "'VT323', monospace", fontSize: isMobile ? '24px' : '32px', letterSpacing: '0.5px' }}>
-            "{intro.quote || 'Un buen diseño se'}{' '}
-            <span style={{ color: '#f5c4b4', opacity: wordVisible ? 1 : 0, transition: 'opacity 300ms ease', display: 'inline-block' }}>
-              {rotatingWords[wordIndex]}
-            </span>."
-          </p>
+          <div className="flex items-center justify-center text-center" style={{ minHeight: isMobile ? '64px' : '84px' }}>
+            <p
+              className="tracking-wide"
+              style={{
+                color: '#eab5a8',
+                fontFamily: "'VT323', monospace",
+                fontSize: isMobile ? '24px' : '32px',
+                letterSpacing: '0.5px',
+                lineHeight: 1.3,
+                opacity: phraseVisible ? 1 : 0,
+                transition: motionDisabled ? 'none' : `opacity ${PHRASE_FADE_MS}ms ease`,
+              }}
+            >
+              {rotatingPhrases[phraseIndex]}
+            </p>
+          </div>
+          {intro.proof && (
+            <p className="text-center" style={{ color: '#00d4ff', opacity: 0.6, fontFamily: "'VT323', monospace", fontSize: isMobile ? '15px' : '18px', letterSpacing: '0.5px' }}>
+              {intro.proof}
+            </p>
+          )}
 
           <div className="flex flex-col items-center gap-6">
             <p className="text-white/90 text-sm tracking-[3px] uppercase">{intro.chooseLabel || 'Elige cómo quieres conocerme'}</p>
@@ -463,9 +501,6 @@ function Intro() {
       </div>
     </section>
     <style>{`@keyframes arrowPulse { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.8; } }`}</style>
-    {loadingMode && (
-      <RetroLoadingScreen reduceMotion={reduceMotion} onComplete={() => { setMode(loadingMode); if (loadingMode === 'professional') window.scrollTo({ top: window.innerHeight, behavior: 'smooth' }); setClickingMode(null); setLettersFalling(false); setLoadingMode(null) }} />
-    )}
     </>
   )
 }

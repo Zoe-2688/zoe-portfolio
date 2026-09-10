@@ -12,10 +12,28 @@
     gtag('config', 'G-WYGTZYXS27');
   </script>
 
-  <script async src="https://t.contentsquare.net/uxa/42472c9b32f8b.js"></script>
+  <!-- Contentsquare es session recording: no aporta nada al primer render y compite
+       por ancho de banda con la fuente/JS/imágenes críticas. Se difiere hasta 'load'. -->
+  <script>
+    function loadContentsquare() {
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://t.contentsquare.net/uxa/42472c9b32f8b.js';
+      document.head.appendChild(s);
+    }
+    if (document.readyState === 'complete') {
+      loadContentsquare();
+    } else {
+      window.addEventListener('load', loadContentsquare);
+    }
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Press Start 2P es la fuente del texto más grande del intro y de ambos heroes (candidato a LCP).
+       La precargamos directo para no depender de la cadena HTML -> CSS de Google Fonts -> archivo. -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="https://fonts.gstatic.com/s/pressstart2p/v16/e3t4euO8T-267oIAQAu6jDQyK3nVivM.woff2">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />

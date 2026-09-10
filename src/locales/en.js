@@ -1,6 +1,5 @@
 const en = {
   intro: {
-    quote: 'Good design is',
     chooseLabel: 'Choose how you want to know me',
     professional: 'Professional',
     professionalSub: 'Process and results',
@@ -8,11 +7,17 @@ const en = {
     creative: 'Creative',
     creativeSub: 'Interactive experience',
     creativeTooltip: 'Interactive experience with animations and my story',
-    rotatingWords: ['felt', 'lived', 'used', 'remembered', 'shared'],
+    proof: 'Product in production · 98/100 accessibility score',
+    rotatingPhrases: [
+      'Accessible design for people who are usually left out of digital products.',
+      'Every design decision has a reason, not a preference.',
+      'I apply artificial intelligence to extend the reach of what I design.',
+      'I research before proposing solutions.',
+    ],
   },
   hero: {
     tag: 'UX/UI Designer · Front-end · Accessibility',
-    title: 'I design digital experiences that connect people with technology.',
+    title: 'Accessible design for everyone — and for your business.',
     name: 'Zoe Mejia Santana',
     location: 'Santiago, Chile · Available for remote and hybrid work',
     btnProjects: 'View projects',
@@ -27,26 +32,31 @@ const en = {
       description: 'B2B2C SaaS for clinics · Booking + AI assistant',
       longDescription: 'One product each clinic sells as their own: they configure their brand, specialities and documents, and get their own booking site with Sage, an assistant trained only on that information. I designed the whole product — patient and admin flows, the design system, and the specification for development. The hardest part wasn\'t the screens: it was defining what an AI working with health must refuse to answer.',
       metric: 'Multi-tenant · 28 screens · 12 specification documents · WCAG 2.1 AA',
+      workType: 'Own project',
     },
     boostcare: {
       description: 'Health SaaS Platform · from design to code',
       longDescription: 'Designed and developed end-to-end: design system in Figma with token architecture, 15 mobile-first screens and a multi-role prototype, built in React + Tailwind and deployed to production. An AI-native workflow.',
       metric: 'Live · 98/100 accessibility (Lighthouse) · Figma → React → deploy',
+      workType: 'Own project',
     },
     boost: {
       description: 'Inclusive Cognitive Health Platform with AI & IoT',
       longDescription: 'UX/UI redesign of a cognitive health platform for older adults, people with cognitive disabilities and their caregivers. Integrates AI to personalize therapies and IoT to sync a smart medication dispenser.',
-      metric: '34% improvement in completion rate · WCAG 3/10 → 9/10',
+      metric: 'Tested with 6 users · 3 changes applied to the design',
+      workType: 'Own project',
     },
     johnnyRockets: {
       description: 'Web Redesign + Front-end',
       longDescription: 'UX/UI redesign + front-end development of the national landing page, integrating clear navigation and cultural elements like Chilean national holidays. Improved accessibility and emotional connection with local users.',
       metric: 'Responsive design with American identity and Chilean context',
+      workType: 'Self-directed exercise',
     },
     flagship: {
       description: 'Landing Page + Digital Strategy',
       longDescription: 'The brief asked for a PDF brochure — I proposed and designed an interactive landing page + promotional videos, identifying that the static format did not communicate the product\'s innovation.',
       metric: 'Design aligned with brand guidelines and commercial objectives',
+      workType: 'Client',
     },
   },
   designProcess: {

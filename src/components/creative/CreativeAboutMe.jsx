@@ -3,9 +3,9 @@ import { usePortfolio } from '../../context/PortfolioContext'
 import {
   SiFigma, SiCanva, SiGithub, SiNpm, SiTrello, SiReact,
   SiHtml5, SiJavascript, SiTailwindcss, SiBootstrap, SiCss,
-  SiVite, SiGit,
+  SiVite, SiGit, SiGoogleanalytics, SiHotjar,
 } from 'react-icons/si'
-import { FiLayout, FiUser, FiEye, FiSmartphone, FiPackage, FiGlobe, FiPenTool, FiCode } from 'react-icons/fi'
+import { FiLayout, FiUser, FiEye, FiSmartphone, FiPackage, FiGlobe, FiPenTool, FiCode, FiBarChart2 } from 'react-icons/fi'
 import es from '../../locales/es'
 import en from '../../locales/en'
 
@@ -253,9 +253,10 @@ function CreativeAboutMe() {
       { name: 'Vite', icon: SiVite }, { name: 'Git', icon: SiGit },
     ]},
     { categoria: isEn ? '[ITEMS] // Tools' : '[ITEMS] // Herramientas', icono: FiPackage, color: '#e8a090', skills: [
-      { name: 'Figma', icon: SiFigma }, { name: 'Adobe XD', icon: FiPenTool }, { name: 'Adobe Illustrator', icon: FiPenTool },
+      { name: 'Figma', icon: SiFigma }, { name: 'Adobe Illustrator', icon: FiPenTool },
       { name: 'Adobe Photoshop', icon: FiLayout }, { name: 'Canva', icon: SiCanva }, { name: 'After Effects', icon: FiLayout },
       { name: 'VS Code', icon: FiCode }, { name: 'GitHub', icon: SiGithub }, { name: 'npm', icon: SiNpm }, { name: 'Trello', icon: SiTrello },
+      { name: 'Google Analytics 4', icon: SiGoogleanalytics }, { name: 'Hotjar', icon: SiHotjar }, { name: 'Contentsquare', icon: FiBarChart2 },
     ]},
     { categoria: isEn ? '[WISDOM] // Methodologies' : '[WISDOM] // Metodologías', icono: FiEye, color: '#00d4ff', skills: [
       { name: 'Design Thinking', icon: FiEye }, { name: 'UCD', icon: FiUser },

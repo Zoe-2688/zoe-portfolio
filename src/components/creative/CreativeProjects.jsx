@@ -1,54 +1,10 @@
 import { useEffect, useState } from 'react'
 import { usePortfolio } from '../../context/PortfolioContext'
-import boosthealthImg from '../../assets/projects/boosthealth-card.png'
-import boostcareImg from '../../assets/projects/boostcare-card.svg'
-import boostImg from '../../assets/projects/boost.png'
-import johnnyRocketsImg from '../../assets/projects/johnny-rockets.png'
-import flagshipImg from '../../assets/projects/flagship.png'
+import { getProjects } from '../../data/projects'
 import es from '../../locales/es'
 import en from '../../locales/en'
 
 const TITLE_COLORS = ['#e8a090', '#00d4ff', '#ffffff', '#e8a090', '#00d4ff', '#ffffff', '#e8a090', '#00d4ff']
-
-function getProjects(t) {
-  return [
-    {
-      id: 'boosthealth', image: boosthealthImg, title: 'BoostHealth',
-      description: t.projects.boosthealth.description,
-      longDescription: t.projects.boosthealth.longDescription,
-      metric: t.projects.boosthealth.metric,
-      metricIcon: '🏥', tags: ['SaaS B2B2C', 'White-label', 'Design System', 'IA', 'WCAG 2.1'], hasCaseStudy: true,
-    },
-    {
-      id: 'boostcare', image: boostcareImg, title: 'BoostCare',
-      description: t.projects.boostcare.description,
-      longDescription: t.projects.boostcare.longDescription,
-      metric: t.projects.boostcare.metric,
-      metricIcon: '🌐', tags: ['Figma', 'Design Tokens', 'React', 'Tailwind', 'WCAG'], hasCaseStudy: true,
-    },
-    {
-      id: 'boost', image: boostImg, title: 'Boost',
-      description: t.projects.boost.description,
-      longDescription: t.projects.boost.longDescription,
-      metric: t.projects.boost.metric,
-      metricIcon: '💡', tags: ['Figma', 'UX/UI', 'Accesibilidad', 'WCAG'], hasCaseStudy: true,
-    },
-    {
-      id: 'johnny-rockets', image: johnnyRocketsImg, title: 'Johnny Rockets Chile',
-      description: t.projects.johnnyRockets.description,
-      longDescription: t.projects.johnnyRockets.longDescription,
-      metric: t.projects.johnnyRockets.metric,
-      metricIcon: '🇨🇱', tags: ['HTML', 'Tailwind CSS', 'JavaScript'], hasCaseStudy: true,
-    },
-    {
-      id: 'flagship', image: flagshipImg, title: 'Flagship CMS',
-      description: t.projects.flagship.description,
-      longDescription: t.projects.flagship.longDescription,
-      metric: t.projects.flagship.metric,
-      metricIcon: '📘', tags: ['Figma', 'Canva', 'B2B'], hasCaseStudy: true,
-    },
-  ]
-}
 
 function CircuitNode({ corner, hovered, reduceMotion }) {
   const cornerStyles = { 'top-left': 'top-2 left-2', 'top-right': 'top-2 right-2', 'bottom-left': 'bottom-2 left-2', 'bottom-right': 'bottom-2 right-2' }
@@ -74,8 +30,8 @@ function ProjectCard({ project, reduceMotion, isLarge = false, isFeatured = fals
   const [hovered, setHovered] = useState(false)
   const [cmdHovered, setCmdHovered] = useState(false)
   const imageHeight = isLarge ? 'h-56 sm:h-72 md:h-96' : 'h-44'
-  const titleSize = isLarge ? 'text-[20px]' : 'text-[11px]'
-  const handleVerCaso = () => { if (project.hasCaseStudy && onOpenCaseStudy) onOpenCaseStudy(project.id) }
+  const titleSize = isLarge ? 'text-xl' : 'text-xs'
+  const handleVerCaso = () => { if (project.hasCaseStudy && onOpenCaseStudy) onOpenCaseStudy(project.id, project.title) }
 
   return (
     <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
@@ -94,10 +50,18 @@ function ProjectCard({ project, reduceMotion, isLarge = false, isFeatured = fals
         cursor: project.hasCaseStudy ? 'pointer' : 'default' }}
     >
       <div className={`relative ${isFeatured ? 'h-56 sm:h-72 md:h-80 lg:h-96' : imageHeight} overflow-hidden flex-shrink-0`}>
-        <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+        <img
+          src={project.image}
+          alt={project.title}
+          width={project.imageWidth}
+          height={project.imageHeight}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover"
+        />
         {isFeatured && destacadoLabel && (
           <div className="absolute top-4 left-4 px-4 py-2 rounded-full" style={{ backgroundColor: 'rgba(0,212,255,0.95)', boxShadow: '0 4px 18px rgba(0,212,255,0.45)' }}>
-            <span style={{ fontFamily: 'monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px', textTransform: 'uppercase', color: '#050d1a' }}>{destacadoLabel}</span>
+            <span className="text-xs" style={{ fontFamily: 'monospace', fontWeight: 700, letterSpacing: '1.8px', textTransform: 'uppercase', color: '#050d1a' }}>{destacadoLabel}</span>
           </div>
         )}
         <CircuitLines hovered={hovered} reduceMotion={reduceMotion} />
@@ -107,22 +71,27 @@ function ProjectCard({ project, reduceMotion, isLarge = false, isFeatured = fals
         <CircuitNode corner="bottom-right" hovered={hovered} reduceMotion={reduceMotion} />
       </div>
       <div className="flex flex-col flex-1 gap-3 p-6">
+        {project.workType && (
+          <span className="text-[#e8a090] text-xs tracking-[2px] uppercase opacity-60" style={{ fontFamily: 'monospace' }}>
+            {project.workType}
+          </span>
+        )}
         <h3 className={`${titleSize} tracking-widest text-[#e8a090]`} style={{ fontFamily: "'Press Start 2P', monospace" }}>{project.title}</h3>
-        <p className="text-[13px] text-[#00d4ff]" style={{ opacity: 0.75, fontFamily: 'monospace' }}>// {project.description}</p>
-        {isLarge && project.longDescription && <p className="text-[13px] text-white leading-relaxed" style={{ opacity: 0.75 }}>{project.longDescription}</p>}
+        <p className="text-sm text-[#00d4ff]" style={{ opacity: 0.75, fontFamily: 'monospace' }}>// {project.description}</p>
+        {isLarge && project.longDescription && <p className="text-sm text-white leading-relaxed" style={{ opacity: 0.75 }}>{project.longDescription}</p>}
         {isLarge && project.metric && (
           <div className="flex items-start gap-2 rounded-md px-3 py-2 mt-1" style={{ backgroundColor: 'rgba(232,160,144,0.08)', border: '1px solid rgba(232,160,144,0.2)' }}>
-            <span style={{ fontSize: '13px' }}>{project.metricIcon}</span>
-            <p className="text-[12px] text-[#e8a090] leading-snug" style={{ opacity: 0.9 }}>{project.metric}</p>
+            <span className="text-sm">{project.metricIcon}</span>
+            <p className="text-xs text-[#e8a090] leading-snug" style={{ opacity: 0.9 }}>{project.metric}</p>
           </div>
         )}
         {!isLarge && project.longDescription && (
           <div style={{ maxHeight: hovered ? '220px' : '0px', opacity: hovered ? 1 : 0, overflow: 'hidden', transition: reduceMotion ? 'none' : 'max-height 350ms ease, opacity 300ms ease' }}>
-            <p className="text-[13px] text-white leading-relaxed" style={{ opacity: 0.85 }}>{project.longDescription}</p>
+            <p className="text-sm text-white leading-relaxed" style={{ opacity: 0.85 }}>{project.longDescription}</p>
             {project.metric && (
               <div className="flex items-start gap-2 rounded-md px-2.5 py-1.5 mt-2" style={{ backgroundColor: 'rgba(232,160,144,0.08)', border: '1px solid rgba(232,160,144,0.2)' }}>
-                <span style={{ fontSize: '11px' }}>{project.metricIcon}</span>
-                <p className="text-[12px] text-[#e8a090] leading-snug" style={{ opacity: 0.9 }}>{project.metric}</p>
+                <span className="text-xs">{project.metricIcon}</span>
+                <p className="text-xs text-[#e8a090] leading-snug" style={{ opacity: 0.9 }}>{project.metric}</p>
               </div>
             )}
           </div>
@@ -131,7 +100,7 @@ function ProjectCard({ project, reduceMotion, isLarge = false, isFeatured = fals
           {project.tags.map((tag, index) => {
             const color = index % 2 === 0 ? '#00d4ff' : '#e8a090'
             return (
-              <div key={tag} className="flex items-center gap-1" style={{ fontFamily: 'monospace', fontSize: '11px' }}>
+              <div key={tag} className="flex items-center gap-1 text-xs" style={{ fontFamily: 'monospace' }}>
                 <div className="rounded-full flex-shrink-0" style={{ width: '4px', height: '4px', backgroundColor: color }} />
                 <div className="flex-shrink-0" style={{ width: '16px', height: '1px', backgroundColor: color, opacity: 0.6 }} />
                 <span style={{ color, opacity: 0.85 }}>{tag}</span>
@@ -139,7 +108,7 @@ function ProjectCard({ project, reduceMotion, isLarge = false, isFeatured = fals
             )
           })}
         </div>
-        <div className="self-start mt-auto cursor-pointer" style={{ fontFamily: 'monospace', fontSize: '18px', fontWeight: 600, marginTop: '1rem' }}
+        <div className="self-start mt-auto cursor-pointer text-lg" style={{ fontFamily: 'monospace', fontWeight: 600, marginTop: '1rem' }}
           onMouseEnter={() => setCmdHovered(true)} onMouseLeave={() => setCmdHovered(false)} onClick={handleVerCaso}>
           <span style={{ transition: reduceMotion ? 'none' : 'color 200ms ease', color: cmdHovered ? '#e8a090' : '#00d4ff' }}>
             <span style={{ textShadow: cmdHovered ? '0 0 8px rgba(232,160,144,0.6), 0 0 16px rgba(232,160,144,0.3)' : '0 0 6px rgba(0,212,255,0.5), 0 0 12px rgba(0,212,255,0.2)', transition: reduceMotion ? 'none' : 'text-shadow 200ms ease' }}>

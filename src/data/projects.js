@@ -1,0 +1,80 @@
+import boosthealthImg from '../assets/projects/boosthealth-card.png'
+import boostcareImg from '../assets/projects/boostcare-card.svg'
+import boostImg from '../assets/projects/boost.png'
+import johnnyRocketsImg from '../assets/projects/johnny-rockets.png'
+import flagshipImg from '../assets/projects/flagship.png'
+
+export function getProjects(t) {
+  return [
+    {
+      id: 'boosthealth',
+      image: boosthealthImg,
+      imageWidth: 1600,
+      imageHeight: 1000,
+      title: 'BoostHealth',
+      workType: t.projects.boosthealth.workType,
+      description: t.projects.boosthealth.description,
+      longDescription: t.projects.boosthealth.longDescription,
+      metric: t.projects.boosthealth.metric,
+      metricIcon: '🏥',
+      tags: ['SaaS B2B2C', 'White-label', 'Design System', 'IA', 'WCAG 2.1', 'React'],
+      hasCaseStudy: true,
+    },
+    {
+      id: 'boostcare',
+      image: boostcareImg,
+      imageWidth: 800,
+      imageHeight: 480,
+      title: 'BoostCare',
+      workType: t.projects.boostcare.workType,
+      description: t.projects.boostcare.description,
+      longDescription: t.projects.boostcare.longDescription,
+      metric: t.projects.boostcare.metric,
+      metricIcon: '🌐',
+      tags: ['Figma', 'Design Tokens', 'React', 'Tailwind', 'WCAG', 'AI-native'],
+      hasCaseStudy: true,
+    },
+    {
+      id: 'boost',
+      image: boostImg,
+      imageWidth: 2800,
+      imageHeight: 2100,
+      title: 'Boost',
+      workType: t.projects.boost.workType,
+      description: t.projects.boost.description,
+      longDescription: t.projects.boost.longDescription,
+      metric: t.projects.boost.metric,
+      metricIcon: '💡',
+      tags: ['Figma', 'UX/UI', 'Accesibilidad', 'WCAG', 'IoT', 'IA'],
+      hasCaseStudy: true,
+    },
+    {
+      id: 'johnny-rockets',
+      image: johnnyRocketsImg,
+      imageWidth: 2800,
+      imageHeight: 2100,
+      title: 'Johnny Rockets Chile',
+      workType: t.projects.johnnyRockets.workType,
+      description: t.projects.johnnyRockets.description,
+      longDescription: t.projects.johnnyRockets.longDescription,
+      metric: t.projects.johnnyRockets.metric,
+      metricIcon: '🇨🇱',
+      tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
+      hasCaseStudy: true,
+    },
+    {
+      id: 'flagship',
+      image: flagshipImg,
+      imageWidth: 2880,
+      imageHeight: 1620,
+      title: 'Flagship CMS',
+      workType: t.projects.flagship.workType,
+      description: t.projects.flagship.description,
+      longDescription: t.projects.flagship.longDescription,
+      metric: t.projects.flagship.metric,
+      metricIcon: '📘',
+      tags: ['Figma', 'Canva', 'B2B'],
+      hasCaseStudy: true,
+    },
+  ]
+}

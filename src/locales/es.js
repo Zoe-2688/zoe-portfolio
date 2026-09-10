@@ -1,6 +1,5 @@
 const es = {
   intro: {
-    quote: 'Un buen diseño se',
     chooseLabel: 'Elige cómo quieres conocerme',
     professional: 'Profesional',
     professionalSub: 'Proceso y resultados',
@@ -8,11 +7,17 @@ const es = {
     creative: 'Creativa',
     creativeSub: 'Experiencia interactiva',
     creativeTooltip: 'Experiencia interactiva con animaciones y mi historia',
-    rotatingWords: ['siente', 'vive', 'usa', 'recuerda', 'comparte'],
+    proof: 'Producto en producción · 98/100 en accesibilidad',
+    rotatingPhrases: [
+      'Diseño accesible para personas que suelen quedar fuera de los productos digitales.',
+      'Cada decisión de diseño responde a una razón, no a una preferencia.',
+      'Aplico inteligencia artificial para ampliar el alcance de lo que diseño.',
+      'Investigo antes de proponer soluciones.',
+    ],
   },
   hero: {
     tag: 'UX/UI Designer · Front-end · Accesibilidad',
-    title: 'Diseño experiencias digitales que conectan personas con tecnología.',
+    title: 'Diseño accesible para todos — y para tu negocio.',
     name: 'Zoe Mejia Santana',
     location: 'Santiago, Chile · Disponible para trabajo remoto e híbrido',
     btnProjects: 'Ver proyectos',
@@ -27,26 +32,31 @@ const es = {
       description: 'SaaS B2B2C para clínicas · Reservas + asistente con IA',
       longDescription: 'Un mismo producto que cada clínica vende como suyo: configura su marca, sus especialidades y sus documentos, y obtiene su propio sitio de reservas con Sage, un asistente entrenado solo con esa información. Diseñé el producto completo — los flujos de paciente y de administrador, el sistema de diseño y la especificación para desarrollo. Lo más difícil no fueron las pantallas: fue definir qué debe negarse a responder una IA que trabaja con salud.',
       metric: 'Multi-tenant · 28 pantallas · 12 documentos de especificación · WCAG 2.1 AA',
+      workType: 'Proyecto propio',
     },
     boostcare: {
       description: 'Plataforma SaaS de Salud · del diseño al código',
       longDescription: 'Diseñada y desarrollada de principio a fin: design system en Figma con arquitectura de tokens, 15 pantallas mobile-first y prototipo multi-rol, construido en React + Tailwind y desplegado en producción. Un flujo AI-native.',
       metric: 'En vivo · 98/100 en accesibilidad (Lighthouse) · Figma → React → deploy',
+      workType: 'Proyecto propio',
     },
     boost: {
       description: 'Plataforma de Salud Cognitiva Inclusiva con IA e IoT',
       longDescription: 'Rediseño UX/UI de una plataforma de salud cognitiva para adultos mayores, personas con discapacidad cognitiva y sus cuidadores. Integra IA para personalizar terapias y IoT para sincronizar un dispensador inteligente de medicación.',
-      metric: 'Mejora del 34% en tasa de finalización · WCAG 3/10 → 9/10',
+      metric: 'Tests con 6 usuarios · 3 cambios aplicados al diseño',
+      workType: 'Proyecto propio',
     },
     johnnyRockets: {
       description: 'Rediseño Web + Front-end',
       longDescription: 'Rediseño UX/UI + desarrollo front-end de la landing nacional, integrando navegación clara y elementos culturales como las Fiestas Patrias. Mejoró la accesibilidad y la conexión emocional con el usuario local.',
       metric: 'Diseño responsive con identidad americana y contexto chileno',
+      workType: 'Ejercicio propio',
     },
     flagship: {
       description: 'Landing Page + Estrategia Digital',
       longDescription: 'El brief pedía solo un folleto en PDF — propuse y diseñé una landing page interactiva + videos promocionales, identificando que el formato estático no comunicaba la innovación del producto.',
       metric: 'Diseño alineado a guías de marca y objetivos comerciales',
+      workType: 'Cliente',
     },
   },
   designProcess: {
