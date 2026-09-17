@@ -8,6 +8,8 @@ import CreativeAboutMe from './components/creative/CreativeAboutMe'
 import DesignProcess from './components/about/DesignProcess'
 import Projects from './components/projects/Projects'
 import AboutMe from './components/aboutme/AboutMe'
+import Feedback from './components/feedback/Feedback'
+import CreativeFeedback from './components/creative/CreativeFeedback'
 import Footer from './components/footer/Footer'
 import WhatsAppButton from './components/shared/WhatsAppButton'
 import CustomCursor from './components/shared/CustomCursor'
@@ -300,6 +302,7 @@ function App() {
             }
             {mode === 'professional' ? <DesignProcess /> : <CreativeDesignProcess />}
             {mode === 'professional' ? <AboutMe /> : <CreativeAboutMe />}
+            {mode === 'professional' ? <Feedback /> : <CreativeFeedback />}
             <Footer />
           </div>
         </>

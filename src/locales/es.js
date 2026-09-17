@@ -147,6 +147,15 @@ const es = {
     title: '¿Hablamos?',
     credit: 'Diseñado y desarrollado por Zoe Mejia Santana · 2026',
   },
+  feedback: {
+    ariaLabel: 'Encuesta de feedback',
+    question: '¿Te gustó la experiencia?',
+    commentLabel: '¿Qué cambiarías?',
+    yes: 'Sí',
+    no: 'No',
+    send: 'Enviar',
+    thanks: 'Gracias por tu feedback.',
+  },
 }
 
 export default es

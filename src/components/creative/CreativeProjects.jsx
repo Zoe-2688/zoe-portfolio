@@ -26,11 +26,11 @@ function CircuitLines({ hovered, reduceMotion }) {
   )
 }
 
-function ProjectCard({ project, reduceMotion, isLarge = false, isFeatured = false, onOpenCaseStudy, verCaso, destacadoLabel }) {
+function ProjectCard({ project, reduceMotion, isFeatured = false, onOpenCaseStudy, verCaso, destacadoLabel }) {
   const [hovered, setHovered] = useState(false)
   const [cmdHovered, setCmdHovered] = useState(false)
-  const imageHeight = isLarge ? 'h-56 sm:h-72 md:h-96' : 'h-44'
-  const titleSize = isLarge ? 'text-xl' : 'text-xs'
+  const imageHeight = 'h-56 sm:h-72 md:h-96'
+  const titleSize = 'text-xl'
   const handleVerCaso = () => { if (project.hasCaseStudy && onOpenCaseStudy) onOpenCaseStudy(project.id, project.title) }
 
   return (
@@ -78,22 +78,11 @@ function ProjectCard({ project, reduceMotion, isLarge = false, isFeatured = fals
         )}
         <h3 className={`${titleSize} tracking-widest text-[#e8a090]`} style={{ fontFamily: "'Press Start 2P', monospace" }}>{project.title}</h3>
         <p className="text-sm text-[#00d4ff]" style={{ opacity: 0.75, fontFamily: 'monospace' }}>// {project.description}</p>
-        {isLarge && project.longDescription && <p className="text-sm text-white leading-relaxed" style={{ opacity: 0.75 }}>{project.longDescription}</p>}
-        {isLarge && project.metric && (
+        {project.longDescription && <p className="text-sm text-white leading-relaxed" style={{ opacity: 0.75 }}>{project.longDescription}</p>}
+        {project.metric && (
           <div className="flex items-start gap-2 rounded-md px-3 py-2 mt-1" style={{ backgroundColor: 'rgba(232,160,144,0.08)', border: '1px solid rgba(232,160,144,0.2)' }}>
             <span className="text-sm">{project.metricIcon}</span>
             <p className="text-xs text-[#e8a090] leading-snug" style={{ opacity: 0.9 }}>{project.metric}</p>
-          </div>
-        )}
-        {!isLarge && project.longDescription && (
-          <div style={{ maxHeight: hovered ? '220px' : '0px', opacity: hovered ? 1 : 0, overflow: 'hidden', transition: reduceMotion ? 'none' : 'max-height 350ms ease, opacity 300ms ease' }}>
-            <p className="text-sm text-white leading-relaxed" style={{ opacity: 0.85 }}>{project.longDescription}</p>
-            {project.metric && (
-              <div className="flex items-start gap-2 rounded-md px-2.5 py-1.5 mt-2" style={{ backgroundColor: 'rgba(232,160,144,0.08)', border: '1px solid rgba(232,160,144,0.2)' }}>
-                <span className="text-xs">{project.metricIcon}</span>
-                <p className="text-xs text-[#e8a090] leading-snug" style={{ opacity: 0.9 }}>{project.metric}</p>
-              </div>
-            )}
           </div>
         )}
         <div className="flex flex-wrap gap-3 mt-1">
@@ -153,12 +142,12 @@ function CreativeProjects({ onOpenCaseStudy }) {
           </div>
         </div>
         <div className="h-full mb-8">
-          <ProjectCard project={PROJECTS[0]} reduceMotion={reduceMotion} isLarge isFeatured onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} destacadoLabel={t.projects.destacado} />
+          <ProjectCard project={PROJECTS[0]} reduceMotion={reduceMotion} isFeatured onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} destacadoLabel={t.projects.destacado} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {PROJECTS.slice(1).map((p, i) => (
+          {PROJECTS.slice(1).map((p) => (
             <div key={p.id} className="h-full">
-              <ProjectCard project={p} reduceMotion={reduceMotion} isLarge={i === 0} onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
+              <ProjectCard project={p} reduceMotion={reduceMotion} onOpenCaseStudy={onOpenCaseStudy} verCaso={t.projects.verCaso} />
             </div>
           ))}
         </div>

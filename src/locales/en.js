@@ -146,6 +146,15 @@ const en = {
     title: "Let's talk?",
     credit: 'Designed and developed by Zoe Mejia Santana · 2026',
   },
+  feedback: {
+    ariaLabel: 'Feedback survey',
+    question: 'Did you enjoy the experience?',
+    commentLabel: 'What would you change?',
+    yes: 'Yes',
+    no: 'No',
+    send: 'Send',
+    thanks: 'Thanks for your feedback.',
+  },
 }
 
 export default en
