@@ -30,7 +30,7 @@ const es = {
     tag: 'Casos de estudio',
     title: 'Proyectos',
     verCaso: '// ver_caso',
-    destacado: 'Último proyecto',
+    destacado: 'Proyecto destacado',
     boosthealth: {
       description: 'SaaS B2B2C para clínicas · Reservas + asistente con IA',
       longDescription: 'Un mismo producto que cada clínica vende como suyo: configura su marca, sus especialidades y sus documentos, y obtiene su propio sitio de reservas con Sage, un asistente limitado a responder solo con la información que carga cada clínica. Diseñé el producto completo (diseño y especificación completos; desarrollo en curso) — los flujos de paciente y de administrador, el sistema de diseño y la especificación para desarrollo. Lo más difícil no fueron las pantallas: fue definir qué debe negarse a responder una IA que trabaja con salud.',
@@ -46,7 +46,7 @@ const es = {
     boost: {
       description: 'Plataforma de Salud Cognitiva Inclusiva con IA e IoT',
       longDescription: 'Rediseño UX/UI de una plataforma de salud cognitiva para adultos mayores, personas con discapacidad cognitiva y sus cuidadores. Integra IA para personalizar terapias y IoT para sincronizar un dispensador inteligente de medicación.',
-      metric: 'Tests con 6 usuarios · 3 cambios aplicados al diseño',
+      metric: 'Estudio con 4 participantes · 3 cambios aplicados al diseño',
       workType: 'Proyecto propio',
     },
     johnnyRockets: {

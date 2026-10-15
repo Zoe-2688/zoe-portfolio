@@ -180,10 +180,10 @@ function CircuitCanvas({ reduceMotion }) {
 
 function getMetricas(isEn) {
   return [
-    { valor: '+34%', label: isEn ? 'Completion rate' : 'Tasa de finalización' },
-    { valor: '-63%', label: isEn ? 'Time per task' : 'Tiempo por tarea' },
-    { valor: '9/10', label: isEn ? 'WCAG 2.1 criteria' : 'Criterios WCAG 2.1' },
-    { valor: '-66%', label: isEn ? 'Flow abandonment' : 'Abandono de flujos' },
+    { valor: '4', label: isEn ? 'Study participants' : 'Participantes del estudio' },
+    { valor: '3', label: isEn ? 'Changes applied to the design' : 'Cambios aplicados al diseño' },
+    { valor: '7 → 3', label: isEn ? 'Steps to book an appointment' : 'Pasos para agendar una cita' },
+    { valor: '9/10', label: isEn ? 'WCAG 2.1 criteria (self-assessed)' : 'Criterios WCAG 2.1 (autoevaluación)' },
   ]
 }
 
@@ -242,15 +242,11 @@ function TablaComparativa({ isEn }) {
     { metrica: 'Average time per task', original: '2.1 min (book appointment)', rediseno: '45 sec (book appointment)', mejora: '-63%' },
     { metrica: 'WCAG 2.1 accessibility', original: 'Meets 3/10 criteria', rediseno: 'Meets 9/10 criteria', mejora: '+200%' },
     { metrica: 'Reusable components', original: '0% (static design)', rediseno: '100% (Figma system)', mejora: '+100%' },
-    { metrica: '30-day retention (AI sim.)', original: '40%', rediseno: '75%', mejora: '+35 pts' },
-    { metrica: 'CSAT satisfaction', original: '3.2/5', rediseno: '4.8/5', mejora: '+1.6' },
   ] : [
     { metrica: 'Tasa de finalización de tareas', original: '58% (flujo de citas)', rediseno: '92% (flujo de citas)', mejora: '+34%' },
     { metrica: 'Tiempo promedio por tarea', original: '2.1 min (agendar cita)', rediseno: '45 seg (agendar cita)', mejora: '-63%' },
     { metrica: 'Accesibilidad WCAG 2.1', original: 'Cumple 3/10 criterios', rediseno: 'Cumple 9/10 criterios', mejora: '+200%' },
     { metrica: 'Componentes reutilizables', original: '0% (diseño estático)', rediseno: '100% (sistema en Figma)', mejora: '+100%' },
-    { metrica: 'Retención a 30 días (sim. IA)', original: '40%', rediseno: '75%', mejora: '+35 pts' },
-    { metrica: 'Satisfacción CSAT', original: '3.2/5', rediseno: '4.8/5', mejora: '+1.6' },
   ]
   const thStyle = { padding: '10px 14px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '1px', textTransform: 'uppercase', textAlign: 'left', borderBottom: '1px solid rgba(255,255,255,0.1)' }
   return (
@@ -378,14 +374,14 @@ function BoostCaseStudy({ onClose }) {
     : ['Paleta WCAG 2.1 con contraste 4.5:1', 'Flujo de citas en 3 pasos con IA', 'Comunidad eliminada → notificaciones cuidador']
 
   const roles = isEn ? [
-    { titulo: 'Research & Diagnosis', icon: '🔍', items: ['Tests with 3 seniors and 3 caregivers', 'Identified pain points: 78% abandoned the appointment flow', 'Heuristic analysis of the original version'] },
+    { titulo: 'Research & Diagnosis', icon: '🔍', items: ['Research with 2 caregivers, plus product review with 2 more people', 'Identified pain points: booking an appointment took 7 manual steps and had no link to medication', 'Heuristic analysis of the original version'] },
     { titulo: 'UX/UI Design', icon: '🎨', items: ['New WCAG 2.1 palette (high contrast)', 'Reusable components in Figma', 'Simplified flows with happy path + errors'] },
-    { titulo: 'Prototyping & Validation', icon: '⚙️', items: ['Interactive prototype in Figma', 'Iterative testing with simulated users', 'Adjustments based on continuous feedback'] },
+    { titulo: 'Prototyping & Validation', icon: '⚙️', items: ['Interactive prototype in Figma', 'Product review with 2 people and design adjustments', 'Adjustments based on continuous feedback'] },
     { titulo: 'Technical Documentation', icon: '📋', items: ['Modular design system (buttons, inputs, cards)', 'Variables for color, typography and spacing', 'Dev notes: hover/error states, APIs, validations'] },
   ] : [
-    { titulo: 'Investigación y Diagnóstico', icon: '🔍', items: ['Testeos con 3 adultos mayores y 3 cuidadores', 'Identifiqué puntos de dolor: 78% abandonaba el flujo de citas', 'Análisis heurístico de la versión original'] },
+    { titulo: 'Investigación y Diagnóstico', icon: '🔍', items: ['Investigación con 2 cuidadores, más revisión del producto con 2 personas', 'Identifiqué puntos de dolor: agendar una cita requería 7 pasos manuales y no estaba vinculado a la medicación', 'Análisis heurístico de la versión original'] },
     { titulo: 'UX/UI Design', icon: '🎨', items: ['Nueva paleta WCAG 2.1 (alto contraste)', 'Componentes reutilizables en Figma', 'Flujos simplificados con happy path + errores'] },
-    { titulo: 'Prototipado y Validación', icon: '⚙️', items: ['Prototipo interactivo en Figma', 'Pruebas iterativas con usuarios simulados', 'Ajustes basados en feedback continuo'] },
+    { titulo: 'Prototipado y Validación', icon: '⚙️', items: ['Prototipo interactivo en Figma', 'Revisión del producto con 2 personas y ajustes de diseño', 'Ajustes basados en feedback continuo'] },
     { titulo: 'Documentación Técnica', icon: '📋', items: ['Sistema de diseño modular (botones, inputs, cards)', 'Variables para color, tipografía y espaciado', 'Notas para devs: estados hover/error, APIs, validaciones'] },
   ]
 
@@ -537,12 +533,12 @@ function BoostCaseStudy({ onClose }) {
             <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 700, color: '#F29251', margin: 0, lineHeight: 1.1 }}>BOOST</h1>
             <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.55, margin: 0 }}>{isEn ? 'Inclusive Cognitive Health Platform with AI & IoT' : 'Plataforma de Salud Cognitiva Inclusiva con IA e IoT'}</p>
             <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', fontStyle: 'italic', lineHeight: 1.7, margin: 0, borderLeft: '2px solid rgba(0,212,255,0.3)', paddingLeft: '12px' }}>
-              {isEn ? '"UX/UI Redesign — from 3/10 to 9/10 WCAG criteria for seniors, caregivers and people with special needs"' : '"Rediseño UX/UI — de 3/10 a 9/10 criterios WCAG para adultos mayores, cuidadores y personas con necesidades especiales"'}
+              {isEn ? '"UX/UI redesign of my own earlier app, for seniors, caregivers and people with special needs"' : '"Rediseño UX/UI de una app propia anterior, para adultos mayores, cuidadores y personas con necesidades especiales"'}
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>{TAGS.map(t => <Tag key={t} label={t} />)}</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>{METRICAS.map(m => <MetricaCard key={m.label} valor={m.valor} label={m.label} />)}</div>
             <p style={{ fontFamily: 'monospace', fontSize: '10px', color: 'rgba(255,255,255,0.3)', margin: 0, lineHeight: 1.5 }}>
-              {isEn ? '* Metrics projected through specialized AI analysis based on UX heuristics and WCAG principles.' : '* Métricas proyectadas mediante análisis con IA especializada basado en heurísticas UX y principios WCAG.'}
+              {isEn ? '* 9/10 is a self-assessment against WCAG 2.1. Impact estimates (completion rate, time per task) are in section 16, labeled as estimates, not measurements.' : '* 9/10 es una autoevaluación frente a WCAG 2.1. Las estimaciones de impacto (finalización, tiempo por tarea) están en la sección 16, marcadas como estimaciones y no como mediciones.'}
             </p>
           </div>
           <img src={boostOverview} alt="Boost Project Overview" style={{ width: '100%', display: 'block', borderRadius: '8px', maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 4%, black 94%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 4%, black 94%, transparent 100%)', maskComposite: 'intersect', WebkitMaskComposite: 'destination-in' }} />
@@ -971,8 +967,8 @@ function BoostCaseStudy({ onClose }) {
         <Separador titulo={isEn ? 'Results' : 'Resultados'} />
 
         <div style={{ marginBottom: '40px' }}>
-          <SectionTitle numero={16} titulo={isEn ? 'Quantitative Comparison' : 'Comparativa Cuantitativa'} />
-          <SectionText>{isEn ? 'Metrics projected through specialized AI analysis, evaluating the interface based on usability principles, WCAG accessibility, flow efficiency and UX heuristics.' : 'Métricas proyectadas mediante análisis con IA especializada, evaluando la interfaz con base en principios de usabilidad, accesibilidad WCAG, eficiencia de flujos y heurísticas UX.'}</SectionText>
+          <SectionTitle numero={16} titulo={isEn ? 'Impact Estimates (not measured)' : 'Estimaciones de Impacto (no medidas)'} />
+          <SectionText>{isEn ? 'These figures are estimates produced with an AI-assisted heuristic analysis (usability principles, WCAG, flow efficiency). They were not measured with users, and the study in section 17 is too small to confirm them.' : 'Estas cifras son estimaciones hechas con un análisis heurístico asistido por IA (principios de usabilidad, WCAG, eficiencia de flujos). No se midieron con usuarios, y el estudio de la sección 17 es demasiado pequeño para confirmarlas.'}</SectionText>
           <TablaComparativa isEn={isEn} />
           <p style={{ fontFamily: 'monospace', fontSize: '10px', color: 'rgba(255,255,255,0.3)', marginTop: '12px', lineHeight: 1.6 }}>
             {isEn ? '* These metrics are impact projections useful for early validation. They do not replace tests with real users in production.' : '* Estas métricas son proyecciones de impacto útiles para validación temprana. No reemplazan tests con usuarios reales en producción.'}
@@ -993,9 +989,9 @@ function BoostCaseStudy({ onClose }) {
 
         <div style={{ marginBottom: '40px' }}>
           <SectionTitle numero={17} titulo={isEn ? 'Usability Study' : 'Estudio de Usabilidad'} />
-          <SectionText>{isEn ? 'I conducted an unmoderated usability study with 5 participants in Chile and the Dominican Republic (remote), 30 to 50 minutes each session. The findings directly impacted the redesign.' : 'Realicé un estudio de usabilidad no moderado con 5 participantes en Chile y República Dominicana (remoto), de 30 a 50 minutos cada sesión. Los hallazgos impactaron directamente en el rediseño.'}</SectionText>
+          <SectionText>{isEn ? 'I ran a small usability study with 4 participants: 2 caregivers and 2 people who reviewed the product. It is a small sample, so I use it to find problems, not to prove results. The findings directly impacted the redesign.' : 'Realicé un estudio de usabilidad pequeño con 4 participantes: 2 cuidadores y 2 personas que revisaron el producto. Es una muestra pequeña, así que la uso para encontrar problemas, no para demostrar resultados. Los hallazgos impactaron directamente en el rediseño.'}</SectionText>
           <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : 'repeat(3, 1fr)', gap: '12px', marginBottom: '20px' }}>
-            {[{ num: '5', label: isEn ? 'Participants' : 'Participantes' }, { num: '2', label: isEn ? 'Countries' : 'Países' }, { num: '30-50 min', label: isEn ? 'Per session' : 'Por sesión' }].map(s => (
+            {[{ num: '4', label: isEn ? 'Participants' : 'Participantes' }, { num: '2', label: isEn ? 'Caregivers' : 'Cuidadores' }, { num: '2', label: isEn ? 'Product reviewers' : 'Revisores del producto' }].map(s => (
               <div key={s.label} style={{ backgroundColor: 'rgba(0,212,255,0.04)', border: '1px solid rgba(0,212,255,0.15)', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
                 <p style={{ fontSize: '1.6rem', fontWeight: 700, color: '#00d4ff', margin: '0 0 4px 0' }}>{s.num}</p>
                 <p style={{ fontFamily: 'monospace', fontSize: '10px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>{s.label}</p>

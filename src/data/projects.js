@@ -7,20 +7,6 @@ import flagshipImg from '../assets/projects/flagship.png'
 export function getProjects(t) {
   return [
     {
-      id: 'boosthealth',
-      image: boosthealthImg,
-      imageWidth: 1600,
-      imageHeight: 1000,
-      title: 'BoostHealth',
-      workType: t.projects.boosthealth.workType,
-      description: t.projects.boosthealth.description,
-      longDescription: t.projects.boosthealth.longDescription,
-      metric: t.projects.boosthealth.metric,
-      metricIcon: '🏥',
-      tags: ['SaaS B2B2C', 'White-label', 'Design System', 'IA', 'WCAG 2.1', 'React'],
-      hasCaseStudy: true,
-    },
-    {
       id: 'boostcare',
       image: boostcareImg,
       imageWidth: 800,
@@ -32,6 +18,20 @@ export function getProjects(t) {
       metric: t.projects.boostcare.metric,
       metricIcon: '🌐',
       tags: ['Figma', 'Design Tokens', 'React', 'Tailwind', 'WCAG', 'AI-native'],
+      hasCaseStudy: true,
+    },
+    {
+      id: 'boosthealth',
+      image: boosthealthImg,
+      imageWidth: 1600,
+      imageHeight: 1000,
+      title: 'BoostHealth',
+      workType: t.projects.boosthealth.workType,
+      description: t.projects.boosthealth.description,
+      longDescription: t.projects.boosthealth.longDescription,
+      metric: t.projects.boosthealth.metric,
+      metricIcon: '🏥',
+      tags: ['SaaS B2B2C', 'White-label', 'Design System', 'IA', 'WCAG 2.1', 'React'],
       hasCaseStudy: true,
     },
     {

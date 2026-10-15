@@ -30,7 +30,7 @@ const en = {
     tag: 'Case studies',
     title: 'Projects',
     verCaso: '// view_case',
-    destacado: 'Latest project',
+    destacado: 'Featured project',
     boosthealth: {
       description: 'B2B2C SaaS for clinics · Booking + AI assistant',
       longDescription: 'One product each clinic sells as their own: they configure their brand, specialities and documents, and get their own booking site with Sage, an assistant limited to answering only from the information each clinic uploads. I designed the whole product (design and specification complete; development in progress) — patient and admin flows, the design system, and the specification for development. The hardest part wasn\'t the screens: it was defining what an AI working with health must refuse to answer.',
@@ -46,7 +46,7 @@ const en = {
     boost: {
       description: 'Inclusive Cognitive Health Platform with AI & IoT',
       longDescription: 'UX/UI redesign of a cognitive health platform for older adults, people with cognitive disabilities and their caregivers. Integrates AI to personalize therapies and IoT to sync a smart medication dispenser.',
-      metric: 'Tested with 6 users · 3 changes applied to the design',
+      metric: 'Study with 4 participants · 3 changes applied to the design',
       workType: 'Own project',
     },
     johnnyRockets: {
