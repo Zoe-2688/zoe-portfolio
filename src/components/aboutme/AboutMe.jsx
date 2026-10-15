@@ -77,7 +77,7 @@ function getSkillGroups(t) {
       color: 'cyan',
       skills: [
         { name: isEn ? 'Native Spanish' : 'Español nativo', icon: FiGlobe },
-        { name: isEn ? 'English B2+' : 'Inglés B2+', icon: FiGlobe },
+        { name: isEn ? 'Professional English' : 'Inglés profesional', icon: FiGlobe },
       ],
     },
   ]

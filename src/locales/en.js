@@ -1,5 +1,6 @@
 const en = {
   intro: {
+    enter: 'Enter portfolio',
     chooseLabel: 'Choose how you want to know me',
     professional: 'Professional',
     professionalSub: 'Process and results',
@@ -22,6 +23,8 @@ const en = {
     location: 'Santiago, Chile · Available for remote and hybrid work',
     btnProjects: 'View projects',
     btnContact: 'Contact',
+    creativeHint: 'Prefer a more interactive experience?',
+    creativeLink: 'View creative mode →',
   },
   projects: {
     tag: 'Case studies',
@@ -30,7 +33,7 @@ const en = {
     destacado: 'Latest project',
     boosthealth: {
       description: 'B2B2C SaaS for clinics · Booking + AI assistant',
-      longDescription: 'One product each clinic sells as their own: they configure their brand, specialities and documents, and get their own booking site with Sage, an assistant trained only on that information. I designed the whole product — patient and admin flows, the design system, and the specification for development. The hardest part wasn\'t the screens: it was defining what an AI working with health must refuse to answer.',
+      longDescription: 'One product each clinic sells as their own: they configure their brand, specialities and documents, and get their own booking site with Sage, an assistant limited to answering only from the information each clinic uploads. I designed the whole product (design and specification complete; development in progress) — patient and admin flows, the design system, and the specification for development. The hardest part wasn\'t the screens: it was defining what an AI working with health must refuse to answer.',
       metric: 'Multi-tenant · 28 screens · 12 specification documents · WCAG 2.1 AA',
       workType: 'Own project',
     },

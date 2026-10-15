@@ -155,7 +155,7 @@ function HeroCircuitCanvas({ reduceMotion }) {
 }
 
 function Hero() {
-  const { mode, language, reduceMotion } = usePortfolio()
+  const { mode, setMode, language, reduceMotion } = usePortfolio()
   const t = language === 'en' ? en : es
   const [visible, setVisible] = useState(() => reduceMotion)
   const [currentScreen, setCurrentScreen] = useState(0)
@@ -228,6 +228,16 @@ function Hero() {
               {t.hero.btnContact}
             </button>
           </div>
+          <p className="text-white/70 text-sm mt-1">
+            {t.hero.creativeHint}{' '}
+            <button
+              type="button"
+              onClick={() => { window.scrollTo({ top: 0, behavior: 'instant' }); setMode('creative') }}
+              className="text-[#00d4ff] underline underline-offset-4 hover:text-white focus:outline-none focus:ring-2 focus:ring-[#00d4ff] rounded"
+            >
+              {t.hero.creativeLink}
+            </button>
+          </p>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>

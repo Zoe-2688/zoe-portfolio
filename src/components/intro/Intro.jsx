@@ -256,9 +256,6 @@ function Intro() {
   const t = language === 'en' ? en : es
   const intro = t.intro || {}
 
-  const [creativePixel, setCreativePixel] = useState(false)
-  const [creativeVisible, setCreativeVisible] = useState(true)
-  const [tooltip, setTooltip] = useState(null)
   const [clickingMode, setClickingMode] = useState(null)
   const [lettersFalling, setLettersFalling] = useState(false)
   const [letterOffsets] = useState(() => {
@@ -273,7 +270,6 @@ function Intro() {
   const [nameGlow, setNameGlow] = useState(false)
   const [assembled, setAssembled] = useState(() => reduceMotion)
   const [activated, setActivated] = useState(() => reduceMotion)
-  const creativeTid = useRef(null)
 
   // Además del toggle propio del sitio, respetamos la preferencia real del SO.
   const [osReduceMotion, setOsReduceMotion] = useState(() =>
@@ -310,8 +306,6 @@ function Intro() {
     return () => clearInterval(intervalId)
   }, [motionDisabled, language, rotatingPhrases.length])
 
-  const handleCreativeEnter = () => { clearTimeout(creativeTid.current); setCreativeVisible(false); creativeTid.current = setTimeout(() => { setCreativePixel(true); setCreativeVisible(true) }, 180) }
-  const handleCreativeLeave = () => { clearTimeout(creativeTid.current); setCreativeVisible(false); creativeTid.current = setTimeout(() => { setCreativePixel(false); setCreativeVisible(true) }, 180) }
 
   const handleModeSelect = (mode) => {
     if (clickingMode) return
@@ -418,8 +412,8 @@ function Intro() {
         </div>
 
         {/* Columna derecha */}
-        <div className="flex flex-col items-center gap-4" style={{ opacity: assembled ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 400ms ease' }}>
-          <div className="flex items-center justify-center text-center" style={{ minHeight: isMobile ? '64px' : '84px' }}>
+        <div className="flex flex-col items-center gap-6" style={{ width: isMobile ? '100%' : '30rem', maxWidth: '100%', opacity: assembled ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 400ms ease' }}>
+          <div className="flex items-center justify-center text-center" style={{ minHeight: isMobile ? '96px' : '140px' }}>
             <p
               className="tracking-wide"
               style={{
@@ -441,42 +435,14 @@ function Intro() {
             </p>
           )}
 
-          <div className="flex flex-col items-center gap-6">
-            <p className="text-white/90 text-sm tracking-[3px] uppercase">{intro.chooseLabel || 'Elige cómo quieres conocerme'}</p>
-
-            <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} justify-center items-center`} style={{ gap: isMobile ? '20px' : '0px' }}>
-              {/* Botón Profesional */}
-              <div className="flex flex-col items-center">
-                <div className="relative">
-                  <button onClick={() => handleModeSelect('professional')} onMouseEnter={() => setTooltip('professional')} onMouseLeave={() => setTooltip(null)}
-                    className={`mode-btn text-[#00d4ff] ${isSmallScreen ? 'px-4 py-4' : 'px-4 py-3'} text-xs tracking-[2px] uppercase min-w-[120px] ${clickingMode === 'professional' ? 'mode-btn-clicking' : ''}`}>
-                    <span className="block text-base mb-1">{intro.professional || 'Profesional'}</span>
-                    <span className="opacity-70 normal-case tracking-normal text-xs">{intro.professionalSub || 'Proceso y resultados'}</span>
-                  </button>
-                  {clickingMode === 'professional' && <BorderParticle onComplete={() => handleAnimationComplete('professional')} />}
-                </div>
-                <p className="mt-2 w-56 text-sm text-white/70 normal-case tracking-normal text-center pointer-events-none" style={{ opacity: tooltip === 'professional' ? 1 : 0, transition: 'opacity 200ms ease' }}>
-                  {intro.professionalTooltip || 'Proceso de diseño, casos de estudio y resultados'}
-                </p>
-              </div>
-
-              {!isMobile && <span style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '32px', color: '#00d4ff', opacity: 0.5, display: 'flex', alignItems: 'center', margin: '0 -8px', marginTop: '-40px' }}>||</span>}
-
-              {/* Botón Creativa */}
-              <div className="flex flex-col items-center">
-                <div className="relative">
-                  <button onClick={() => handleModeSelect('creative')} onMouseEnter={() => { handleCreativeEnter(); setTooltip('creative') }} onMouseLeave={() => { handleCreativeLeave(); setTooltip(null) }}
-                    className={`mode-btn text-[#00d4ff] ${isSmallScreen ? 'px-4 py-4' : 'px-4 py-3'} text-xs tracking-[2px] uppercase min-w-[120px] ${clickingMode === 'creative' ? 'mode-btn-clicking' : ''}`}>
-                    <span className="block mb-1" style={{ fontFamily: creativePixel ? "'Press Start 2P', monospace" : 'inherit', fontSize: creativePixel ? '0.6rem' : '1rem', lineHeight: creativePixel ? 1.8 : 'inherit', opacity: creativeVisible ? 1 : 0, transition: 'opacity 180ms ease' }}>
-                      {intro.creative || 'Creativa'}
-                    </span>
-                    <span className="opacity-70 normal-case tracking-normal text-xs">{intro.creativeSub || 'Experiencia interactiva'}</span>
-                  </button>
-                  {clickingMode === 'creative' && <BorderParticle onComplete={() => handleAnimationComplete('creative')} />}
-                </div>
-                <p className="mt-2 w-56 text-sm text-white/70 normal-case tracking-normal text-center pointer-events-none" style={{ opacity: tooltip === 'creative' ? 1 : 0, transition: 'opacity 200ms ease' }}>
-                  {intro.creativeTooltip || 'Experiencia interactiva con animaciones y mi historia'}
-                </p>
+          <div className="flex flex-col items-center gap-8">
+            <div className="flex flex-col items-center">
+              <div className="relative">
+                <button onClick={() => handleModeSelect('professional')}
+                  className={`mode-btn text-[#00d4ff] ${isSmallScreen ? 'px-6 py-4' : 'px-8 py-4'} text-sm tracking-[2px] uppercase min-w-[220px] ${clickingMode === 'professional' ? 'mode-btn-clicking' : ''}`}>
+                  <span className="block text-base">{intro.enter || 'Entrar al portafolio'}</span>
+                </button>
+                {clickingMode === 'professional' && <BorderParticle onComplete={() => handleAnimationComplete('professional')} />}
               </div>
             </div>
 

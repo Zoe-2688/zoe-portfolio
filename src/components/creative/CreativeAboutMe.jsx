@@ -265,7 +265,7 @@ function CreativeAboutMe() {
     ]},
     { categoria: isEn ? '[LINGUA] // Languages' : '[LINGUA] // Idiomas', icono: FiGlobe, color: '#e8a090', skills: [
       { name: isEn ? 'Native Spanish' : 'Español nativo', icon: FiGlobe },
-      { name: isEn ? 'English B2+' : 'Inglés B2+', icon: FiGlobe },
+      { name: isEn ? 'Professional English' : 'Inglés profesional', icon: FiGlobe },
     ]},
   ]
 

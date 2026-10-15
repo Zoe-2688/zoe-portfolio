@@ -357,8 +357,8 @@ const CONTACT_ITEMS = [
   },
   {
     Icon: LinkedInIcon,
-    label: 'linkedin.com/in/zoe-mejia',
-    href: 'https://linkedin.com/in/zoe-mejia',
+    label: 'linkedin.com/in/zoe-m-99a9b382',
+    href: 'https://www.linkedin.com/in/zoe-m-99a9b382/',
   },
   {
     Icon: GitHubIcon,

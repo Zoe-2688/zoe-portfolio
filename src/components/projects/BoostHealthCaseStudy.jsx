@@ -1254,7 +1254,7 @@ export default function BoostHealthCaseStudy({ onClose }) {
         <div style={{ marginBottom: '40px' }}>
           <SectionTitle numero={1} titulo={isEn ? 'About BoostHealth' : 'Sobre BoostHealth'} />
           <SectionText>
-            {isEn ? 'BoostHealth is a booking platform with an AI assistant, sold to clinics. Patients book appointments and resolve doubts with Sage, an assistant trained only on their clinic\'s own documents. Administrators configure their brand, upload content and measure what people are asking.' : 'BoostHealth es una plataforma de reservas con asistente de IA, que se vende a clínicas. Los pacientes agendan horas y resuelven dudas con Sage, un asistente entrenado solo con los documentos de su clínica. Los administradores configuran su marca, cargan contenido y miden qué está preguntando la gente.'}
+            {isEn ? 'BoostHealth is a booking platform with an AI assistant, sold to clinics. Patients book appointments and resolve doubts with Sage, an assistant limited to answering only from their clinic\'s own documents. Administrators configure their brand, upload content and measure what people are asking.' : 'BoostHealth es una plataforma de reservas con asistente de IA, que se vende a clínicas. Los pacientes agendan horas y resuelven dudas con Sage, un asistente limitado a responder solo con los documentos de su clínica. Los administradores configuran su marca, cargan contenido y miden qué está preguntando la gente.'}
           </SectionText>
           <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : 'repeat(3, 1fr)', gap: '10px', marginBottom: '20px' }}>
             {(isEn ? [

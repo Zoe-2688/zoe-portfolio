@@ -1,5 +1,6 @@
 const es = {
   intro: {
+    enter: 'Entrar al portafolio',
     chooseLabel: 'Elige cómo quieres conocerme',
     professional: 'Profesional',
     professionalSub: 'Proceso y resultados',
@@ -22,6 +23,8 @@ const es = {
     location: 'Santiago, Chile · Disponible para trabajo remoto e híbrido',
     btnProjects: 'Ver proyectos',
     btnContact: 'Contacto',
+    creativeHint: '¿Prefieres una experiencia más interactiva?',
+    creativeLink: 'Ver modo creativo →',
   },
   projects: {
     tag: 'Casos de estudio',
@@ -30,7 +33,7 @@ const es = {
     destacado: 'Último proyecto',
     boosthealth: {
       description: 'SaaS B2B2C para clínicas · Reservas + asistente con IA',
-      longDescription: 'Un mismo producto que cada clínica vende como suyo: configura su marca, sus especialidades y sus documentos, y obtiene su propio sitio de reservas con Sage, un asistente entrenado solo con esa información. Diseñé el producto completo — los flujos de paciente y de administrador, el sistema de diseño y la especificación para desarrollo. Lo más difícil no fueron las pantallas: fue definir qué debe negarse a responder una IA que trabaja con salud.',
+      longDescription: 'Un mismo producto que cada clínica vende como suyo: configura su marca, sus especialidades y sus documentos, y obtiene su propio sitio de reservas con Sage, un asistente limitado a responder solo con la información que carga cada clínica. Diseñé el producto completo (diseño y especificación completos; desarrollo en curso) — los flujos de paciente y de administrador, el sistema de diseño y la especificación para desarrollo. Lo más difícil no fueron las pantallas: fue definir qué debe negarse a responder una IA que trabaja con salud.',
       metric: 'Multi-tenant · 28 pantallas · 12 documentos de especificación · WCAG 2.1 AA',
       workType: 'Proyecto propio',
     },
